@@ -19,36 +19,95 @@ import (
 	"encoding/json"
 	"fmt"
 	"math"
+	"math/rand"
 	"time"
 
+	wr "github.com/mroth/weightedrand"
 	"github.com/spf13/cobra"
 )
 
 type Colonist struct {
-	Name      string
-	Alive     bool
-	Hydration float64
+	Name           string
+	Status         string
+	Alive          bool
+	Hydration      float64
+	LastActionTake time.Time
 }
 
 type GameState struct {
 	ActiveColonist *Colonist
-	ActionQueue    []Action
+	LastTick       time.Time
+	Elapsed        time.Duration
+}
+
+type Action struct {
+	Status string
 }
 
 func gameIsLost(gameState *GameState) bool {
 	return gameState.ActiveColonist.Alive == false
 }
 
-func updateGameState(elapsed time.Duration, gameState *GameState) {
-	ratePerSecond := 1
+func searchForWater(colonist *Colonist) wr.Choice {
+	action := &Action{Status: "Searching for water."}
 
-	decrement := gameState.ActiveColonist.Hydration - float64(ratePerSecond)*elapsed.Seconds()
-
-	gameState.ActiveColonist.Hydration = math.Round(decrement*100) / 100
-
-	if gameState.ActiveColonist.Hydration <= 0 {
-		gameState.ActiveColonist.Alive = false
+	if colonist.Hydration <= 4 {
+		return wr.Choice{Item: action, Weight: 70}
 	}
+
+	if colonist.Hydration <= 3 {
+		return wr.Choice{Item: action, Weight: 80}
+	}
+
+	if colonist.Hydration <= 2 {
+		return wr.Choice{Item: action, Weight: 90}
+	}
+
+	return wr.Choice{Item: action, Weight: 5}
+}
+
+func decreaseHydration(colonist *Colonist, gameState *GameState) {
+	ratePerSecond := 0.1
+
+	decrement := colonist.Hydration - float64(ratePerSecond)*gameState.Elapsed.Seconds()
+
+	colonist.Hydration = math.Round(decrement*1000) / 1000
+}
+
+func isColonistAlive(colonist *Colonist) bool {
+	if colonist.Hydration <= 0 {
+		return false
+	}
+
+	return true
+}
+
+func processColonistActions(c wr.Chooser) *Action {
+	return c.Pick().(*Action)
+}
+
+func findRecreation(colonist *Colonist) wr.Choice {
+	action := &Action{Status: "Taking a nice walk."}
+
+	return wr.Choice{Item: action, Weight: 40}
+}
+
+func updateGameState(gameState *GameState) {
+	colonist := gameState.ActiveColonist
+
+	decreaseHydration(colonist, gameState)
+
+	actionToTake := processColonistActions(wr.NewChooser(
+		searchForWater(colonist),
+		findRecreation(colonist),
+	))
+
+	if colonist.LastActionTake.Sub(time.Now())*time.Second >= 6 {
+		colonist.Status = actionToTake.Status
+		colonist.LastActionTake = time.Now()
+	}
+
+	colonist.Alive = isColonistAlive(colonist)
 }
 
 func renderGameState(gameState *GameState) {
@@ -68,9 +127,17 @@ This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 
-		gameState := &GameState{ActiveColonist: &Colonist{Name: "Artokun", Alive: true, Hydration: 10}}
-
-		lastTime := time.Now()
+		gameState := &GameState{
+			ActiveColonist: &Colonist{
+				Name:           "Artokun",
+				Status:         "Waking Up",
+				Alive:          true,
+				Hydration:      10,
+				LastActionTake: time.Now(),
+			},
+			LastTick: time.Now(),
+			Elapsed:  0,
+		}
 
 		// open a grpc server
 		// set a route for an action to "drink some water"
@@ -80,19 +147,21 @@ to quickly create a Cobra application.`,
 
 		for range time.Tick(16 * time.Millisecond) {
 			currentTime := time.Now()
-			elapsed := currentTime.Sub(lastTime)
-			updateGameState(elapsed, gameState)
+			gameState.Elapsed = currentTime.Sub(gameState.LastTick)
+			updateGameState(gameState)
 			renderGameState(gameState)
 			if gameIsLost(gameState) {
 				fmt.Println("You lost the game.")
 				break
 			}
-			lastTime = currentTime
+			gameState.LastTick = currentTime
 		}
 	},
 }
 
 func init() {
+	rand.Seed(time.Now().UTC().UnixNano())
+
 	rootCmd.AddCommand(startCmd)
 
 	// Here you will define your flags and configuration settings.
