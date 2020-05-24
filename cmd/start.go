@@ -32,7 +32,6 @@ type Colonist struct {
 
 type GameState struct {
 	ActiveColonist *Colonist
-	ActionQueue    []Action
 }
 
 func gameIsLost(gameState *GameState) bool {
