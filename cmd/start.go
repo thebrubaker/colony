@@ -31,17 +31,17 @@ type Colonist struct {
 	Status                 string
 	Thirst                 float64
 	Stress                 float64
-	LastActionTake         time.Time
+	LastActionTaken        time.Time
 	CurrentAction          *Action
 	CurrentActionExpiresAt float64
 }
 
-func (colonist *Colonist) SubStress(n float64) {
-	colonist.Stress = math.Max(0, colonist.Stress-n)
+func SubAttribute(attribute float64, amount float64) float64 {
+	return math.Max(0, attribute-amount)
 }
 
-func (colonist *Colonist) AddStress(n float64) {
-	colonist.Stress = math.Min(100, colonist.Stress+n)
+func AddAttribute(attribute float64, amount float64) float64 {
+	return math.Max(0, attribute+amount)
 }
 
 type GameState struct {
@@ -86,7 +86,7 @@ var WatchClouds *Action = &Action{
 	},
 	OnStart: func(gameState *GameState, colonist *Colonist) {},
 	OnTick: func(gameState *GameState, colonist *Colonist) {
-		colonist.SubStress(0.2 * gameState.TickElapsed)
+		colonist.Stress = SubAttribute(colonist.Stress, 4*gameState.TickElapsed)
 	},
 	OnEnd: func(gameState *GameState, colonist *Colonist) {},
 }
@@ -94,21 +94,20 @@ var WatchClouds *Action = &Action{
 var SearchForWater *Action = &Action{
 	Status:     "Searching for water.",
 	Priority:   Survival,
-	EnergyCost: 0.1,
+	EnergyCost: 2,
 	Duration:   4,
 	GetUtility: func(gameState *GameState, colonist *Colonist) uint {
-		return uint(colonist.Thirst)
+		return uint(colonist.Thirst / 2)
 	},
 	IsAllowed: func(gameState *GameState, colonist *Colonist) bool {
 		return gameState.Inventory["water"] == 0
 	},
 	OnStart: func(gameState *GameState, colonist *Colonist) {
-		gameState.Inventory["water"]--
 	},
 	OnTick: func(gameState *GameState, colonist *Colonist) {},
 	OnEnd: func(gameState *GameState, colonist *Colonist) {
 		if rand.Float64() <= 0.6 {
-			gameState.Inventory["water"]++
+			gameState.Inventory["water"] += 3
 		}
 	},
 }
@@ -116,14 +115,10 @@ var SearchForWater *Action = &Action{
 var DrinkWater *Action = &Action{
 	Status:     "Drinking water.",
 	Priority:   Survival,
-	EnergyCost: 0.2,
+	EnergyCost: 1,
 	Duration:   10,
 	GetUtility: func(gameState *GameState, colonist *Colonist) uint {
 		if colonist.Thirst >= 60 {
-			if colonist.CurrentAction == SearchForWater {
-				return 90
-			}
-
 			return 70
 		}
 
@@ -136,7 +131,7 @@ var DrinkWater *Action = &Action{
 		gameState.Inventory["water"]--
 	},
 	OnTick: func(gameState *GameState, colonist *Colonist) {
-		colonist.Thirst -= 5 * gameState.TickElapsed
+		colonist.Thirst = SubAttribute(colonist.Thirst, 5*gameState.TickElapsed)
 	},
 	OnEnd: func(gameState *GameState, colonist *Colonist) {},
 }
@@ -144,7 +139,7 @@ var DrinkWater *Action = &Action{
 var StandIdle *Action = &Action{
 	Status:     "Standing Still.",
 	Priority:   Recreation,
-	EnergyCost: 0.1,
+	EnergyCost: 1,
 	Duration:   5,
 	GetUtility: func(gameState *GameState, colonist *Colonist) uint {
 		return 1
@@ -160,8 +155,8 @@ var StandIdle *Action = &Action{
 var WakingUp *Action = &Action{
 	Status:     "Waking up from cryosleep.",
 	Priority:   Recreation,
-	EnergyCost: 0,
-	Duration:   1,
+	EnergyCost: 1,
+	Duration:   4,
 	GetUtility: func(gameState *GameState, colonist *Colonist) uint {
 		return 1
 	},
@@ -169,20 +164,18 @@ var WakingUp *Action = &Action{
 		return false
 	},
 	OnStart: func(gameState *GameState, colonist *Colonist) {},
-	OnTick:  func(gameState *GameState, colonist *Colonist) {},
-	OnEnd:   func(gameState *GameState, colonist *Colonist) {},
+	OnTick: func(gameState *GameState, colonist *Colonist) {
+		colonist.Stress = AddAttribute(colonist.Stress, 15*gameState.TickElapsed)
+	},
+	OnEnd: func(gameState *GameState, colonist *Colonist) {},
 }
 
 func increateThirst(colonist *Colonist, gameState *GameState) {
-	ratePerTick := 0.1
-
-	value := colonist.Thirst + float64(ratePerTick)*gameState.TickElapsed
-
-	colonist.Thirst = math.Round(value*1000) / 1000
+	colonist.Thirst = AddAttribute(colonist.Thirst, 0.1*gameState.TickElapsed)
 }
 
 func processColonistActions(gameState *GameState, colonist *Colonist, actions []*Action) {
-	colonist.AddStress(colonist.CurrentAction.EnergyCost * gameState.TickElapsed)
+	colonist.Stress = AddAttribute(colonist.Stress, colonist.CurrentAction.EnergyCost*gameState.TickElapsed)
 	colonist.CurrentAction.OnTick(gameState, colonist)
 
 	if gameState.Ticks < colonist.CurrentActionExpiresAt {
@@ -210,7 +203,7 @@ func findRecreation(colonist *Colonist) wr.Choice {
 }
 
 func getChoice(action *Action, utility uint) wr.Choice {
-	return wr.Choice{Item: action, Weight: utility ^ 2}
+	return wr.Choice{Item: action, Weight: utility ^ 3}
 }
 
 func updateGameState(gameState *GameState) {
@@ -264,7 +257,7 @@ to quickly create a Cobra application.`,
 				Name:                   "Artokun",
 				Status:                 WakingUp.Status,
 				Thirst:                 60,
-				LastActionTake:         time.Now(),
+				LastActionTaken:        time.Now(),
 				CurrentActionExpiresAt: WakingUp.Duration,
 				CurrentAction:          WakingUp,
 			},
@@ -273,7 +266,7 @@ to quickly create a Cobra application.`,
 			TickElapsed: 0,
 			Ticks:       0,
 			Inventory: Stock{
-				"water": 3,
+				"water": 0,
 			},
 		}
 
