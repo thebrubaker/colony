@@ -27,91 +27,223 @@ import (
 )
 
 type Colonist struct {
-	Name           string
-	Status         string
-	Alive          bool
-	Hydration      float64
-	LastActionTake time.Time
+	Name                   string
+	Status                 string
+	Thirst                 float64
+	Stress                 float64
+	LastActionTake         time.Time
+	CurrentAction          *Action
+	CurrentActionExpiresAt float64
+}
+
+func (colonist *Colonist) SubStress(n float64) {
+	colonist.Stress = math.Max(0, colonist.Stress-n)
+}
+
+func (colonist *Colonist) AddStress(n float64) {
+	colonist.Stress = math.Min(100, colonist.Stress+n)
 }
 
 type GameState struct {
 	ActiveColonist *Colonist
 	LastTick       time.Time
-	Elapsed        time.Duration
+	TimeElapsed    time.Duration
+	TickElapsed    float64
+	Ticks          float64
+	Inventory      Stock
 }
+
+type Stock map[string]uint
+
+const (
+	Survival   uint = 1
+	Duty       uint = 2
+	Recreation uint = 3
+)
 
 type Action struct {
-	Status string
+	Status     string
+	Priority   uint
+	EnergyCost float64
+	Duration   float64
+	GetUtility func(gameState *GameState, colonist *Colonist) uint
+	IsAllowed  func(gameState *GameState, colonist *Colonist) bool
+	OnStart    func(gameState *GameState, colonist *Colonist)
+	OnTick     func(gameState *GameState, colonist *Colonist)
+	OnEnd      func(gameState *GameState, colonist *Colonist)
 }
 
-func gameIsLost(gameState *GameState) bool {
-	return gameState.ActiveColonist.Alive == false
+var WatchClouds *Action = &Action{
+	Status:     "Watching the clouds.",
+	Priority:   Recreation,
+	EnergyCost: 0,
+	Duration:   15,
+	GetUtility: func(gameState *GameState, colonist *Colonist) uint {
+		return 40
+	},
+	IsAllowed: func(gameState *GameState, colonist *Colonist) bool {
+		return colonist.Stress > 10
+	},
+	OnStart: func(gameState *GameState, colonist *Colonist) {},
+	OnTick: func(gameState *GameState, colonist *Colonist) {
+		colonist.SubStress(0.2 * gameState.TickElapsed)
+	},
+	OnEnd: func(gameState *GameState, colonist *Colonist) {},
 }
 
-func searchForWater(colonist *Colonist) wr.Choice {
-	action := &Action{Status: "Searching for water."}
-
-	if colonist.Hydration <= 4 {
-		return wr.Choice{Item: action, Weight: 70}
-	}
-
-	if colonist.Hydration <= 3 {
-		return wr.Choice{Item: action, Weight: 80}
-	}
-
-	if colonist.Hydration <= 2 {
-		return wr.Choice{Item: action, Weight: 90}
-	}
-
-	return wr.Choice{Item: action, Weight: 5}
+var SearchForWater *Action = &Action{
+	Status:     "Searching for water.",
+	Priority:   Survival,
+	EnergyCost: 0.1,
+	Duration:   4,
+	GetUtility: func(gameState *GameState, colonist *Colonist) uint {
+		return uint(colonist.Thirst)
+	},
+	IsAllowed: func(gameState *GameState, colonist *Colonist) bool {
+		return gameState.Inventory["water"] == 0
+	},
+	OnStart: func(gameState *GameState, colonist *Colonist) {
+		gameState.Inventory["water"]--
+	},
+	OnTick: func(gameState *GameState, colonist *Colonist) {},
+	OnEnd: func(gameState *GameState, colonist *Colonist) {
+		if rand.Float64() <= 0.6 {
+			gameState.Inventory["water"]++
+		}
+	},
 }
 
-func decreaseHydration(colonist *Colonist, gameState *GameState) {
-	ratePerSecond := 0.1
+var DrinkWater *Action = &Action{
+	Status:     "Drinking water.",
+	Priority:   Survival,
+	EnergyCost: 0.2,
+	Duration:   10,
+	GetUtility: func(gameState *GameState, colonist *Colonist) uint {
+		if colonist.Thirst >= 60 {
+			if colonist.CurrentAction == SearchForWater {
+				return 90
+			}
 
-	decrement := colonist.Hydration - float64(ratePerSecond)*gameState.Elapsed.Seconds()
+			return 70
+		}
 
-	colonist.Hydration = math.Round(decrement*1000) / 1000
+		return 0
+	},
+	IsAllowed: func(gameState *GameState, colonist *Colonist) bool {
+		return gameState.Inventory["water"] > 0
+	},
+	OnStart: func(gameState *GameState, colonist *Colonist) {
+		gameState.Inventory["water"]--
+	},
+	OnTick: func(gameState *GameState, colonist *Colonist) {
+		colonist.Thirst -= 5 * gameState.TickElapsed
+	},
+	OnEnd: func(gameState *GameState, colonist *Colonist) {},
 }
 
-func isColonistAlive(colonist *Colonist) bool {
-	if colonist.Hydration <= 0 {
+var StandIdle *Action = &Action{
+	Status:     "Standing Still.",
+	Priority:   Recreation,
+	EnergyCost: 0.1,
+	Duration:   5,
+	GetUtility: func(gameState *GameState, colonist *Colonist) uint {
+		return 1
+	},
+	IsAllowed: func(gameState *GameState, colonist *Colonist) bool {
+		return true
+	},
+	OnStart: func(gameState *GameState, colonist *Colonist) {},
+	OnTick:  func(gameState *GameState, colonist *Colonist) {},
+	OnEnd:   func(gameState *GameState, colonist *Colonist) {},
+}
+
+var WakingUp *Action = &Action{
+	Status:     "Waking up from cryosleep.",
+	Priority:   Recreation,
+	EnergyCost: 0,
+	Duration:   1,
+	GetUtility: func(gameState *GameState, colonist *Colonist) uint {
+		return 1
+	},
+	IsAllowed: func(gameState *GameState, colonist *Colonist) bool {
 		return false
-	}
-
-	return true
+	},
+	OnStart: func(gameState *GameState, colonist *Colonist) {},
+	OnTick:  func(gameState *GameState, colonist *Colonist) {},
+	OnEnd:   func(gameState *GameState, colonist *Colonist) {},
 }
 
-func processColonistActions(c wr.Chooser) *Action {
-	return c.Pick().(*Action)
+func increateThirst(colonist *Colonist, gameState *GameState) {
+	ratePerTick := 0.1
+
+	value := colonist.Thirst + float64(ratePerTick)*gameState.TickElapsed
+
+	colonist.Thirst = math.Round(value*1000) / 1000
+}
+
+func processColonistActions(gameState *GameState, colonist *Colonist, actions []*Action) {
+	colonist.AddStress(colonist.CurrentAction.EnergyCost * gameState.TickElapsed)
+	colonist.CurrentAction.OnTick(gameState, colonist)
+
+	if gameState.Ticks < colonist.CurrentActionExpiresAt {
+		return
+	}
+
+	colonist.CurrentAction.OnEnd(gameState, colonist)
+
+	choices := []wr.Choice{}
+
+	for _, action := range actions {
+		if action.IsAllowed(gameState, colonist) {
+			choices = append(choices, getChoice(action, action.GetUtility(gameState, colonist)))
+		}
+	}
+
+	colonist.CurrentAction = wr.NewChooser(choices...).Pick().(*Action)
+	colonist.CurrentActionExpiresAt = gameState.Ticks + colonist.CurrentAction.Duration
+	colonist.Status = colonist.CurrentAction.Status
+	colonist.CurrentAction.OnStart(gameState, colonist)
 }
 
 func findRecreation(colonist *Colonist) wr.Choice {
-	action := &Action{Status: "Taking a nice walk."}
+	return wr.Choice{Item: WatchClouds, Weight: 20}
+}
 
-	return wr.Choice{Item: action, Weight: 40}
+func getChoice(action *Action, utility uint) wr.Choice {
+	return wr.Choice{Item: action, Weight: utility ^ 2}
 }
 
 func updateGameState(gameState *GameState) {
 	colonist := gameState.ActiveColonist
 
-	decreaseHydration(colonist, gameState)
+	increateThirst(colonist, gameState)
 
-	actionToTake := processColonistActions(wr.NewChooser(
-		searchForWater(colonist),
-		findRecreation(colonist),
-	))
-
-	if colonist.LastActionTake.Sub(time.Now())*time.Second >= 6 {
-		colonist.Status = actionToTake.Status
-		colonist.LastActionTake = time.Now()
-	}
-
-	colonist.Alive = isColonistAlive(colonist)
+	processColonistActions(gameState, colonist, []*Action{
+		SearchForWater,
+		WatchClouds,
+		StandIdle,
+		DrinkWater,
+	})
 }
 
 func renderGameState(gameState *GameState) {
-	output, _ := json.MarshalIndent(gameState, "", "    ")
+	colonist := gameState.ActiveColonist
+	data := struct {
+		Tick      string
+		Name      string
+		Status    string
+		Stress    string
+		Thirst    string
+		Inventory Stock
+	}{
+		fmt.Sprintf("%d", uint(gameState.Ticks)),
+		colonist.Name,
+		colonist.Status,
+		fmt.Sprintf("%f", colonist.Stress),
+		fmt.Sprintf("%f", colonist.Thirst),
+		gameState.Inventory,
+	}
+	output, _ := json.MarshalIndent(data, "", "    ")
 	fmt.Printf("\033c%s\n", string(output))
 }
 
@@ -129,14 +261,20 @@ to quickly create a Cobra application.`,
 
 		gameState := &GameState{
 			ActiveColonist: &Colonist{
-				Name:           "Artokun",
-				Status:         "Waking Up",
-				Alive:          true,
-				Hydration:      10,
-				LastActionTake: time.Now(),
+				Name:                   "Artokun",
+				Status:                 WakingUp.Status,
+				Thirst:                 60,
+				LastActionTake:         time.Now(),
+				CurrentActionExpiresAt: WakingUp.Duration,
+				CurrentAction:          WakingUp,
 			},
-			LastTick: time.Now(),
-			Elapsed:  0,
+			LastTick:    time.Now(),
+			TimeElapsed: 0,
+			TickElapsed: 0,
+			Ticks:       0,
+			Inventory: Stock{
+				"water": 3,
+			},
 		}
 
 		// open a grpc server
@@ -145,16 +283,24 @@ to quickly create a Cobra application.`,
 		// updateGameState: pull actions off the queue
 		// process drink water (add 20 to hydration)
 
-		for range time.Tick(16 * time.Millisecond) {
+		baseTickRate := 16 * time.Millisecond
+		// fastTickRate := 8 * time.Millisecond
+		// fastestTickRate := 4 * time.Millisecond
+
+		currentTickRate := baseTickRate
+
+		for range time.Tick(currentTickRate) {
 			currentTime := time.Now()
-			gameState.Elapsed = currentTime.Sub(gameState.LastTick)
+			gameState.TimeElapsed = currentTime.Sub(gameState.LastTick)
 			updateGameState(gameState)
 			renderGameState(gameState)
-			if gameIsLost(gameState) {
+			if false {
 				fmt.Println("You lost the game.")
 				break
 			}
 			gameState.LastTick = currentTime
+			gameState.TickElapsed = gameState.TimeElapsed.Seconds() * float64(baseTickRate/currentTickRate)
+			gameState.Ticks += gameState.TickElapsed
 		}
 	},
 }
