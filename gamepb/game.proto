@@ -1,0 +1,27 @@
+
+syntax = "proto3";
+
+option go_package = "github.com/thebrubaker/colony/gamepb";
+
+service Game {
+  rpc StreamGameState(GameState) returns (stream GameState) {}
+}
+
+message GameState { string Json = 1; }
+
+service PlayerActions {
+  rpc GetActionTypes(GetActionTypesRequest) returns (ActionList) {}
+  rpc AddAction(ActionType) returns (Action) {}
+  rpc RemoveAction(Action) returns (Action) {}
+}
+
+message GetActionTypesRequest {}
+
+message ActionList { repeated ActionType action_types = 1; }
+
+message ActionType {
+  string colonist_id = 1;
+  string id = 2;
+}
+
+message Action { string id = 1; }

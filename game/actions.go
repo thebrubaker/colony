@@ -16,6 +16,7 @@ var (
 )
 
 type ActionType struct {
+	ID         string
 	Status     string
 	Priority   float64
 	EnergyCost float64
@@ -83,6 +84,7 @@ func (actionType *ActionType) IsAllowedForColonist(colonist *Colonist) bool {
 }
 
 var WatchClouds *ActionType = &ActionType{
+	ID:         "1",
 	Status:     "Watching the clouds.",
 	Priority:   Recreation,
 	EnergyCost: 0,
@@ -96,6 +98,7 @@ var WatchClouds *ActionType = &ActionType{
 }
 
 var SearchForWater *ActionType = &ActionType{
+	ID:         "2",
 	Status:     "Collecting water from a stream.",
 	Priority:   Obligation,
 	EnergyCost: 2,
@@ -112,6 +115,7 @@ var SearchForWater *ActionType = &ActionType{
 }
 
 var DrinkNaturalWater *ActionType = &ActionType{
+	ID:         "3",
 	Status:     "Drinking water from a stream.",
 	Priority:   Physiological,
 	EnergyCost: 1,
@@ -126,6 +130,7 @@ var DrinkNaturalWater *ActionType = &ActionType{
 }
 
 var DrinkWater *ActionType = &ActionType{
+	ID:         "3",
 	Status:     "Drinking water.",
 	Priority:   Physiological,
 	EnergyCost: 1,
@@ -149,6 +154,7 @@ var DrinkWater *ActionType = &ActionType{
 }
 
 var StandIdle *ActionType = &ActionType{
+	ID:         "4",
 	Status:     "Standing Still.",
 	Priority:   Recreation,
 	EnergyCost: 1,
@@ -156,6 +162,7 @@ var StandIdle *ActionType = &ActionType{
 }
 
 var WakingUp *ActionType = &ActionType{
+	ID:         "5",
 	Status:     "Waking up from cryosleep.",
 	Priority:   Recreation,
 	EnergyCost: 1,
@@ -166,6 +173,7 @@ var WakingUp *ActionType = &ActionType{
 }
 
 var HuntForFood *ActionType = &ActionType{
+	ID:         "6",
 	Status:     "Hunting a wild boar.",
 	Priority:   Obligation,
 	EnergyCost: 2,
@@ -184,6 +192,7 @@ var HuntForFood *ActionType = &ActionType{
 }
 
 var ConsumeRawFood *ActionType = &ActionType{
+	ID:         "7",
 	Status:     "Consuming raw berries.",
 	Priority:   Physiological,
 	EnergyCost: 2,
@@ -200,6 +209,7 @@ var ConsumeRawFood *ActionType = &ActionType{
 }
 
 var ConsumeCookedFood *ActionType = &ActionType{
+	ID:         "8",
 	Status:     "Eating a cooked meal.",
 	Priority:   Physiological,
 	EnergyCost: 1,
@@ -217,6 +227,7 @@ var ConsumeCookedFood *ActionType = &ActionType{
 }
 
 var CookRawFood *ActionType = &ActionType{
+	ID:         "9",
 	Status:     "Cooking food.",
 	Priority:   Physiological,
 	EnergyCost: 2,
@@ -238,6 +249,7 @@ var CookRawFood *ActionType = &ActionType{
 }
 
 var RestingOnGround *ActionType = &ActionType{
+	ID:         "10",
 	Status:     "Resting on a pile of leaves.",
 	Priority:   Physiological,
 	EnergyCost: 0,
