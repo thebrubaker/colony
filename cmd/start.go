@@ -47,7 +47,7 @@ to quickly create a Cobra application.`,
 			currentTime := time.Now()
 			gameState.Ticker.Elapsed = currentTime.Sub(gameState.Ticker.LastTick).Seconds() * float64(baseTickRate/currentTickRate)
 
-			gameState.Update()
+			gameState.Update(gameState.Ticker)
 			gameState.Render()
 
 			if false {
