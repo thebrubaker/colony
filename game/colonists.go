@@ -7,7 +7,7 @@ import (
 )
 
 type Attribute struct {
-	Value float64
+	Value float64 `json:value`
 }
 
 func (attribute *Attribute) Add(amount float64) {
@@ -20,13 +20,13 @@ func (attribute *Attribute) Sub(amount float64) {
 
 type Colonist struct {
 	Name          string     `json:name`
-	CurrentAction *Action    `json:action`
+	CurrentAction *Action    `json:-`
 	Thirst        *Attribute `json:thirst`
 	Stress        *Attribute `json:stress`
 	Energy        *Attribute `json:energy`
 	Hunger        *Attribute `json:hunger`
 	Inventory     *Inventory `json:inventory`
-	GameState     *GameState
+	GameState     *GameState `json:-`
 }
 
 func (colonist *Colonist) OnTick(ticker *Ticker) {

@@ -16,23 +16,23 @@ var (
 )
 
 type ActionType struct {
-	ID         string
-	Status     string
-	Priority   float64
-	EnergyCost float64
-	Duration   float64
-	GetUtility func(actionType *ActionType, colonist *Colonist) float64
-	IsAllowed  func(actionType *ActionType, colonist *Colonist) bool
-	OnStart    func(action *Action, ticker *Ticker)
-	OnTick     func(action *Action, ticker *Ticker)
-	OnEnd      func(action *Action, ticker *Ticker)
+	ID         string                                                   `json:id`
+	Status     string                                                   `json:status`
+	Priority   float64                                                  `json:priority`
+	EnergyCost float64                                                  `json:energy_cost`
+	Duration   float64                                                  `json:duration`
+	GetUtility func(actionType *ActionType, colonist *Colonist) float64 `json:-`
+	IsAllowed  func(actionType *ActionType, colonist *Colonist) bool    `json:-`
+	OnStart    func(action *Action, ticker *Ticker)                     `json:-`
+	OnTick     func(action *Action, ticker *Ticker)                     `json:-`
+	OnEnd      func(action *Action, ticker *Ticker)                     `json:-`
 }
 
 type Action struct {
-	Game           *GameState
-	Colonist       *Colonist
-	Type           *ActionType
-	TickExpiration float64
+	Game           *GameState  `json:-`
+	Colonist       *Colonist   `json:-`
+	Type           *ActionType `json:type`
+	TickExpiration float64     `json:-`
 }
 
 func (action *Action) SetTickExpiration() {

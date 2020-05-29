@@ -2,7 +2,6 @@ package server
 
 import (
 	"context"
-	"encoding/json"
 	"log"
 	"net"
 	"time"
@@ -22,10 +21,9 @@ type GameServer struct {
 }
 
 func (s *GameServer) StreamGameState(request *pb.EmptyRequest, stream pb.GameServer_StreamGameStateServer) error {
-	for range time.Tick(time.Second) {
-		json, _ := json.Marshal(s.GameState)
+	for range time.Tick(8 * time.Millisecond) {
 		stream.Send(&pb.GameState{
-			Json: string(json),
+			Json: string(s.GameState.Render()),
 		})
 	}
 
@@ -44,19 +42,24 @@ func (s *GameServer) RemoveCommand(c context.Context, request *pb.Command) (*pb.
 	return &pb.EmptyResponse{}, nil
 }
 
-func StartServer(gameState *game.GameState) {
+func StartServer(gameState *game.GameState, f func()) {
 	lis, err := net.Listen("tcp", port)
+
+	log.Printf("Listening on %s", port)
 
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
 
-	s := grpc.NewServer()
-	srv := &GameServer{GameState: gameState}
+	server := grpc.NewServer()
+	service := &GameServer{GameState: gameState}
 
-	pb.RegisterGameServerServer(s, srv)
+	log.Println("Registering service.")
+	pb.RegisterGameServerServer(server, service)
 
-	if err := s.Serve(lis); err != nil {
-		log.Fatalf("failed to serve: %v", err)
-	}
+	log.Println("Starting server.")
+	go server.Serve(lis)
+	f()
+	log.Println("Server started.")
+
 }

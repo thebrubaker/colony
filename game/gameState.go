@@ -7,25 +7,29 @@ import (
 )
 
 type Ticker struct {
-	LastTick time.Time
-	Elapsed  float64
-	Count    float64
+	LastTick time.Time `json:last_tick`
+	Elapsed  float64   `json:elapsed`
+	Count    float64   `json:count`
 }
 
 type GameState struct {
-	ActiveColonist *Colonist
-	Ticker         *Ticker
-	Inventory      *Inventory
+	ActiveColonist *Colonist  `json:active_colonist`
+	Ticker         *Ticker    `json:ticker`
+	Inventory      *Inventory `json:inventory`
 }
 
 func (gameState *GameState) Update(ticker *Ticker) {
 	gameState.ActiveColonist.ProcessActions(ActionTypes, gameState).OnTick(ticker)
 }
 
-func (gameState *GameState) Render() {
+func (gameState *GameState) Render() string {
 	data := ToJsonGame(gameState)
 
-	output, _ := json.MarshalIndent(data, "", "    ")
+	output, err := json.MarshalIndent(data, "", "    ")
 
-	fmt.Printf("\033c%s\n", string(output))
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	return string(output)
 }

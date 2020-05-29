@@ -4,6 +4,12 @@
 go run main.go serve
 ```
 
+# How to stream the game server
+
+```script
+go run main.go stream
+```
+
 # How to add an action
 
 Create a new Struct in `game/actions.go` for your action. Then at the bottom of the file, append your
