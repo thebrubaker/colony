@@ -24,21 +24,17 @@ import (
 	"google.golang.org/grpc"
 )
 
-const (
-	address = "localhost:50051"
-)
-
 // streamCmd represents the stream command
 var streamCmd = &cobra.Command{
 	Use:   "stream",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "Stream the game state over a gRPC connection.",
+	Long: `Stream the game state over a gRPC connection. The game state
+	will be returned and printed to the console as JSON.`,
 	Run: func(cmd *cobra.Command, args []string) {
+		address := "localhost:50051"
+		if len(args) > 0 {
+			address = args[0]
+		}
 		// Set up a connection to the server.
 		conn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
 		if err != nil {
@@ -70,6 +66,7 @@ func init() {
 	rootCmd.AddCommand(streamCmd)
 
 	// Here you will define your flags and configuration settings.
+	streamCmd.PersistentFlags().String("address", "localhost:50051", "The connection address.")
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
