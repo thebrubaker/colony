@@ -1,0 +1,32 @@
+
+syntax = "proto3";
+
+option go_package = "github.com/thebrubaker/colony/pb";
+
+message EmptyRequest {}
+
+message EmptyResponse { string error = 2; }
+
+service GameServer {
+  rpc StreamGameState(EmptyRequest) returns (stream GameState) {}
+  rpc GetCommandTypes(EmptyRequest) returns (CommandList) {}
+  rpc AddCommand(AddCommandRequest) returns (Command) {}
+  rpc RemoveCommand(Command) returns (EmptyResponse) {}
+}
+
+message GameState { string json = 1; }
+
+message CommandList { repeated CommandType action_types = 1; }
+
+message CommandType {
+  string command_type_id = 1;
+  string name = 2;
+  string description = 3;
+}
+
+message AddCommandRequest { string command_type_id = 1; }
+
+message Command {
+  string id = 1;
+  string command_type_id = 2;
+}

@@ -19,14 +19,13 @@ func (attribute *Attribute) Sub(amount float64) {
 }
 
 type Colonist struct {
-	Name          string
-	Status        string
-	CurrentAction *Action
-	Thirst        *Attribute
-	Stress        *Attribute
-	Energy        *Attribute
-	Hunger        *Attribute
-	Inventory     *Inventory
+	Name          string     `json:name`
+	CurrentAction *Action    `json:action`
+	Thirst        *Attribute `json:thirst`
+	Stress        *Attribute `json:stress`
+	Energy        *Attribute `json:energy`
+	Hunger        *Attribute `json:hunger`
+	Inventory     *Inventory `json:inventory`
 	GameState     *GameState
 }
 
