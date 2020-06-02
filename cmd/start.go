@@ -16,19 +16,19 @@ limitations under the License.
 package cmd
 
 import (
-	"fmt"
 	"math/rand"
 	"time"
 
+	tm "github.com/buger/goterm"
 	"github.com/spf13/cobra"
-	"github.com/thebrubaker/colony/game"
 	"github.com/thebrubaker/colony/server"
+	"github.com/thebrubaker/colony/ticker"
 )
 
 // startCmd represents the start command
 var startCmd = &cobra.Command{
 	Use:   "start",
-	Short: "A brief description of your command",
+	Short: "Starts the game server.",
 	Long: `A longer description that spans multiple lines and likely contains examples
 and usage of using your command. For example:
 
@@ -36,33 +36,24 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		gameState := game.InitGame()
+		renderToConsole := cmd.Flag("render").Value.String() == "true"
 
-		baseTickRate := 16 * time.Millisecond
-		// fastTickRate := 8 * time.Millisecond
-		// fastestTickRate := 4 * time.Millisecond
-
-		currentTickRate := baseTickRate
-
-		server.StartServer(gameState, func() {
-			for range time.Tick(currentTickRate) {
-				currentTime := time.Now()
-				gameState.Ticker.Elapsed = currentTime.Sub(gameState.Ticker.LastTick).Seconds() * float64(baseTickRate/currentTickRate)
-
-				gameState.Update(gameState.Ticker)
-				output := gameState.Render()
-
-				fmt.Printf("\033c%s\n", string(output))
-
-				if false {
-					fmt.Println("You lost the game.")
-					break
-				}
-
-				gameState.Ticker.LastTick = currentTime
-				gameState.Ticker.Count += gameState.Ticker.Elapsed
-			}
+		go ticker.OnTick(func(t *ticker.Ticker) {
 		})
+
+		if renderToConsole {
+			tm.Clear()
+
+			go ticker.OnTickMilliseconds(16, func() {
+				output := ""
+				tm.Clear()
+				tm.MoveCursor(1, 1)
+				tm.Println(string(output))
+				tm.Flush()
+			})
+		}
+
+		go server.StartServer()
 	},
 }
 
@@ -75,7 +66,7 @@ func init() {
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// startCmd.PersistentFlags().String("foo", "", "A help for foo")
+	startCmd.PersistentFlags().String("render", "false", "Streams the game state to the console.")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:

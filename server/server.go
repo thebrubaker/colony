@@ -6,7 +6,6 @@ import (
 	"net"
 	"time"
 
-	"github.com/thebrubaker/colony/game"
 	"github.com/thebrubaker/colony/pb"
 	"google.golang.org/grpc"
 )
@@ -17,13 +16,12 @@ const (
 
 type GameServer struct {
 	pb.UnimplementedGameServerServer
-	GameState *game.GameState
 }
 
 func (s *GameServer) StreamGameState(request *pb.EmptyRequest, stream pb.GameServer_StreamGameStateServer) error {
-	for range time.Tick(8 * time.Millisecond) {
+	for range time.Tick(16 * time.Millisecond) {
 		stream.Send(&pb.GameState{
-			Json: string(s.GameState.Render()),
+			Json: "",
 		})
 	}
 
@@ -42,7 +40,7 @@ func (s *GameServer) RemoveCommand(c context.Context, request *pb.Command) (*pb.
 	return &pb.EmptyResponse{}, nil
 }
 
-func StartServer(gameState *game.GameState, f func()) {
+func StartServer() {
 	lis, err := net.Listen("tcp", port)
 
 	log.Printf("Listening on %s", port)
@@ -52,14 +50,11 @@ func StartServer(gameState *game.GameState, f func()) {
 	}
 
 	server := grpc.NewServer()
-	service := &GameServer{GameState: gameState}
+	service := &GameServer{}
 
 	log.Println("Registering service.")
 	pb.RegisterGameServerServer(server, service)
 
 	log.Println("Starting server.")
-	go server.Serve(lis)
-	f()
-	log.Println("Server started.")
-
+	server.Serve(lis)
 }

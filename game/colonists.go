@@ -1,108 +1,137 @@
-package game
+// package game
 
-import (
-	"math"
+// import (
+// 	"math"
 
-	wr "github.com/mroth/weightedrand"
-)
+// 	wr "github.com/mroth/weightedrand"
+// )
 
-type Attribute struct {
-	Value float64 `json:value`
-}
+// type Attribute struct {
+// 	Value float64 `json:value`
+// }
 
-func (attribute *Attribute) Add(amount float64) {
-	attribute.Value = math.Min(100, attribute.Value+amount)
-}
+// func (attribute *Attribute) Add(amount float64) {
+// 	attribute.Value = math.Min(100, attribute.Value+amount)
+// }
 
-func (attribute *Attribute) Sub(amount float64) {
-	attribute.Value = math.Max(0, attribute.Value-amount)
-}
+// func (attribute *Attribute) Sub(amount float64) {
+// 	attribute.Value = math.Max(0, attribute.Value-amount)
+// }
 
-type Colonist struct {
-	Name          string     `json:name`
-	CurrentAction *Action    `json:-`
-	Thirst        *Attribute `json:thirst`
-	Stress        *Attribute `json:stress`
-	Energy        *Attribute `json:energy`
-	Hunger        *Attribute `json:hunger`
-	Inventory     *Inventory `json:inventory`
-	GameState     *GameState `json:-`
-}
+// type Colonist struct {
+// 	Name   string `json:name`
+// 	Status string `json:status`
 
-func (colonist *Colonist) OnTick(ticker *Ticker) {
-	colonist.Hunger.Add(0.1 * ticker.Elapsed)
-	colonist.Thirst.Add(0.1 * ticker.Elapsed)
-	colonist.Stress.Add(0.1 * ticker.Elapsed)
-	colonist.Energy.Sub(0.1 * ticker.Elapsed)
+// 	Hands     Carryable   `json:hands`
+// 	Bag       []Slottable `json:bag`
+// 	Equipment *Equipment  `json:equipment`
 
-	colonist.Energy.Sub(colonist.CurrentAction.Type.EnergyCost * ticker.Elapsed)
+// 	Needs Needs `json:needs`
+// }
 
-	colonist.CurrentAction.OnTick()
-}
+// type Needs struct {
+// 	Thirst     *Attribute `json:thirst`
+// 	Stress     *Attribute `json:stress`
+// 	Exhaustion *Attribute `json:exhaustion`
+// 	Hunger     *Attribute `json:hunger`
+// }
 
-func (colonist *Colonist) SetActionType(actionType *ActionType, gameState *GameState) {
-	if colonist.CurrentAction != nil {
-		colonist.CurrentAction.OnEnd()
-	}
+// func (_ *Needs) Add(a *Attribute, amount float64) {
+// 	a.Value = math.Min(100, a.Value+amount)
+// }
 
-	colonist.CurrentAction = &Action{
-		Colonist: colonist,
-		Game:     gameState,
-		Type:     actionType,
-	}
+// func (_ *Needs) Sub(a *Attribute, amount float64) {
+// 	a.Value = math.Max(0, a.Value-amount)
+// }
 
-	colonist.CurrentAction.OnStart()
+// func (colonist *Colonist) OnTick(currentAction *Action, ticker *Ticker) {
+// 	colonist.Needs.Add(colonist.Needs.Hunger, 0.3*ticker.Elapsed)
+// 	colonist.Needs.Add(colonist.Needs.Thirst, 0.3*ticker.Elapsed)
 
-	colonist.CurrentAction.SetTickExpiration()
-}
+// 	cost := currentAction.Type.EnergyCost
 
-func (colonist *Colonist) ContinueWithCurrentAction(ticker *Ticker) bool {
-	if colonist.CurrentAction == nil {
-		return false
-	}
+// 	colonist.Needs.Add(colonist.Needs.Exhaustion, cost*ticker.Elapsed)
 
-	if colonist.CurrentAction.IsExpired(ticker) {
-		return false
-	}
+// 	currentAction.OnTick()
+// }
 
-	return true
-}
+// func SetActionType(actionType *ActionType, currentAction *Action) {
+// 	if currentAction != nil {
+// 		currentAction.OnEnd()
+// 	}
 
-func (colonist *Colonist) ProcessActions(actionTypes []*ActionType, gameState *GameState) *Colonist {
-	if colonist.ContinueWithCurrentAction(gameState.Ticker) {
-		return colonist
-	}
+// 	currentAction = &Action{
+// 		Type: actionType,
+// 	}
 
-	choices := CreateChoices(colonist, actionTypes)
+// 	currentAction.OnStart()
 
-	actionType := wr.NewChooser(choices...).Pick().(*ActionType)
+// 	currentAction.SetTickExpiration()
+// }
 
-	colonist.SetActionType(actionType, gameState)
+// func ProcessActions(colonist *Colonist, currentAction *Action, ticker *Ticker) *Action {
+// 	if continueAction(currentAction, ticker) {
+// 		return currentAction
+// 	}
 
-	return colonist
-}
+// 	choices := CreateChoices(ActionTypes, colonist)
 
-func CreateChoices(colonist *Colonist, actionTypes []*ActionType) []wr.Choice {
-	choices := []wr.Choice{}
+// 	// for _, choice := range colonist.Choices {
+// 	// 	fmt.Printf("%s: %d\n", choice.Item.(*ActionType).Status, choice.Weight)
+// 	// }
 
-	for _, actionType := range actionTypes {
-		if !actionType.IsAllowedForColonist(colonist) {
-			continue
-		}
+// 	// os.Exit(1)
 
-		choice := MakeChoice(colonist, actionType)
+// 	actionType := wr.NewChooser(colonist.Choices...).Pick().(*ActionType)
 
-		choices = append(choices, choice)
-	}
+// 	SetActionType(actionType)
 
-	return choices
-}
+// 	return colonist
+// }
 
-func MakeChoice(colonist *Colonist, actionType *ActionType) wr.Choice {
-	utility := actionType.GetUtilityForColonist(colonist) * 100
+// func continueAction(currentAction *Action, ticker *Ticker) bool {
+// 	if currentAction == nil {
+// 		return false
+// 	}
 
-	return wr.Choice{
-		Item:   actionType,
-		Weight: uint(math.Pow(utility, 3)),
-	}
-}
+// 	if currentAction.IsExpired(ticker) {
+// 		return false
+// 	}
+
+// 	return true
+// }
+
+// func CreateChoices(actionTypes []*ActionType, colonist *Colonist) {
+// 	for _, actionType := range actionTypes {
+// 		if CannotTakeAction(actionType, colonist) {
+// 			continue
+// 		}
+
+// 		weight := colonist.GetWeight(actionType)
+
+// 		colonist.Choices = append(colonist.Choices, wr.Choice{
+// 			Item:   actionType,
+// 			Weight: uint(math.Pow(weight, 3)),
+// 		})
+// 	}
+// }
+
+// func (colonist *Colonist) GetWeight(actionType *ActionType) float64 {
+// 	if actionType.GetUtility == nil {
+// 		return actionType.Priority - 9
+// 	}
+
+// 	return actionType.GetUtility(actionType, colonist) * actionType.Priority
+// }
+
+// func CanTakeAction(actionType *ActionType, colonist *Colonist) bool {
+// 	if actionType.IsAllowed == nil {
+// 		return true
+// 	}
+
+// 	return actionType.IsAllowed(actionType, colonist)
+// }
+
+// func CannotTakeAction(actionType *ActionType, colonist *Colonist) bool {
+// 	return !CanTakeAction(actionType, colonist)
+// }

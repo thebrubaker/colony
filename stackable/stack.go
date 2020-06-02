@@ -150,7 +150,9 @@ func putElem(slice []interface{}, elem interface{}) ([]interface{}, error) {
 	return append(slice, elem), nil
 }
 
-func combineStacks(a Stackable, b Stackable) (*Stack, error) {
+// CombineStacks returns a new Stack that combines the counts of two Stacks
+// as long as the elements in the stacks match.
+func CombineStacks(a Stackable, b Stackable) (*Stack, error) {
 	if a.GetElement() != b.GetElement() {
 		return nil, errors.New("cannot combine stacks where items do not match")
 	}

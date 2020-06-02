@@ -1,26 +1,34 @@
-package game
+// package game
 
-import "time"
+// import (
+// 	"time"
+// )
 
-func InitGame() *GameState {
-	gameState := &GameState{
-		Ticker:    &Ticker{time.Now(), 0, 0},
-		Inventory: &Inventory{},
-	}
+// func InitGame() *GameState {
+// 	gameState := &GameState{
+// 		Ticker:    &Ticker{time.Now(), 0, 0},
+// 		Stockpile: &Inventory{},
+// 	}
 
-	colonist := Colonist{
-		Name:      "Caloke",
-		Energy:    &Attribute{100},
-		Hunger:    &Attribute{40},
-		Thirst:    &Attribute{40},
-		Stress:    &Attribute{0},
-		Inventory: &Inventory{},
-		GameState: gameState,
-	}
+// 	gameState.Colonists = []*Colonist{
+// 		MakeColonist("Blackthorne", gameState),
+// 	}
 
-	colonist.SetActionType(WakingUp, gameState)
+// 	return gameState
+// }
 
-	gameState.ActiveColonist = &colonist
+// func MakeColonist(name string, gameState *GameState) *Colonist {
+// 	colonist := &Colonist{
+// 		Name:       name,
+// 		Exhaustion: &Attribute{0},
+// 		Hunger:     &Attribute{60},
+// 		Thirst:     &Attribute{60},
+// 		Stress:     &Attribute{0},
+// 		Equipment:  &Inventory{},
+// 		GameState:  gameState,
+// 	}
 
-	return gameState
-}
+// 	colonist.SetActionType(WakingUp, gameState)
+
+// 	return colonist
+// }
