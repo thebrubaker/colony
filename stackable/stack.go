@@ -75,10 +75,10 @@ func takeStack(slice []interface{}, stack Stackable) ([]interface{}, error) {
 				return removeIndex(slice, i), nil
 			}
 
-			if s.GetCount() < stack.GetCount() {
+			if stack.GetCount() < s.GetCount() {
 				slice[i] = &Stack{
-					s.GetElement,
-					stack.GetCount() - s.GetCount(),
+					s.GetElement(),
+					s.GetCount() - stack.GetCount(),
 				}
 
 				return slice, nil
