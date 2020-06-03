@@ -130,7 +130,7 @@ func hasElem(slice []interface{}, elem interface{}) bool {
 func putStack(slice []interface{}, stack Stackable) ([]interface{}, error) {
 	for i, elem := range slice {
 		if s, ok := elem.(Stackable); ok && s.GetElement() == stack.GetElement() {
-			combined, err := combineStacks(s, stack)
+			combined, err := CombineStacks(s, stack)
 
 			slice[i] = combined
 

@@ -21,6 +21,8 @@ import (
 
 	tm "github.com/buger/goterm"
 	"github.com/spf13/cobra"
+	"github.com/thebrubaker/colony/colonist"
+	"github.com/thebrubaker/colony/region"
 	"github.com/thebrubaker/colony/server"
 	"github.com/thebrubaker/colony/ticker"
 )
@@ -38,7 +40,16 @@ to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		renderToConsole := cmd.Flag("render").Value.String() == "true"
 
+		colonists := map[string]*colonist.Colonist{
+			"Joel": colonist.GenerateColonist("Joel"),
+		}
+
+		region := &region.Region{
+			Colonists: colonists,
+		}
+
 		go ticker.OnTick(func(t *ticker.Ticker) {
+			region.UpdateRegion(region, t.TickElapsed)
 		})
 
 		if renderToConsole {

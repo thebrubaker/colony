@@ -1,6 +1,8 @@
 package colonist
 
-import "errors"
+import (
+	"errors"
+)
 
 // Equippable items can be assigned to the head, weapon or body slot
 // of a colonist's equipment.

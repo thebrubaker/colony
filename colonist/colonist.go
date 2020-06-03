@@ -12,7 +12,6 @@ type Colonist struct {
 	Status string `json:"status"`
 	Age    uint   `json:"age"`
 
-	Hands     interface{}   `json:"hands"`
 	Bag       []interface{} `json:"bag"`
 	Equipment *Equipment    `json:"equipment"`
 
@@ -49,24 +48,7 @@ func (c *Colonist) RemoveFromBag(elem interface{}) error {
 
 // Has determines if the colonist has the given element or stackable in their hands or bag.
 func (c *Colonist) Has(elem interface{}) bool {
-	if c.Hands == elem {
-		return true
-	}
-
-	if stackable.Has(c.Bag, elem) {
-		return true
-	}
-
-	return false
-}
-
-func (c *Colonist) Take(elem interface{}) error {
-
-	if stackable.Has(c.Bag, elem) {
-		return true
-	}
-
-	return false
+	return stackable.Has(c.Bag, elem)
 }
 
 // GenerateColonist returns a new colonist with the given name
@@ -81,8 +63,9 @@ func GenerateColonist(name string) *Colonist {
 			Exhaustion: 30,
 			Hunger:     30,
 		},
-		Skills: generateSkills(),
-		Stats:  generateStats(),
+		Skills:    generateSkills(),
+		Stats:     generateStats(),
+		Equipment: &Equipment{},
 	}
 }
 
@@ -133,13 +116,6 @@ func generateStats() *Stats {
 
 func (c *Colonist) SetStatus(s string) {
 	c.Status = s
-}
-
-type Needs struct {
-	Thirst     float64 `json:"thirst"`
-	Stress     float64 `json:"stress"`
-	Exhaustion float64 `json:"exhaustion"`
-	Hunger     float64 `json:"hunger"`
 }
 
 type Skills struct {
