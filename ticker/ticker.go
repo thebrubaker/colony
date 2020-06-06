@@ -7,6 +7,13 @@ import (
 type TickRate string
 
 const (
+	PausedRate      TickRate = "pause"
+	BaseTickRate    TickRate = "base"
+	FastTickRate    TickRate = "fast"
+	FastestTickRate TickRate = "fastest"
+)
+
+const (
 	pausedRate      = 0
 	baseTickRate    = 1
 	fastTickRate    = 2
@@ -22,13 +29,13 @@ type Ticker struct {
 
 func (t *Ticker) SetTickRate(r TickRate) {
 	switch r {
-	case "pause":
+	case PausedRate:
 		t.Rate = pausedRate
-	case "base":
+	case BaseTickRate:
 		t.Rate = baseTickRate
-	case "fast":
+	case FastTickRate:
 		t.Rate = fastTickRate
-	case "fastest":
+	case FastestTickRate:
 		t.Rate = fastestTickRate
 	default:
 		t.Rate = baseTickRate
