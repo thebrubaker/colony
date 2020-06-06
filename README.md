@@ -2,7 +2,7 @@
 
 Colony is a colony / survival / simulation game written in Go. The game is currently experimental and a work in progress.
 
-The premise is your colonist has woken up from cryosleep alone on a brand new planet. Unfortunately things haven't gone as planned, and you wake up alone, with most of your resources already looted or destroyed by others who woke up before you.
+The premise is your colonist has woken up from cryosleep alone on a new planet. Your mission was to be one of the first to colonize the planet. Unfortunately things haven't gone as planned. Your colonist wakes up alone, and it appears others have already looted your supply and technology.
 
 Slowly build your colony from the ground up despite this setback. Create a settlement, hunt for food, recruit new colonists, and discover advanced technology hidden away. But be careful. There seems to be some strange, dangerous creatures roaming about. Maybe something much worse.
 
