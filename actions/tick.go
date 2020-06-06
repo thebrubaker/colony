@@ -24,21 +24,23 @@ func OnTick(c *Context, a *Action) {
 		SimpleAgitate(c, i, a.TickProgress)
 	}
 
-	if i, ok := a.Type.(types.AddsToBag); ok {
-		AddsToBag(c, i, a.TickProgress)
+	if i, ok := a.Type.(types.Gathers); ok {
+		Gathers(c, i, c.TickElapsed)
 	}
 }
 
-func AddsToBag(c *Context, i types.AddsToBag, tickProgress float64) {
-	storage, elem, count, odds := i.AddToBag()
+func Gathers(c *Context, i types.Gathers, tickElapsed float64) {
+	storage, elem, odds := i.Gather()
 
-	if rand.Float64() > odds {
+	// fmt.Println(rand.Float64(), tickElapsed, odds)
+
+	if rand.Float64() > odds*tickElapsed {
 		return
 	}
 
 	switch storage {
 	case types.ColonistBag:
-		c.Colonist.Bag.Add(elem, count)
+		c.Colonist.Bag.Add(elem, 1)
 	case types.Stockpile:
 		return // TODO
 	}

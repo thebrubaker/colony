@@ -1,6 +1,7 @@
 package colonist
 
 import (
+	"encoding/json"
 	"errors"
 
 	"github.com/thebrubaker/colony/stackable"
@@ -12,6 +13,24 @@ type Bag struct {
 
 type Stackable interface {
 	IsStackable() bool
+}
+
+// MarshalJSON will marshal needs into it's attributes
+func (b *Bag) MarshalJSON() ([]byte, error) {
+	return json.Marshal(b.items)
+}
+
+// UnmarshalJSON fills in the attributes of needs
+func (b *Bag) UnmarshalJSON(bytes []byte) error {
+	var items []interface{}
+
+	if err := json.Unmarshal(bytes, items); err != nil {
+		return err
+	}
+
+	b.items = items
+
+	return nil
 }
 
 func (b *Bag) Add(elem interface{}, count uint) error {

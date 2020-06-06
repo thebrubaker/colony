@@ -1,17 +1,17 @@
 package resources
 
 type SimpleResource struct {
-	name        string
-	description string
+	Name        string
+	Description string
 	stackable   bool
 }
 
 func (w *SimpleResource) GetName() string {
-	return w.name
+	return w.Name
 }
 
 func (w *SimpleResource) GetDescription() string {
-	return w.description
+	return w.Description
 }
 
 func (w *SimpleResource) IsStackable() bool {
@@ -19,20 +19,20 @@ func (w *SimpleResource) IsStackable() bool {
 }
 
 var Wood *SimpleResource = &SimpleResource{
-	name:        "wood",
-	description: "a stack of logs",
+	Name:        "wood",
+	Description: "a stack of logs",
 	stackable:   true,
 }
 
 var RawLeather *SimpleResource = &SimpleResource{
-	name:        "raw leather",
-	description: "raw leather stripped from a hunted animal",
+	Name:        "raw leather",
+	Description: "raw leather stripped from a hunted animal",
 	stackable:   true,
 }
 
 var CuredLeather *SimpleResource = &SimpleResource{
-	name:        "raw leather",
-	description: "prepared leather used in crafting apparel and other goods",
+	Name:        "raw leather",
+	Description: "prepared leather used in crafting apparel and other goods",
 	stackable:   true,
 }
 

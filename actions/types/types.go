@@ -60,9 +60,9 @@ type SimpleAgitate interface {
 	Agitates() (need.NeedType, float64, func(float64) float64)
 }
 
-type AddsToBag interface {
+type Gathers interface {
 	Actionable
-	AddToBag() (StorageType, interface{}, uint, float64)
+	Gather() (StorageType, interface{}, float64)
 }
 
 type EasedWeight interface {

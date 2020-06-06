@@ -30,7 +30,7 @@ func InitActions(region *region.Region, colonists []*colonist.Colonist) []*Actio
 
 func (c *Context) CreateStartingAction(colonist *colonist.Colonist) *Action {
 	action := &Action{
-		Type:     &types.StartingAction{},
+		Type:     &types.GatherWood{},
 		Colonist: colonist,
 	}
 
