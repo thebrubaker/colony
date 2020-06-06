@@ -7,7 +7,6 @@ import (
 )
 
 type GatherWood struct {
-	Gathered float64
 }
 
 // MarshalJSON will marshal needs into it's attributes

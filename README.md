@@ -1,73 +1,73 @@
 # How to start the game server
 
+To do some basic streaming of the game server, you can run the following command.
+
+Warning: you should run this in a very tall console window.
+
 ```script
-go run main.go serve
+go run main.go start --render true
 ```
 
 # How to stream the game server
 
 ```script
-go run main.go stream
+Coming Soon
 ```
 
-# How to add an action
+# How To Add Actions
 
-Create a new Struct in `game/actions.go` for your action. Then at the bottom of the file, append your
-action to `ActionTypes []*ActionType`
+To create a new action, create a new file in the `game/actions/types` directory and then append it to the InitTypes() method at the top of `game/actions/types/types.go`. The following is an example action for gathering wood.
 
 ```go
-var WatchClouds *ActionType = &ActionType{
-	ID:         "3", // unique string ID
-	Status:     "Drinking water.", // make it interesting
-	Priority:   Recreation, // caps the utility to this category
-	EnergyCost: 0, // per tick
-  Duration:   9, // how many ticks
-  // Determine if this is one of the actions allowed to the colonist
-  // when the colonist is deciding what to do next. Is this action
-  // physically possible for the given game state?
-  IsAllowed: func(actionType *ActionType, colonist *Colonist) bool {
-		if colonist.GameState.Inventory.Water > 0 {
-      return true
-    }
+package types
 
-    if colonist.Inventory.Water > 0 {
-      return true
-    }
+import (
+	"encoding/json"
 
-    return false
-	},
-  // Return a score for the utility this action provides to the colonist.
-  // Typically scales with the related need.
-  // Ease functions provide more interesting AI curves
-  // Visual Here: https://github.com/fogleman/ease
-	GetUtility: func(actionType *ActionType, colonist *Colonist) float64 {
-    // |                      *
-    // |                     *
-    // |                    *
-    // |                   *
-    // |                 **
-    // |               **
-    // |         ******
-    // |*********
-    // |-------------------------
-		return ease.InQuart(colonist.Thirst.Value / 100)
-  },
-  // When this action is selected, you can modify the game state such
-  // as equiping an item from the global inventory to the colonist.
-  OnStart: func(action *Action, ticker *Ticker) {
-		action.Game.Inventory.Water--
-		action.Colonist.Inventory.Water++
-	},
-  // While taking this action, what do you want to change about
-  // the state per tick? Make sure you reduce it by the fraction of
-  // the tick that has passed this compute cycle.
-	OnTick: func(action *Action, ticker *Ticker) {
-		action.Colonist.Thirst.Sub(5 * ticker.Elapsed)
-	},
-  // When the action comes to an end, you might want to reduce
-  // some inventory, or conclude the action by having a result
-  OnEnd: func(action *Action, ticker *Ticker) {
-		action.Colonist.Inventory.Water--
-	},
+	"github.com/thebrubaker/colony/resources"
+)
+
+type GatherWood struct {
+}
+
+// MarshalJSON will marshal needs into it's attributes
+func (a *GatherWood) MarshalJSON() ([]byte, error) {
+	return json.Marshal(map[string]interface{}{
+		"status":      a.Status(),
+		"energy_cost": a.EnergyCost(),
+		"duration":    a.Duration(),
+		"priority":    a.Priority(),
+	})
+}
+
+// UnmarshalJSON fills in the attributes of needs
+func (a *GatherWood) UnmarshalJSON(b []byte) error {
+	if err := json.Unmarshal(b, a); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (a *GatherWood) Status() string {
+	return "gathering wood from a nearby forest"
+}
+
+func (a *GatherWood) EnergyCost() EnergyCost {
+	return Hard
+}
+
+func (a *GatherWood) Duration() TickDuration {
+	return Slow
+}
+
+func (a *GatherWood) Priority() Priority {
+	return Job
+}
+
+func (a *GatherWood) Gather() (StorageType, interface{}, float64) {
+	return ColonistBag, resources.Wood, 0.5
 }
 ```
+
+Open `game/actions/types/types.go` to view the different constants available to you.
