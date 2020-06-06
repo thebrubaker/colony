@@ -35,14 +35,16 @@ func (t *Ticker) SetTickRate(r TickRate) {
 	}
 }
 
-func OnTick(f func(t *Ticker)) {
-	ticker := &Ticker{
+func CreateTick() *Ticker {
+	return &Ticker{
 		Rate:           baseTickRate,
 		TickElapsed:    0,
 		TimeOfLastTick: time.Now(),
 		Count:          0,
 	}
+}
 
+func (ticker *Ticker) OnTick(f func(t *Ticker)) {
 	for {
 		currentTime := time.Now()
 		ticker.TickElapsed = currentTime.Sub(ticker.TimeOfLastTick).Seconds() * ticker.Rate

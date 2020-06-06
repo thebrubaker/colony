@@ -1,6 +1,8 @@
 package stackable
 
-import "errors"
+import (
+	"errors"
+)
 
 // Stackable is an interface for an element that can be placed into
 // a slice but should be incremented as a stack instead of appended

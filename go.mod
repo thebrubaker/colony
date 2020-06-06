@@ -4,6 +4,7 @@ go 1.14
 
 require (
 	github.com/buger/goterm v0.0.0-20200322175922-2f3e71b85129
+	github.com/davecgh/go-spew v1.1.1
 	github.com/fogleman/ease v0.0.0-20170301025033-8da417bf1776
 	github.com/golang/mock v1.4.3
 	github.com/golang/protobuf v1.4.2

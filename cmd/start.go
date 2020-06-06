@@ -16,16 +16,26 @@ limitations under the License.
 package cmd
 
 import (
+	"encoding/json"
+	"fmt"
 	"math/rand"
+	"os"
 	"time"
 
 	tm "github.com/buger/goterm"
 	"github.com/spf13/cobra"
+	"github.com/thebrubaker/colony/actions"
 	"github.com/thebrubaker/colony/colonist"
 	"github.com/thebrubaker/colony/region"
 	"github.com/thebrubaker/colony/server"
 	"github.com/thebrubaker/colony/ticker"
 )
+
+// type Debug struct {
+// 	Ticker    *ticker.Ticker
+// 	Colonists []*colonist.Colonist
+// 	Actions   []*actions.ColonistAction
+// }
 
 // startCmd represents the start command
 var startCmd = &cobra.Command{
@@ -40,31 +50,46 @@ to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		renderToConsole := cmd.Flag("render").Value.String() == "true"
 
-		colonists := map[string]*colonist.Colonist{
-			"Joel": colonist.GenerateColonist("Joel"),
+		t := ticker.CreateTick()
+
+		r := &region.Region{}
+
+		c := []*colonist.Colonist{
+			colonist.GenerateColonist("Joel"),
 		}
 
-		region := &region.Region{
-			Colonists: colonists,
-		}
+		a := actions.InitActions(r, c)
 
-		go ticker.OnTick(func(t *ticker.Ticker) {
-			region.UpdateRegion(region, t.TickElapsed)
+		// debug := &Debug{
+		// 	Ticker:    t,
+		// 	Colonists: c,
+		// 	Actions:   a,
+		// }
+
+		go t.OnTick(func(t *ticker.Ticker) {
+			actions.Update(t.TickElapsed, r, c, a)
 		})
 
 		if renderToConsole {
 			tm.Clear()
 
-			go ticker.OnTickMilliseconds(16, func() {
-				output := ""
+			ticker.OnTickMilliseconds(16, func() {
+				json, err := json.MarshalIndent(a[0], "", "    ")
+
+				if err != nil {
+					fmt.Println(err)
+					os.Exit(1)
+				}
+
+				output := string(json)
 				tm.Clear()
 				tm.MoveCursor(1, 1)
 				tm.Println(string(output))
 				tm.Flush()
 			})
+		} else {
+			server.StartServer()
 		}
-
-		go server.StartServer()
 	},
 }
 
