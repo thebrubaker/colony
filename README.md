@@ -2,23 +2,25 @@
 
 Colony is a colony / survival / simulation game written in Go. The game is currently experimental and a work in progress.
 
-The premise is your colonist has woken up from cryosleep alone on a new planet. Your mission was to be one of the first to colonize the planet. Unfortunately things haven't gone as planned. Your colonist wakes up alone, and it appears others have already looted your supply and technology.
+## Quick Backstory
 
-Slowly build your colony from the ground up despite this setback. Create a settlement, hunt for food, recruit new colonists, and discover advanced technology hidden away. But be careful. There seems to be some strange, dangerous creatures roaming about. Maybe something much worse.
+Your colonist has woken up from cryosleep alone on a new planet. Your mission was to be one of the first to colonize the planet. Unfortunately things haven't gone as planned. Your colonist wakes up alone, and it appears others have already looted your supplies and technology.
+
+You will have to slowly build your colony from the ground up despite this setback. Hunt for food, create a settlement, recruit new colonists, and discover advanced technology hidden away. But be careful. Not everyone is friendly, and there appears to be some strange, dangerous creatures roaming about. Maybe something much worse.
 
 ## Planned technical features include
 
 - gRPC API for streaming game and sending in commands
 - Fully documented API for automating the game while you are away
-- Multiplayer support to play with or against others
-- OAuth support enabling custom API-driven clients such as voice commands and push notifications
+- Multiplayer support to play with others
+- OAuth support enabling custom API-driven clients such as voice commands, push notifications and custom clients
 
 ## Planned game features include
 
-- Utility-based decision trees. Assign colonists to leadership roles to improve coordinated effort.
-- Construct farms, mines, workshops, fortificatons, trade depots and other buildings to sustain your colonists needs and desires
-- Train your colonists and prepare them for battle from raiders, bugs and worse things crawling in the dark recesses of the planet
-- Raid hidden bunkers for advanced technology
+- Utility-based decision trees. Colonists have a mind of their own, but you can command them to attempt certain tasks. Assign colonists to leadership roles to improve coordinated effort.
+- Crafting and Construction. Build farms, mines, workshops, fortificatons, trade depots and other buildings to sustain your colonists needs and desires
+- Combat. Train your colonists and prepare them for battle from raiders, dangerous animals and much, much worse things crawling in the dark recesses of the planet
+- Trade. Build a trade depot and send your colonists out to trade with other players.
 
 # How to start the game server
 
