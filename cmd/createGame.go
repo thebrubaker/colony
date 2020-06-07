@@ -16,46 +16,51 @@ limitations under the License.
 package cmd
 
 import (
-	"math/rand"
-	"time"
+	"fmt"
+	"log"
 
 	"github.com/spf13/cobra"
-	"github.com/thebrubaker/colony/server"
+	"github.com/thebrubaker/colony/client"
+	"github.com/thebrubaker/colony/pb"
 )
 
-// type Debug struct {
-// 	Ticker    *ticker.Ticker
-// 	Colonists []*colonist.Colonist
-// 	Actions   []*actions.ColonistAction
-// }
-
-// startCmd represents the start command
-var startCmd = &cobra.Command{
-	Use:   "start",
-	Short: "Starts the game server.",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+// createGameCmd represents the createGame command
+var createGameCmd = &cobra.Command{
+	Use:   "createGame",
+	Short: "Creates a new game.",
+	Long:  `Creates a new game with the given name. If a game already exists with that name, returns an error.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		server.StartServer()
+		if len(args) == 0 {
+			panic("Missing required argument GameName")
+		}
+
+		name := args[0]
+
+		address := cmd.Flag("address").Value.String()
+
+		client, connection, context, _ := client.CreateClient(address)
+		defer connection.Close()
+
+		res, err := client.CreateGame(context, &pb.CreateGameRequest{Name: name})
+
+		if err != nil {
+			log.Fatalf("could not create game: %v", err)
+		}
+
+		fmt.Printf("%v", res)
 	},
 }
 
 func init() {
-	rand.Seed(time.Now().UTC().UnixNano())
-
-	rootCmd.AddCommand(startCmd)
+	rootCmd.AddCommand(createGameCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	startCmd.PersistentFlags().String("render", "false", "Streams the game state to the console.")
+	createGameCmd.Flags().String("address", "localhost:50051", "Address for listening the client")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// startCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// createGameCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

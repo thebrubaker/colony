@@ -2,10 +2,12 @@ package server
 
 import (
 	"context"
+	"encoding/json"
 	"log"
 	"net"
 	"time"
 
+	"github.com/thebrubaker/colony/game"
 	"github.com/thebrubaker/colony/pb"
 	"google.golang.org/grpc"
 )
@@ -16,12 +18,45 @@ const (
 
 type GameServer struct {
 	pb.UnimplementedGameServerServer
+	Games []*game.Game
 }
 
-func (s *GameServer) StreamGameState(request *pb.EmptyRequest, stream pb.GameServer_StreamGameStateServer) error {
+func (s *GameServer) CreateGame(c context.Context, request *pb.CreateGameRequest) (*pb.CreateGameResponse, error) {
+	name := request.Name
+
+	log.Printf("new request: %v", request)
+
+	// for _, game := range s.Games {
+	// 	if game.Name == name {
+	// 		return &pb.CreateGameResponse{Name: name, Error: "Game name already active."}, nil
+	// 	}
+	// }
+
+	// s.Games = append(s.Games, game.CreateGame(name))
+
+	return &pb.CreateGameResponse{Name: name}, nil
+}
+
+func (s *GameServer) StreamGame(request *pb.StreamGameRequest, stream pb.GameServer_StreamGameServer) error {
+	var game *game.Game
+
+	name := request.Name
+
+	for _, g := range s.Games {
+		if g.Name == name {
+			game = g
+		}
+	}
+
 	for range time.Tick(16 * time.Millisecond) {
-		stream.Send(&pb.GameState{
-			Json: "",
+		data, err := json.Marshal(game)
+
+		if err != nil {
+			continue
+		}
+
+		stream.Send(&pb.Game{
+			Json: string(data),
 		})
 	}
 
@@ -41,6 +76,29 @@ func (s *GameServer) RemoveCommand(c context.Context, request *pb.Command) (*pb.
 }
 
 func StartServer() {
+	var games []*game.Game
+
+	lis := CreateListener()
+	server := CreateServer(games)
+
+	server.Serve(lis)
+}
+
+func CreateServer(games []*game.Game) *grpc.Server {
+	server := grpc.NewServer()
+	service := &GameServer{
+		Games: games,
+	}
+
+	log.Println("Registering service.")
+	pb.RegisterGameServerServer(server, service)
+
+	log.Println("Starting server.")
+
+	return server
+}
+
+func CreateListener() net.Listener {
 	lis, err := net.Listen("tcp", port)
 
 	log.Printf("Listening on %s", port)
@@ -49,12 +107,5 @@ func StartServer() {
 		log.Fatalf("failed to listen: %v", err)
 	}
 
-	server := grpc.NewServer()
-	service := &GameServer{}
-
-	log.Println("Registering service.")
-	pb.RegisterGameServerServer(server, service)
-
-	log.Println("Starting server.")
-	server.Serve(lis)
+	return lis
 }

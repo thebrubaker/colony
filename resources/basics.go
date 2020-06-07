@@ -17,3 +17,9 @@ var Water *SimpleResource = &SimpleResource{
 	Description: "a jug of water",
 	stackable:   true,
 }
+
+var Berries *SimpleResource = &SimpleResource{
+	Name:        "berries",
+	Description: "a carton of berries",
+	stackable:   true,
+}

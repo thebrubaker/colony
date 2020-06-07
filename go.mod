@@ -20,8 +20,8 @@ require (
 	github.com/willf/pad v0.0.0-20200313202418-172aa767f2a4
 	golang.org/x/mod v0.3.0 // indirect
 	golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d
-	golang.org/x/tools v0.0.0-20200529172331-a64b76657301 // indirect
-	google.golang.org/genproto v0.0.0-20200528191852-705c0b31589b
+	golang.org/x/tools v0.0.0-20200606014950-c42cb6316fb6 // indirect
+	google.golang.org/genproto v0.0.0-20200605102947-12044bf5ea91
 	google.golang.org/grpc v1.30.0-dev.1
 	google.golang.org/protobuf v1.24.0
 )

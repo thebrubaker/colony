@@ -17,11 +17,16 @@ package cmd
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
 	"log"
+	"os"
 
+	tm "github.com/buger/goterm"
 	"github.com/spf13/cobra"
+	"github.com/thebrubaker/colony/client"
 	"github.com/thebrubaker/colony/pb"
-	"google.golang.org/grpc"
+	"github.com/thebrubaker/colony/ticker"
 )
 
 // streamCmd represents the stream command
@@ -31,34 +36,35 @@ var streamCmd = &cobra.Command{
 	Long: `Stream the game state over a gRPC connection. The game state
 	will be returned and printed to the console as JSON.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		address := "localhost:50051"
-		if len(args) > 0 {
-			address = args[0]
-		}
-		// Set up a connection to the server.
-		conn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
-		if err != nil {
-			log.Fatalf("did not connect: %v", err)
-		}
-		defer conn.Close()
-		c := pb.NewGameServerClient(conn)
-
-		ctx, cancel := context.WithCancel(context.Background())
-		defer cancel()
-		stream, err := c.StreamGameState(ctx, &pb.EmptyRequest{})
-		if err != nil {
-			log.Fatalf("could not greet: %v", err)
+		if len(args) == 0 {
+			panic("Missing required argument GameName")
 		}
 
-		for {
-			gameState, err := stream.Recv()
+		name := args[0]
 
-			if err != nil {
-				log.Fatalf("can not receive %v", err)
-			}
+		address := cmd.Flag("address").Value.String()
 
-			log.Printf("\033c%s\n", gameState.Json)
-		}
+		client, connection, context, _ := client.CreateClient(address)
+		defer connection.Close()
+
+		StreamGame(client, context, name, func(data string) {
+			tm.Clear()
+
+			ticker.OnTickMilliseconds(16, func() {
+				json, err := json.MarshalIndent(data, "", "    ")
+
+				if err != nil {
+					fmt.Println(err)
+					os.Exit(1)
+				}
+
+				output := string(json)
+				tm.Clear()
+				tm.MoveCursor(1, 1)
+				tm.Println(string(output))
+				tm.Flush()
+			})
+		})
 	},
 }
 
@@ -75,4 +81,22 @@ func init() {
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	// streamCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+}
+
+func StreamGame(client pb.GameServerClient, context context.Context, name string, f func(json string)) {
+	stream, err := client.StreamGame(context, &pb.StreamGameRequest{Name: name})
+
+	if err != nil {
+		log.Fatalf("could not greet: %v", err)
+	}
+
+	for {
+		gameState, err := stream.Recv()
+
+		if err != nil {
+			log.Fatalf("can not receive %v", err)
+		}
+
+		f(gameState.Json)
+	}
 }
