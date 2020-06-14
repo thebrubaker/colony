@@ -8,7 +8,7 @@ import (
 	"google.golang.org/grpc"
 )
 
-func CreateClient(address string) (pb.GameServerClient, *grpc.ClientConn, context.Context, context.CancelFunc) {
+func CreateClient(address string) (pb.GameServiceClient, *grpc.ClientConn, context.Context, context.CancelFunc) {
 	log.Printf("Connecting to %s", address)
 
 	// Set up a connection to the server.
@@ -18,7 +18,7 @@ func CreateClient(address string) (pb.GameServerClient, *grpc.ClientConn, contex
 		log.Fatalf("did not connect: %v", err)
 	}
 
-	client := pb.NewGameServerClient(connection)
+	client := pb.NewGameServiceClient(connection)
 
 	context, cancel := context.WithCancel(context.Background())
 

@@ -30,18 +30,12 @@ var createGameCmd = &cobra.Command{
 	Short: "Creates a new game.",
 	Long:  `Creates a new game with the given name. If a game already exists with that name, returns an error.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		if len(args) == 0 {
-			panic("Missing required argument GameName")
-		}
-
-		name := args[0]
-
 		address := cmd.Flag("address").Value.String()
 
 		client, connection, context, _ := client.CreateClient(address)
 		defer connection.Close()
 
-		res, err := client.CreateGame(context, &pb.CreateGameRequest{Name: name})
+		res, err := client.CreateGame(context, &pb.CreateGameRequest{})
 
 		if err != nil {
 			log.Fatalf("could not create game: %v", err)

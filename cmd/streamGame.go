@@ -16,63 +16,60 @@ limitations under the License.
 package cmd
 
 import (
-	"context"
 	"encoding/json"
-	"fmt"
 	"log"
-	"os"
 
 	tm "github.com/buger/goterm"
 	"github.com/spf13/cobra"
 	"github.com/thebrubaker/colony/client"
 	"github.com/thebrubaker/colony/pb"
-	"github.com/thebrubaker/colony/ticker"
 )
 
-// streamCmd represents the stream command
-var streamCmd = &cobra.Command{
-	Use:   "stream",
+// streamGameCmd represents the stream command
+var streamGameCmd = &cobra.Command{
+	Use:   "streamGame",
 	Short: "Stream the game state over a gRPC connection.",
 	Long: `Stream the game state over a gRPC connection. The game state
 	will be returned and printed to the console as JSON.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
-			panic("Missing required argument GameName")
+			panic("Missing required argument for game Key")
 		}
 
-		name := args[0]
-
+		key := args[0]
 		address := cmd.Flag("address").Value.String()
 
 		client, connection, context, _ := client.CreateClient(address)
 		defer connection.Close()
 
-		StreamGame(client, context, name, func(data string) {
-			tm.Clear()
-
-			ticker.OnTickMilliseconds(16, func() {
-				json, err := json.MarshalIndent(data, "", "    ")
-
-				if err != nil {
-					fmt.Println(err)
-					os.Exit(1)
-				}
-
-				output := string(json)
-				tm.Clear()
-				tm.MoveCursor(1, 1)
-				tm.Println(string(output))
-				tm.Flush()
-			})
+		stream, err := client.StreamGame(context, &pb.StreamGameRequest{
+			GameKey: key,
 		})
+		if err != nil {
+			log.Fatal("Failed to open client stream.")
+		}
+
+		for {
+			gameState, err := stream.Recv()
+			if err != nil {
+				log.Fatalf("can not receive %v", err)
+			}
+			tm.Clear()
+			var state map[string]interface{}
+			json.Unmarshal([]byte(gameState.Json), &state)
+			tm.Clear()
+			tm.MoveCursor(1, 1)
+			tm.Println(state)
+			tm.Flush()
+		}
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(streamCmd)
+	rootCmd.AddCommand(streamGameCmd)
 
 	// Here you will define your flags and configuration settings.
-	streamCmd.PersistentFlags().String("address", "localhost:50051", "The connection address.")
+	streamGameCmd.PersistentFlags().String("address", "localhost:50051", "The connection address.")
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
@@ -81,22 +78,4 @@ func init() {
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	// streamCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-}
-
-func StreamGame(client pb.GameServerClient, context context.Context, name string, f func(json string)) {
-	stream, err := client.StreamGame(context, &pb.StreamGameRequest{Name: name})
-
-	if err != nil {
-		log.Fatalf("could not greet: %v", err)
-	}
-
-	for {
-		gameState, err := stream.Recv()
-
-		if err != nil {
-			log.Fatalf("can not receive %v", err)
-		}
-
-		f(gameState.Json)
-	}
 }

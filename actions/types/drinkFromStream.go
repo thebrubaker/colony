@@ -29,5 +29,5 @@ func (a *DrinkFromStream) Need() need.NeedType {
 }
 
 func (a *DrinkFromStream) Satisfies() (need.NeedType, float64, func(float64) float64) {
-	return need.Thirst, 70, func(w float64) float64 { return ease.InQuad(w) }
+	return need.Thirst, 70, ease.InQuad
 }

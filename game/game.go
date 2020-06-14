@@ -1,46 +1,71 @@
 package game
 
 import (
-	"github.com/thebrubaker/colony/actions"
-	"github.com/thebrubaker/colony/colonist"
-	"github.com/thebrubaker/colony/region"
-	"github.com/thebrubaker/colony/ticker"
+	"time"
 )
 
+type GameKey string
+
 type Game struct {
-	Name      string
-	Ticker    *ticker.Ticker
-	Region    *region.Region
-	Colonists []*colonist.Colonist
-	Actions   []*actions.Action
+	state   *GameState
+	actionc chan func()
+	quitc   chan struct{}
 }
 
-func CreateGame(name string) *Game {
-	t := ticker.CreateTick()
-
-	r := &region.Region{}
-
-	c := []*colonist.Colonist{
-		colonist.GenerateColonist(name),
+func CreateGame() *Game {
+	g := &Game{
+		state:   CreateGameState(),
+		actionc: make(chan func()),
+		quitc:   make(chan struct{}),
 	}
+	go g.loop()
+	return g
+}
 
-	a := actions.InitActions(r, c)
+func (g *Game) loop() {
+	previousTime := time.Now()
 
-	return &Game{
-		Name:      name,
-		Ticker:    t,
-		Region:    r,
-		Colonists: c,
-		Actions:   a,
+	for {
+		select {
+		case <-g.quitc:
+			return
+		case f := <-g.actionc:
+			f()
+		case <-time.Tick(10 * time.Millisecond):
+			currentTime := time.Now()
+			tickElapsed := currentTime.Sub(previousTime).Seconds()
+			g.state.update(tickElapsed)
+			previousTime = currentTime
+		}
 	}
 }
 
-func (g *Game) SetSpeed(r ticker.TickRate) {
-	g.Ticker.SetTickRate(r)
+func (g *Game) Stop() {
+	close(g.quitc)
 }
 
-func (g *Game) Start() {
-	g.Ticker.OnTick(func(t *ticker.Ticker) {
-		actions.Update(t.TickElapsed, g.Region, g.Colonists, g.Actions)
-	})
+func (g *Game) AddCommand(commandType string) bool {
+	c := make(chan bool)
+	g.actionc <- func() {
+		c <- true
+	}
+	return <-c
+}
+
+func (g *Game) SetTickRate(rate tickRate) bool {
+	c := make(chan bool)
+	g.actionc <- func() {
+		g.state.Ticker.Rate = rate
+
+		c <- true
+	}
+	return <-c
+}
+
+func (g *Game) Render() GameState {
+	c := make(chan GameState)
+	g.actionc <- func() {
+		c <- *g.state
+	}
+	return <-c
 }

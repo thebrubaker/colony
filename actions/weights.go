@@ -11,13 +11,13 @@ type ActionWeight struct {
 	Weight float64
 }
 
-func GetActionWeights(c *Context, currentType types.Actionable, actionTypes []types.Actionable) []*ActionWeight {
+func GetActionWeights(c *Context, currentAction types.Actionable, availableActions []types.Actionable) []*ActionWeight {
 	var weights []*ActionWeight
 
-	for _, actionType := range actionTypes {
+	for _, actionType := range availableActions {
 		weights = append(weights, &ActionWeight{
 			Type:   actionType,
-			Weight: GetUtility(c, currentType, actionType),
+			Weight: GetUtility(c, currentAction, actionType),
 		})
 	}
 

@@ -16,10 +16,16 @@ limitations under the License.
 package cmd
 
 import (
+	"log"
 	"math/rand"
+	"net"
+	"os"
+	"os/signal"
+	"syscall"
 	"time"
 
 	"github.com/spf13/cobra"
+	"github.com/thebrubaker/colony/controllers"
 	"github.com/thebrubaker/colony/server"
 )
 
@@ -40,7 +46,31 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		server.StartServer()
+		// render, err := cmd.Flags().GetBool("render")
+
+		// if err != nil {
+		// 	log.Fatal(err)
+		// }
+		port := ":50051"
+		lis, err := net.Listen("tcp", port)
+		log.Printf("Listening on %s", port)
+		if err != nil {
+			log.Fatalf("failed to listen: %v", err)
+		}
+		sc := controllers.NewStreamController()
+		gc := controllers.NewGameController(sc)
+		server := server.NewServer(lis, server.NewGameService(gc, sc))
+
+		gc.CreateGame()
+
+		c := make(chan os.Signal)
+		signal.Notify(c, os.Interrupt, syscall.SIGTERM)
+		<-c
+		log.Println("\nStopping Server and Game Resources...")
+		sc.Stop()
+		gc.Stop()
+		server.GracefulStop()
+		os.Exit(0)
 	},
 }
 
@@ -53,7 +83,7 @@ func init() {
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	startCmd.PersistentFlags().String("render", "false", "Streams the game state to the console.")
+	startCmd.PersistentFlags().Bool("render", false, "Streams the game state to the console.")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:

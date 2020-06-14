@@ -3,6 +3,7 @@ module github.com/thebrubaker/colony
 go 1.14
 
 require (
+	github.com/asaskevich/EventBus v0.0.0-20200428142821-4fc0642a29f3
 	github.com/buger/goterm v0.0.0-20200322175922-2f3e71b85129
 	github.com/davecgh/go-spew v1.1.1
 	github.com/fogleman/ease v0.0.0-20170301025033-8da417bf1776
@@ -15,13 +16,14 @@ require (
 	github.com/motemen/gore v0.5.0 // indirect
 	github.com/mroth/weightedrand v0.2.1
 	github.com/peterh/liner v1.2.0 // indirect
+	github.com/rs/xid v1.2.1
 	github.com/spf13/cobra v1.0.0
 	github.com/spf13/viper v1.7.0
 	github.com/willf/pad v0.0.0-20200313202418-172aa767f2a4
 	golang.org/x/mod v0.3.0 // indirect
 	golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d
-	golang.org/x/tools v0.0.0-20200606014950-c42cb6316fb6 // indirect
-	google.golang.org/genproto v0.0.0-20200605102947-12044bf5ea91
+	golang.org/x/tools v0.0.0-20200608174601-1b747fd94509 // indirect
+	google.golang.org/genproto v0.0.0-20200608115520-7c474a2e3482
 	google.golang.org/grpc v1.30.0-dev.1
 	google.golang.org/protobuf v1.24.0
 )

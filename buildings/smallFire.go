@@ -1,12 +1,30 @@
 package buildings
 
-import "github.com/thebrubaker/colony/recipes"
+import (
+	"github.com/thebrubaker/colony/resources"
+	"github.com/thebrubaker/colony/stackable"
+)
 
-type SmallFire struct {
+type CampFire struct {
 }
 
-func (b *SmallFire) Allows() []*recipes.Recipe {
-	return []*recipes.Recipe{
-		recipes.SimpleMeal,
+func (b *CampFire) Name() string {
+	return "Campfire"
+}
+
+func (b *CampFire) Description() string {
+	return "A small campfire for cooking small meals and staying warm."
+}
+
+func (b *CampFire) BuildCost() []stackable.Stack {
+	return []stackable.Stack{
+		{
+			Element: resources.Wood,
+			Count:   10,
+		},
 	}
+}
+
+func (b *CampFire) BuildDuration() float64 {
+	return 10
 }

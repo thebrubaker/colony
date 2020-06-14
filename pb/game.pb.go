@@ -29,260 +29,16 @@ const (
 // of the legacy proto package is being used.
 const _ = proto.ProtoPackageIsVersion4
 
-type EmptyRequest struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-}
-
-func (x *EmptyRequest) Reset() {
-	*x = EmptyRequest{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_game_proto_msgTypes[0]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *EmptyRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*EmptyRequest) ProtoMessage() {}
-
-func (x *EmptyRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_game_proto_msgTypes[0]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use EmptyRequest.ProtoReflect.Descriptor instead.
-func (*EmptyRequest) Descriptor() ([]byte, []int) {
-	return file_game_proto_rawDescGZIP(), []int{0}
-}
-
-type EmptyResponse struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	Error string `protobuf:"bytes,2,opt,name=error,proto3" json:"error,omitempty"`
-}
-
-func (x *EmptyResponse) Reset() {
-	*x = EmptyResponse{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_game_proto_msgTypes[1]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *EmptyResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*EmptyResponse) ProtoMessage() {}
-
-func (x *EmptyResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_game_proto_msgTypes[1]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use EmptyResponse.ProtoReflect.Descriptor instead.
-func (*EmptyResponse) Descriptor() ([]byte, []int) {
-	return file_game_proto_rawDescGZIP(), []int{1}
-}
-
-func (x *EmptyResponse) GetError() string {
-	if x != nil {
-		return x.Error
-	}
-	return ""
-}
-
-type Game struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	Json string `protobuf:"bytes,1,opt,name=json,proto3" json:"json,omitempty"`
-}
-
-func (x *Game) Reset() {
-	*x = Game{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_game_proto_msgTypes[2]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *Game) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*Game) ProtoMessage() {}
-
-func (x *Game) ProtoReflect() protoreflect.Message {
-	mi := &file_game_proto_msgTypes[2]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use Game.ProtoReflect.Descriptor instead.
-func (*Game) Descriptor() ([]byte, []int) {
-	return file_game_proto_rawDescGZIP(), []int{2}
-}
-
-func (x *Game) GetJson() string {
-	if x != nil {
-		return x.Json
-	}
-	return ""
-}
-
-type CommandList struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	ActionTypes []*CommandType `protobuf:"bytes,1,rep,name=action_types,json=actionTypes,proto3" json:"action_types,omitempty"`
-}
-
-func (x *CommandList) Reset() {
-	*x = CommandList{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_game_proto_msgTypes[3]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *CommandList) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CommandList) ProtoMessage() {}
-
-func (x *CommandList) ProtoReflect() protoreflect.Message {
-	mi := &file_game_proto_msgTypes[3]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CommandList.ProtoReflect.Descriptor instead.
-func (*CommandList) Descriptor() ([]byte, []int) {
-	return file_game_proto_rawDescGZIP(), []int{3}
-}
-
-func (x *CommandList) GetActionTypes() []*CommandType {
-	if x != nil {
-		return x.ActionTypes
-	}
-	return nil
-}
-
-type CommandType struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	CommandTypeId string `protobuf:"bytes,1,opt,name=command_type_id,json=commandTypeId,proto3" json:"command_type_id,omitempty"`
-	Name          string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	Description   string `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
-}
-
-func (x *CommandType) Reset() {
-	*x = CommandType{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_game_proto_msgTypes[4]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *CommandType) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CommandType) ProtoMessage() {}
-
-func (x *CommandType) ProtoReflect() protoreflect.Message {
-	mi := &file_game_proto_msgTypes[4]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CommandType.ProtoReflect.Descriptor instead.
-func (*CommandType) Descriptor() ([]byte, []int) {
-	return file_game_proto_rawDescGZIP(), []int{4}
-}
-
-func (x *CommandType) GetCommandTypeId() string {
-	if x != nil {
-		return x.CommandTypeId
-	}
-	return ""
-}
-
-func (x *CommandType) GetName() string {
-	if x != nil {
-		return x.Name
-	}
-	return ""
-}
-
-func (x *CommandType) GetDescription() string {
-	if x != nil {
-		return x.Description
-	}
-	return ""
-}
-
 type CreateGameRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
-
-	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 }
 
 func (x *CreateGameRequest) Reset() {
 	*x = CreateGameRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_game_proto_msgTypes[5]
+		mi := &file_game_proto_msgTypes[0]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -295,7 +51,7 @@ func (x *CreateGameRequest) String() string {
 func (*CreateGameRequest) ProtoMessage() {}
 
 func (x *CreateGameRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_game_proto_msgTypes[5]
+	mi := &file_game_proto_msgTypes[0]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -308,14 +64,7 @@ func (x *CreateGameRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateGameRequest.ProtoReflect.Descriptor instead.
 func (*CreateGameRequest) Descriptor() ([]byte, []int) {
-	return file_game_proto_rawDescGZIP(), []int{5}
-}
-
-func (x *CreateGameRequest) GetName() string {
-	if x != nil {
-		return x.Name
-	}
-	return ""
+	return file_game_proto_rawDescGZIP(), []int{0}
 }
 
 type StreamGameRequest struct {
@@ -323,13 +72,13 @@ type StreamGameRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	GameKey string `protobuf:"bytes,1,opt,name=game_key,json=gameKey,proto3" json:"game_key,omitempty"`
 }
 
 func (x *StreamGameRequest) Reset() {
 	*x = StreamGameRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_game_proto_msgTypes[6]
+		mi := &file_game_proto_msgTypes[1]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -342,7 +91,7 @@ func (x *StreamGameRequest) String() string {
 func (*StreamGameRequest) ProtoMessage() {}
 
 func (x *StreamGameRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_game_proto_msgTypes[6]
+	mi := &file_game_proto_msgTypes[1]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -355,169 +104,263 @@ func (x *StreamGameRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StreamGameRequest.ProtoReflect.Descriptor instead.
 func (*StreamGameRequest) Descriptor() ([]byte, []int) {
+	return file_game_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *StreamGameRequest) GetGameKey() string {
+	if x != nil {
+		return x.GameKey
+	}
+	return ""
+}
+
+type GameState struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	GameKey string `protobuf:"bytes,1,opt,name=game_key,json=gameKey,proto3" json:"game_key,omitempty"`
+	Json    string `protobuf:"bytes,2,opt,name=json,proto3" json:"json,omitempty"`
+}
+
+func (x *GameState) Reset() {
+	*x = GameState{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_game_proto_msgTypes[2]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GameState) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GameState) ProtoMessage() {}
+
+func (x *GameState) ProtoReflect() protoreflect.Message {
+	mi := &file_game_proto_msgTypes[2]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GameState.ProtoReflect.Descriptor instead.
+func (*GameState) Descriptor() ([]byte, []int) {
+	return file_game_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *GameState) GetGameKey() string {
+	if x != nil {
+		return x.GameKey
+	}
+	return ""
+}
+
+func (x *GameState) GetJson() string {
+	if x != nil {
+		return x.Json
+	}
+	return ""
+}
+
+type SendCommandRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	GameKey     string `protobuf:"bytes,1,opt,name=game_key,json=gameKey,proto3" json:"game_key,omitempty"`
+	CommandType string `protobuf:"bytes,2,opt,name=command_type,json=commandType,proto3" json:"command_type,omitempty"`
+}
+
+func (x *SendCommandRequest) Reset() {
+	*x = SendCommandRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_game_proto_msgTypes[3]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *SendCommandRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SendCommandRequest) ProtoMessage() {}
+
+func (x *SendCommandRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_game_proto_msgTypes[3]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SendCommandRequest.ProtoReflect.Descriptor instead.
+func (*SendCommandRequest) Descriptor() ([]byte, []int) {
+	return file_game_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *SendCommandRequest) GetGameKey() string {
+	if x != nil {
+		return x.GameKey
+	}
+	return ""
+}
+
+func (x *SendCommandRequest) GetCommandType() string {
+	if x != nil {
+		return x.CommandType
+	}
+	return ""
+}
+
+type SendCommandResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	CommandKey string `protobuf:"bytes,1,opt,name=command_key,json=commandKey,proto3" json:"command_key,omitempty"`
+}
+
+func (x *SendCommandResponse) Reset() {
+	*x = SendCommandResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_game_proto_msgTypes[4]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *SendCommandResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SendCommandResponse) ProtoMessage() {}
+
+func (x *SendCommandResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_game_proto_msgTypes[4]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SendCommandResponse.ProtoReflect.Descriptor instead.
+func (*SendCommandResponse) Descriptor() ([]byte, []int) {
+	return file_game_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *SendCommandResponse) GetCommandKey() string {
+	if x != nil {
+		return x.CommandKey
+	}
+	return ""
+}
+
+type CancelCommandRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	CommandKey string `protobuf:"bytes,1,opt,name=command_key,json=commandKey,proto3" json:"command_key,omitempty"`
+}
+
+func (x *CancelCommandRequest) Reset() {
+	*x = CancelCommandRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_game_proto_msgTypes[5]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *CancelCommandRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CancelCommandRequest) ProtoMessage() {}
+
+func (x *CancelCommandRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_game_proto_msgTypes[5]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CancelCommandRequest.ProtoReflect.Descriptor instead.
+func (*CancelCommandRequest) Descriptor() ([]byte, []int) {
+	return file_game_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *CancelCommandRequest) GetCommandKey() string {
+	if x != nil {
+		return x.CommandKey
+	}
+	return ""
+}
+
+type CancelCommandResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Err string `protobuf:"bytes,1,opt,name=err,proto3" json:"err,omitempty"`
+}
+
+func (x *CancelCommandResponse) Reset() {
+	*x = CancelCommandResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_game_proto_msgTypes[6]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *CancelCommandResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CancelCommandResponse) ProtoMessage() {}
+
+func (x *CancelCommandResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_game_proto_msgTypes[6]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CancelCommandResponse.ProtoReflect.Descriptor instead.
+func (*CancelCommandResponse) Descriptor() ([]byte, []int) {
 	return file_game_proto_rawDescGZIP(), []int{6}
 }
 
-func (x *StreamGameRequest) GetName() string {
+func (x *CancelCommandResponse) GetErr() string {
 	if x != nil {
-		return x.Name
-	}
-	return ""
-}
-
-type CreateGameResponse struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	Name  string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	Error string `protobuf:"bytes,2,opt,name=error,proto3" json:"error,omitempty"`
-}
-
-func (x *CreateGameResponse) Reset() {
-	*x = CreateGameResponse{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_game_proto_msgTypes[7]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *CreateGameResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CreateGameResponse) ProtoMessage() {}
-
-func (x *CreateGameResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_game_proto_msgTypes[7]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CreateGameResponse.ProtoReflect.Descriptor instead.
-func (*CreateGameResponse) Descriptor() ([]byte, []int) {
-	return file_game_proto_rawDescGZIP(), []int{7}
-}
-
-func (x *CreateGameResponse) GetName() string {
-	if x != nil {
-		return x.Name
-	}
-	return ""
-}
-
-func (x *CreateGameResponse) GetError() string {
-	if x != nil {
-		return x.Error
-	}
-	return ""
-}
-
-type AddCommandRequest struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	CommandTypeId string `protobuf:"bytes,1,opt,name=command_type_id,json=commandTypeId,proto3" json:"command_type_id,omitempty"`
-}
-
-func (x *AddCommandRequest) Reset() {
-	*x = AddCommandRequest{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_game_proto_msgTypes[8]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *AddCommandRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*AddCommandRequest) ProtoMessage() {}
-
-func (x *AddCommandRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_game_proto_msgTypes[8]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use AddCommandRequest.ProtoReflect.Descriptor instead.
-func (*AddCommandRequest) Descriptor() ([]byte, []int) {
-	return file_game_proto_rawDescGZIP(), []int{8}
-}
-
-func (x *AddCommandRequest) GetCommandTypeId() string {
-	if x != nil {
-		return x.CommandTypeId
-	}
-	return ""
-}
-
-type Command struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	Id            string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	CommandTypeId string `protobuf:"bytes,2,opt,name=command_type_id,json=commandTypeId,proto3" json:"command_type_id,omitempty"`
-}
-
-func (x *Command) Reset() {
-	*x = Command{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_game_proto_msgTypes[9]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *Command) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*Command) ProtoMessage() {}
-
-func (x *Command) ProtoReflect() protoreflect.Message {
-	mi := &file_game_proto_msgTypes[9]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use Command.ProtoReflect.Descriptor instead.
-func (*Command) Descriptor() ([]byte, []int) {
-	return file_game_proto_rawDescGZIP(), []int{9}
-}
-
-func (x *Command) GetId() string {
-	if x != nil {
-		return x.Id
-	}
-	return ""
-}
-
-func (x *Command) GetCommandTypeId() string {
-	if x != nil {
-		return x.CommandTypeId
+		return x.Err
 	}
 	return ""
 }
@@ -525,59 +368,48 @@ func (x *Command) GetCommandTypeId() string {
 var File_game_proto protoreflect.FileDescriptor
 
 var file_game_proto_rawDesc = []byte{
-	0x0a, 0x0a, 0x67, 0x61, 0x6d, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0x0e, 0x0a, 0x0c,
-	0x45, 0x6d, 0x70, 0x74, 0x79, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x22, 0x25, 0x0a, 0x0d,
-	0x45, 0x6d, 0x70, 0x74, 0x79, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x14, 0x0a,
-	0x05, 0x65, 0x72, 0x72, 0x6f, 0x72, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x65, 0x72,
-	0x72, 0x6f, 0x72, 0x22, 0x1a, 0x0a, 0x04, 0x47, 0x61, 0x6d, 0x65, 0x12, 0x12, 0x0a, 0x04, 0x6a,
-	0x73, 0x6f, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6a, 0x73, 0x6f, 0x6e, 0x22,
-	0x3e, 0x0a, 0x0b, 0x43, 0x6f, 0x6d, 0x6d, 0x61, 0x6e, 0x64, 0x4c, 0x69, 0x73, 0x74, 0x12, 0x2f,
-	0x0a, 0x0c, 0x61, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x5f, 0x74, 0x79, 0x70, 0x65, 0x73, 0x18, 0x01,
-	0x20, 0x03, 0x28, 0x0b, 0x32, 0x0c, 0x2e, 0x43, 0x6f, 0x6d, 0x6d, 0x61, 0x6e, 0x64, 0x54, 0x79,
-	0x70, 0x65, 0x52, 0x0b, 0x61, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x54, 0x79, 0x70, 0x65, 0x73, 0x22,
-	0x6b, 0x0a, 0x0b, 0x43, 0x6f, 0x6d, 0x6d, 0x61, 0x6e, 0x64, 0x54, 0x79, 0x70, 0x65, 0x12, 0x26,
-	0x0a, 0x0f, 0x63, 0x6f, 0x6d, 0x6d, 0x61, 0x6e, 0x64, 0x5f, 0x74, 0x79, 0x70, 0x65, 0x5f, 0x69,
-	0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0d, 0x63, 0x6f, 0x6d, 0x6d, 0x61, 0x6e, 0x64,
-	0x54, 0x79, 0x70, 0x65, 0x49, 0x64, 0x12, 0x12, 0x0a, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x02,
-	0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x12, 0x20, 0x0a, 0x0b, 0x64, 0x65,
-	0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52,
-	0x0b, 0x64, 0x65, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x22, 0x27, 0x0a, 0x11,
+	0x0a, 0x0a, 0x67, 0x61, 0x6d, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0x13, 0x0a, 0x11,
 	0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x47, 0x61, 0x6d, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
-	0x74, 0x12, 0x12, 0x0a, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52,
-	0x04, 0x6e, 0x61, 0x6d, 0x65, 0x22, 0x27, 0x0a, 0x11, 0x53, 0x74, 0x72, 0x65, 0x61, 0x6d, 0x47,
-	0x61, 0x6d, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x12, 0x0a, 0x04, 0x6e, 0x61,
-	0x6d, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x22, 0x3e,
-	0x0a, 0x12, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x47, 0x61, 0x6d, 0x65, 0x52, 0x65, 0x73, 0x70,
-	0x6f, 0x6e, 0x73, 0x65, 0x12, 0x12, 0x0a, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x01, 0x20, 0x01,
-	0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x12, 0x14, 0x0a, 0x05, 0x65, 0x72, 0x72, 0x6f,
-	0x72, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x65, 0x72, 0x72, 0x6f, 0x72, 0x22, 0x3b,
-	0x0a, 0x11, 0x41, 0x64, 0x64, 0x43, 0x6f, 0x6d, 0x6d, 0x61, 0x6e, 0x64, 0x52, 0x65, 0x71, 0x75,
-	0x65, 0x73, 0x74, 0x12, 0x26, 0x0a, 0x0f, 0x63, 0x6f, 0x6d, 0x6d, 0x61, 0x6e, 0x64, 0x5f, 0x74,
-	0x79, 0x70, 0x65, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0d, 0x63, 0x6f,
-	0x6d, 0x6d, 0x61, 0x6e, 0x64, 0x54, 0x79, 0x70, 0x65, 0x49, 0x64, 0x22, 0x41, 0x0a, 0x07, 0x43,
-	0x6f, 0x6d, 0x6d, 0x61, 0x6e, 0x64, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01,
-	0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x12, 0x26, 0x0a, 0x0f, 0x63, 0x6f, 0x6d, 0x6d, 0x61, 0x6e,
-	0x64, 0x5f, 0x74, 0x79, 0x70, 0x65, 0x5f, 0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52,
-	0x0d, 0x63, 0x6f, 0x6d, 0x6d, 0x61, 0x6e, 0x64, 0x54, 0x79, 0x70, 0x65, 0x49, 0x64, 0x32, 0xff,
-	0x01, 0x0a, 0x0a, 0x47, 0x61, 0x6d, 0x65, 0x53, 0x65, 0x72, 0x76, 0x65, 0x72, 0x12, 0x37, 0x0a,
+	0x74, 0x22, 0x2e, 0x0a, 0x11, 0x53, 0x74, 0x72, 0x65, 0x61, 0x6d, 0x47, 0x61, 0x6d, 0x65, 0x52,
+	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x19, 0x0a, 0x08, 0x67, 0x61, 0x6d, 0x65, 0x5f, 0x6b,
+	0x65, 0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x67, 0x61, 0x6d, 0x65, 0x4b, 0x65,
+	0x79, 0x22, 0x3a, 0x0a, 0x09, 0x47, 0x61, 0x6d, 0x65, 0x53, 0x74, 0x61, 0x74, 0x65, 0x12, 0x19,
+	0x0a, 0x08, 0x67, 0x61, 0x6d, 0x65, 0x5f, 0x6b, 0x65, 0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09,
+	0x52, 0x07, 0x67, 0x61, 0x6d, 0x65, 0x4b, 0x65, 0x79, 0x12, 0x12, 0x0a, 0x04, 0x6a, 0x73, 0x6f,
+	0x6e, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6a, 0x73, 0x6f, 0x6e, 0x22, 0x52, 0x0a,
+	0x12, 0x53, 0x65, 0x6e, 0x64, 0x43, 0x6f, 0x6d, 0x6d, 0x61, 0x6e, 0x64, 0x52, 0x65, 0x71, 0x75,
+	0x65, 0x73, 0x74, 0x12, 0x19, 0x0a, 0x08, 0x67, 0x61, 0x6d, 0x65, 0x5f, 0x6b, 0x65, 0x79, 0x18,
+	0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x67, 0x61, 0x6d, 0x65, 0x4b, 0x65, 0x79, 0x12, 0x21,
+	0x0a, 0x0c, 0x63, 0x6f, 0x6d, 0x6d, 0x61, 0x6e, 0x64, 0x5f, 0x74, 0x79, 0x70, 0x65, 0x18, 0x02,
+	0x20, 0x01, 0x28, 0x09, 0x52, 0x0b, 0x63, 0x6f, 0x6d, 0x6d, 0x61, 0x6e, 0x64, 0x54, 0x79, 0x70,
+	0x65, 0x22, 0x36, 0x0a, 0x13, 0x53, 0x65, 0x6e, 0x64, 0x43, 0x6f, 0x6d, 0x6d, 0x61, 0x6e, 0x64,
+	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x1f, 0x0a, 0x0b, 0x63, 0x6f, 0x6d, 0x6d,
+	0x61, 0x6e, 0x64, 0x5f, 0x6b, 0x65, 0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0a, 0x63,
+	0x6f, 0x6d, 0x6d, 0x61, 0x6e, 0x64, 0x4b, 0x65, 0x79, 0x22, 0x37, 0x0a, 0x14, 0x43, 0x61, 0x6e,
+	0x63, 0x65, 0x6c, 0x43, 0x6f, 0x6d, 0x6d, 0x61, 0x6e, 0x64, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
+	0x74, 0x12, 0x1f, 0x0a, 0x0b, 0x63, 0x6f, 0x6d, 0x6d, 0x61, 0x6e, 0x64, 0x5f, 0x6b, 0x65, 0x79,
+	0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0a, 0x63, 0x6f, 0x6d, 0x6d, 0x61, 0x6e, 0x64, 0x4b,
+	0x65, 0x79, 0x22, 0x29, 0x0a, 0x15, 0x43, 0x61, 0x6e, 0x63, 0x65, 0x6c, 0x43, 0x6f, 0x6d, 0x6d,
+	0x61, 0x6e, 0x64, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x10, 0x0a, 0x03, 0x65,
+	0x72, 0x72, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x65, 0x72, 0x72, 0x32, 0xed, 0x01,
+	0x0a, 0x0b, 0x47, 0x61, 0x6d, 0x65, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x2e, 0x0a,
 	0x0a, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x47, 0x61, 0x6d, 0x65, 0x12, 0x12, 0x2e, 0x43, 0x72,
 	0x65, 0x61, 0x74, 0x65, 0x47, 0x61, 0x6d, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a,
-	0x13, 0x2e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x47, 0x61, 0x6d, 0x65, 0x52, 0x65, 0x73, 0x70,
-	0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x2b, 0x0a, 0x0a, 0x53, 0x74, 0x72, 0x65, 0x61, 0x6d,
-	0x47, 0x61, 0x6d, 0x65, 0x12, 0x12, 0x2e, 0x53, 0x74, 0x72, 0x65, 0x61, 0x6d, 0x47, 0x61, 0x6d,
-	0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x05, 0x2e, 0x47, 0x61, 0x6d, 0x65, 0x22,
-	0x00, 0x30, 0x01, 0x12, 0x30, 0x0a, 0x0f, 0x47, 0x65, 0x74, 0x43, 0x6f, 0x6d, 0x6d, 0x61, 0x6e,
-	0x64, 0x54, 0x79, 0x70, 0x65, 0x73, 0x12, 0x0d, 0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79, 0x52, 0x65,
-	0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x0c, 0x2e, 0x43, 0x6f, 0x6d, 0x6d, 0x61, 0x6e, 0x64, 0x4c,
-	0x69, 0x73, 0x74, 0x22, 0x00, 0x12, 0x2c, 0x0a, 0x0a, 0x41, 0x64, 0x64, 0x43, 0x6f, 0x6d, 0x6d,
-	0x61, 0x6e, 0x64, 0x12, 0x12, 0x2e, 0x41, 0x64, 0x64, 0x43, 0x6f, 0x6d, 0x6d, 0x61, 0x6e, 0x64,
-	0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x08, 0x2e, 0x43, 0x6f, 0x6d, 0x6d, 0x61, 0x6e,
-	0x64, 0x22, 0x00, 0x12, 0x2b, 0x0a, 0x0d, 0x52, 0x65, 0x6d, 0x6f, 0x76, 0x65, 0x43, 0x6f, 0x6d,
-	0x6d, 0x61, 0x6e, 0x64, 0x12, 0x08, 0x2e, 0x43, 0x6f, 0x6d, 0x6d, 0x61, 0x6e, 0x64, 0x1a, 0x0e,
-	0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00,
-	0x42, 0x22, 0x5a, 0x20, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x74,
-	0x68, 0x65, 0x62, 0x72, 0x75, 0x62, 0x61, 0x6b, 0x65, 0x72, 0x2f, 0x63, 0x6f, 0x6c, 0x6f, 0x6e,
-	0x79, 0x2f, 0x70, 0x62, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x0a, 0x2e, 0x47, 0x61, 0x6d, 0x65, 0x53, 0x74, 0x61, 0x74, 0x65, 0x22, 0x00, 0x12, 0x30, 0x0a,
+	0x0a, 0x53, 0x74, 0x72, 0x65, 0x61, 0x6d, 0x47, 0x61, 0x6d, 0x65, 0x12, 0x12, 0x2e, 0x53, 0x74,
+	0x72, 0x65, 0x61, 0x6d, 0x47, 0x61, 0x6d, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a,
+	0x0a, 0x2e, 0x47, 0x61, 0x6d, 0x65, 0x53, 0x74, 0x61, 0x74, 0x65, 0x22, 0x00, 0x30, 0x01, 0x12,
+	0x3a, 0x0a, 0x0b, 0x53, 0x65, 0x6e, 0x64, 0x43, 0x6f, 0x6d, 0x6d, 0x61, 0x6e, 0x64, 0x12, 0x13,
+	0x2e, 0x53, 0x65, 0x6e, 0x64, 0x43, 0x6f, 0x6d, 0x6d, 0x61, 0x6e, 0x64, 0x52, 0x65, 0x71, 0x75,
+	0x65, 0x73, 0x74, 0x1a, 0x14, 0x2e, 0x53, 0x65, 0x6e, 0x64, 0x43, 0x6f, 0x6d, 0x6d, 0x61, 0x6e,
+	0x64, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x40, 0x0a, 0x0d, 0x43,
+	0x61, 0x6e, 0x63, 0x65, 0x6c, 0x43, 0x6f, 0x6d, 0x6d, 0x61, 0x6e, 0x64, 0x12, 0x15, 0x2e, 0x43,
+	0x61, 0x6e, 0x63, 0x65, 0x6c, 0x43, 0x6f, 0x6d, 0x6d, 0x61, 0x6e, 0x64, 0x52, 0x65, 0x71, 0x75,
+	0x65, 0x73, 0x74, 0x1a, 0x16, 0x2e, 0x43, 0x61, 0x6e, 0x63, 0x65, 0x6c, 0x43, 0x6f, 0x6d, 0x6d,
+	0x61, 0x6e, 0x64, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x42, 0x22, 0x5a,
+	0x20, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x74, 0x68, 0x65, 0x62,
+	0x72, 0x75, 0x62, 0x61, 0x6b, 0x65, 0x72, 0x2f, 0x63, 0x6f, 0x6c, 0x6f, 0x6e, 0x79, 0x2f, 0x70,
+	0x62, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -592,36 +424,30 @@ func file_game_proto_rawDescGZIP() []byte {
 	return file_game_proto_rawDescData
 }
 
-var file_game_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
+var file_game_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
 var file_game_proto_goTypes = []interface{}{
-	(*EmptyRequest)(nil),       // 0: EmptyRequest
-	(*EmptyResponse)(nil),      // 1: EmptyResponse
-	(*Game)(nil),               // 2: Game
-	(*CommandList)(nil),        // 3: CommandList
-	(*CommandType)(nil),        // 4: CommandType
-	(*CreateGameRequest)(nil),  // 5: CreateGameRequest
-	(*StreamGameRequest)(nil),  // 6: StreamGameRequest
-	(*CreateGameResponse)(nil), // 7: CreateGameResponse
-	(*AddCommandRequest)(nil),  // 8: AddCommandRequest
-	(*Command)(nil),            // 9: Command
+	(*CreateGameRequest)(nil),     // 0: CreateGameRequest
+	(*StreamGameRequest)(nil),     // 1: StreamGameRequest
+	(*GameState)(nil),             // 2: GameState
+	(*SendCommandRequest)(nil),    // 3: SendCommandRequest
+	(*SendCommandResponse)(nil),   // 4: SendCommandResponse
+	(*CancelCommandRequest)(nil),  // 5: CancelCommandRequest
+	(*CancelCommandResponse)(nil), // 6: CancelCommandResponse
 }
 var file_game_proto_depIdxs = []int32{
-	4, // 0: CommandList.action_types:type_name -> CommandType
-	5, // 1: GameServer.CreateGame:input_type -> CreateGameRequest
-	6, // 2: GameServer.StreamGame:input_type -> StreamGameRequest
-	0, // 3: GameServer.GetCommandTypes:input_type -> EmptyRequest
-	8, // 4: GameServer.AddCommand:input_type -> AddCommandRequest
-	9, // 5: GameServer.RemoveCommand:input_type -> Command
-	7, // 6: GameServer.CreateGame:output_type -> CreateGameResponse
-	2, // 7: GameServer.StreamGame:output_type -> Game
-	3, // 8: GameServer.GetCommandTypes:output_type -> CommandList
-	9, // 9: GameServer.AddCommand:output_type -> Command
-	1, // 10: GameServer.RemoveCommand:output_type -> EmptyResponse
-	6, // [6:11] is the sub-list for method output_type
-	1, // [1:6] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	1, // [1:1] is the sub-list for extension extendee
-	0, // [0:1] is the sub-list for field type_name
+	0, // 0: GameService.CreateGame:input_type -> CreateGameRequest
+	1, // 1: GameService.StreamGame:input_type -> StreamGameRequest
+	3, // 2: GameService.SendCommand:input_type -> SendCommandRequest
+	5, // 3: GameService.CancelCommand:input_type -> CancelCommandRequest
+	2, // 4: GameService.CreateGame:output_type -> GameState
+	2, // 5: GameService.StreamGame:output_type -> GameState
+	4, // 6: GameService.SendCommand:output_type -> SendCommandResponse
+	6, // 7: GameService.CancelCommand:output_type -> CancelCommandResponse
+	4, // [4:8] is the sub-list for method output_type
+	0, // [0:4] is the sub-list for method input_type
+	0, // [0:0] is the sub-list for extension type_name
+	0, // [0:0] is the sub-list for extension extendee
+	0, // [0:0] is the sub-list for field type_name
 }
 
 func init() { file_game_proto_init() }
@@ -631,66 +457,6 @@ func file_game_proto_init() {
 	}
 	if !protoimpl.UnsafeEnabled {
 		file_game_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*EmptyRequest); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_game_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*EmptyResponse); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_game_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Game); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_game_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CommandList); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_game_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CommandType); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_game_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*CreateGameRequest); i {
 			case 0:
 				return &v.state
@@ -702,7 +468,7 @@ func file_game_proto_init() {
 				return nil
 			}
 		}
-		file_game_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
+		file_game_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*StreamGameRequest); i {
 			case 0:
 				return &v.state
@@ -714,8 +480,8 @@ func file_game_proto_init() {
 				return nil
 			}
 		}
-		file_game_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CreateGameResponse); i {
+		file_game_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GameState); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -726,8 +492,8 @@ func file_game_proto_init() {
 				return nil
 			}
 		}
-		file_game_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*AddCommandRequest); i {
+		file_game_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*SendCommandRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -738,8 +504,32 @@ func file_game_proto_init() {
 				return nil
 			}
 		}
-		file_game_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Command); i {
+		file_game_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*SendCommandResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_game_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*CancelCommandRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_game_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*CancelCommandResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -757,7 +547,7 @@ func file_game_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_game_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   10,
+			NumMessages:   7,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
@@ -779,40 +569,39 @@ var _ grpc.ClientConnInterface
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion6
 
-// GameServerClient is the client API for GameServer service.
+// GameServiceClient is the client API for GameService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
-type GameServerClient interface {
-	CreateGame(ctx context.Context, in *CreateGameRequest, opts ...grpc.CallOption) (*CreateGameResponse, error)
-	StreamGame(ctx context.Context, in *StreamGameRequest, opts ...grpc.CallOption) (GameServer_StreamGameClient, error)
-	GetCommandTypes(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*CommandList, error)
-	AddCommand(ctx context.Context, in *AddCommandRequest, opts ...grpc.CallOption) (*Command, error)
-	RemoveCommand(ctx context.Context, in *Command, opts ...grpc.CallOption) (*EmptyResponse, error)
+type GameServiceClient interface {
+	CreateGame(ctx context.Context, in *CreateGameRequest, opts ...grpc.CallOption) (*GameState, error)
+	StreamGame(ctx context.Context, in *StreamGameRequest, opts ...grpc.CallOption) (GameService_StreamGameClient, error)
+	SendCommand(ctx context.Context, in *SendCommandRequest, opts ...grpc.CallOption) (*SendCommandResponse, error)
+	CancelCommand(ctx context.Context, in *CancelCommandRequest, opts ...grpc.CallOption) (*CancelCommandResponse, error)
 }
 
-type gameServerClient struct {
+type gameServiceClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewGameServerClient(cc grpc.ClientConnInterface) GameServerClient {
-	return &gameServerClient{cc}
+func NewGameServiceClient(cc grpc.ClientConnInterface) GameServiceClient {
+	return &gameServiceClient{cc}
 }
 
-func (c *gameServerClient) CreateGame(ctx context.Context, in *CreateGameRequest, opts ...grpc.CallOption) (*CreateGameResponse, error) {
-	out := new(CreateGameResponse)
-	err := c.cc.Invoke(ctx, "/GameServer/CreateGame", in, out, opts...)
+func (c *gameServiceClient) CreateGame(ctx context.Context, in *CreateGameRequest, opts ...grpc.CallOption) (*GameState, error) {
+	out := new(GameState)
+	err := c.cc.Invoke(ctx, "/GameService/CreateGame", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *gameServerClient) StreamGame(ctx context.Context, in *StreamGameRequest, opts ...grpc.CallOption) (GameServer_StreamGameClient, error) {
-	stream, err := c.cc.NewStream(ctx, &_GameServer_serviceDesc.Streams[0], "/GameServer/StreamGame", opts...)
+func (c *gameServiceClient) StreamGame(ctx context.Context, in *StreamGameRequest, opts ...grpc.CallOption) (GameService_StreamGameClient, error) {
+	stream, err := c.cc.NewStream(ctx, &_GameService_serviceDesc.Streams[0], "/GameService/StreamGame", opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &gameServerStreamGameClient{stream}
+	x := &gameServiceStreamGameClient{stream}
 	if err := x.ClientStream.SendMsg(in); err != nil {
 		return nil, err
 	}
@@ -822,201 +611,166 @@ func (c *gameServerClient) StreamGame(ctx context.Context, in *StreamGameRequest
 	return x, nil
 }
 
-type GameServer_StreamGameClient interface {
-	Recv() (*Game, error)
+type GameService_StreamGameClient interface {
+	Recv() (*GameState, error)
 	grpc.ClientStream
 }
 
-type gameServerStreamGameClient struct {
+type gameServiceStreamGameClient struct {
 	grpc.ClientStream
 }
 
-func (x *gameServerStreamGameClient) Recv() (*Game, error) {
-	m := new(Game)
+func (x *gameServiceStreamGameClient) Recv() (*GameState, error) {
+	m := new(GameState)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
 	return m, nil
 }
 
-func (c *gameServerClient) GetCommandTypes(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*CommandList, error) {
-	out := new(CommandList)
-	err := c.cc.Invoke(ctx, "/GameServer/GetCommandTypes", in, out, opts...)
+func (c *gameServiceClient) SendCommand(ctx context.Context, in *SendCommandRequest, opts ...grpc.CallOption) (*SendCommandResponse, error) {
+	out := new(SendCommandResponse)
+	err := c.cc.Invoke(ctx, "/GameService/SendCommand", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *gameServerClient) AddCommand(ctx context.Context, in *AddCommandRequest, opts ...grpc.CallOption) (*Command, error) {
-	out := new(Command)
-	err := c.cc.Invoke(ctx, "/GameServer/AddCommand", in, out, opts...)
+func (c *gameServiceClient) CancelCommand(ctx context.Context, in *CancelCommandRequest, opts ...grpc.CallOption) (*CancelCommandResponse, error) {
+	out := new(CancelCommandResponse)
+	err := c.cc.Invoke(ctx, "/GameService/CancelCommand", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *gameServerClient) RemoveCommand(ctx context.Context, in *Command, opts ...grpc.CallOption) (*EmptyResponse, error) {
-	out := new(EmptyResponse)
-	err := c.cc.Invoke(ctx, "/GameServer/RemoveCommand", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
+// GameServiceServer is the server API for GameService service.
+type GameServiceServer interface {
+	CreateGame(context.Context, *CreateGameRequest) (*GameState, error)
+	StreamGame(*StreamGameRequest, GameService_StreamGameServer) error
+	SendCommand(context.Context, *SendCommandRequest) (*SendCommandResponse, error)
+	CancelCommand(context.Context, *CancelCommandRequest) (*CancelCommandResponse, error)
 }
 
-// GameServerServer is the server API for GameServer service.
-type GameServerServer interface {
-	CreateGame(context.Context, *CreateGameRequest) (*CreateGameResponse, error)
-	StreamGame(*StreamGameRequest, GameServer_StreamGameServer) error
-	GetCommandTypes(context.Context, *EmptyRequest) (*CommandList, error)
-	AddCommand(context.Context, *AddCommandRequest) (*Command, error)
-	RemoveCommand(context.Context, *Command) (*EmptyResponse, error)
+// UnimplementedGameServiceServer can be embedded to have forward compatible implementations.
+type UnimplementedGameServiceServer struct {
 }
 
-// UnimplementedGameServerServer can be embedded to have forward compatible implementations.
-type UnimplementedGameServerServer struct {
-}
-
-func (*UnimplementedGameServerServer) CreateGame(context.Context, *CreateGameRequest) (*CreateGameResponse, error) {
+func (*UnimplementedGameServiceServer) CreateGame(context.Context, *CreateGameRequest) (*GameState, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateGame not implemented")
 }
-func (*UnimplementedGameServerServer) StreamGame(*StreamGameRequest, GameServer_StreamGameServer) error {
+func (*UnimplementedGameServiceServer) StreamGame(*StreamGameRequest, GameService_StreamGameServer) error {
 	return status.Errorf(codes.Unimplemented, "method StreamGame not implemented")
 }
-func (*UnimplementedGameServerServer) GetCommandTypes(context.Context, *EmptyRequest) (*CommandList, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetCommandTypes not implemented")
+func (*UnimplementedGameServiceServer) SendCommand(context.Context, *SendCommandRequest) (*SendCommandResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendCommand not implemented")
 }
-func (*UnimplementedGameServerServer) AddCommand(context.Context, *AddCommandRequest) (*Command, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method AddCommand not implemented")
-}
-func (*UnimplementedGameServerServer) RemoveCommand(context.Context, *Command) (*EmptyResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method RemoveCommand not implemented")
+func (*UnimplementedGameServiceServer) CancelCommand(context.Context, *CancelCommandRequest) (*CancelCommandResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CancelCommand not implemented")
 }
 
-func RegisterGameServerServer(s *grpc.Server, srv GameServerServer) {
-	s.RegisterService(&_GameServer_serviceDesc, srv)
+func RegisterGameServiceServer(s *grpc.Server, srv GameServiceServer) {
+	s.RegisterService(&_GameService_serviceDesc, srv)
 }
 
-func _GameServer_CreateGame_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _GameService_CreateGame_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateGameRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(GameServerServer).CreateGame(ctx, in)
+		return srv.(GameServiceServer).CreateGame(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/GameServer/CreateGame",
+		FullMethod: "/GameService/CreateGame",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GameServerServer).CreateGame(ctx, req.(*CreateGameRequest))
+		return srv.(GameServiceServer).CreateGame(ctx, req.(*CreateGameRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _GameServer_StreamGame_Handler(srv interface{}, stream grpc.ServerStream) error {
+func _GameService_StreamGame_Handler(srv interface{}, stream grpc.ServerStream) error {
 	m := new(StreamGameRequest)
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}
-	return srv.(GameServerServer).StreamGame(m, &gameServerStreamGameServer{stream})
+	return srv.(GameServiceServer).StreamGame(m, &gameServiceStreamGameServer{stream})
 }
 
-type GameServer_StreamGameServer interface {
-	Send(*Game) error
+type GameService_StreamGameServer interface {
+	Send(*GameState) error
 	grpc.ServerStream
 }
 
-type gameServerStreamGameServer struct {
+type gameServiceStreamGameServer struct {
 	grpc.ServerStream
 }
 
-func (x *gameServerStreamGameServer) Send(m *Game) error {
+func (x *gameServiceStreamGameServer) Send(m *GameState) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func _GameServer_GetCommandTypes_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(EmptyRequest)
+func _GameService_SendCommand_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SendCommandRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(GameServerServer).GetCommandTypes(ctx, in)
+		return srv.(GameServiceServer).SendCommand(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/GameServer/GetCommandTypes",
+		FullMethod: "/GameService/SendCommand",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GameServerServer).GetCommandTypes(ctx, req.(*EmptyRequest))
+		return srv.(GameServiceServer).SendCommand(ctx, req.(*SendCommandRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _GameServer_AddCommand_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AddCommandRequest)
+func _GameService_CancelCommand_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CancelCommandRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(GameServerServer).AddCommand(ctx, in)
+		return srv.(GameServiceServer).CancelCommand(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/GameServer/AddCommand",
+		FullMethod: "/GameService/CancelCommand",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GameServerServer).AddCommand(ctx, req.(*AddCommandRequest))
+		return srv.(GameServiceServer).CancelCommand(ctx, req.(*CancelCommandRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _GameServer_RemoveCommand_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Command)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(GameServerServer).RemoveCommand(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/GameServer/RemoveCommand",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GameServerServer).RemoveCommand(ctx, req.(*Command))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-var _GameServer_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "GameServer",
-	HandlerType: (*GameServerServer)(nil),
+var _GameService_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "GameService",
+	HandlerType: (*GameServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "CreateGame",
-			Handler:    _GameServer_CreateGame_Handler,
+			Handler:    _GameService_CreateGame_Handler,
 		},
 		{
-			MethodName: "GetCommandTypes",
-			Handler:    _GameServer_GetCommandTypes_Handler,
+			MethodName: "SendCommand",
+			Handler:    _GameService_SendCommand_Handler,
 		},
 		{
-			MethodName: "AddCommand",
-			Handler:    _GameServer_AddCommand_Handler,
-		},
-		{
-			MethodName: "RemoveCommand",
-			Handler:    _GameServer_RemoveCommand_Handler,
+			MethodName: "CancelCommand",
+			Handler:    _GameService_CancelCommand_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{
 		{
 			StreamName:    "StreamGame",
-			Handler:       _GameServer_StreamGame_Handler,
+			Handler:       _GameService_StreamGame_Handler,
 			ServerStreams: true,
 		},
 	},

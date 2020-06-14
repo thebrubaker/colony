@@ -3,39 +3,25 @@ syntax = "proto3";
 
 option go_package = "github.com/thebrubaker/colony/pb";
 
-message EmptyRequest {}
-
-message EmptyResponse { string error = 2; }
-
-service GameServer {
-  rpc CreateGame(CreateGameRequest) returns (CreateGameResponse) {}
-  rpc StreamGame(StreamGameRequest) returns (stream Game) {}
-  rpc GetCommandTypes(EmptyRequest) returns (CommandList) {}
-  rpc AddCommand(AddCommandRequest) returns (Command) {}
-  rpc RemoveCommand(Command) returns (EmptyResponse) {}
+service GameService {
+  rpc CreateGame(CreateGameRequest) returns (GameState) {}
+  rpc StreamGame(StreamGameRequest) returns (stream GameState) {}
+  rpc SendCommand(SendCommandRequest) returns (SendCommandResponse) {}
+  rpc CancelCommand(CancelCommandRequest) returns (CancelCommandResponse) {}
 }
 
-message Game { string json = 1; }
-
-message CommandList { repeated CommandType action_types = 1; }
-
-message CommandType {
-  string command_type_id = 1;
-  string name = 2;
-  string description = 3;
+message CreateGameRequest {}
+message StreamGameRequest { string game_key = 1; }
+message GameState {
+  string game_key = 1;
+  string json = 2;
 }
 
-message CreateGameRequest { string name = 1; }
-message StreamGameRequest { string name = 1; }
-
-message CreateGameResponse {
-  string name = 1;
-  string error = 2;
+message SendCommandRequest {
+  string game_key = 1;
+  string command_type = 2;
 }
+message SendCommandResponse { string command_key = 1; }
 
-message AddCommandRequest { string command_type_id = 1; }
-
-message Command {
-  string id = 1;
-  string command_type_id = 2;
-}
+message CancelCommandRequest { string command_key = 1; }
+message CancelCommandResponse { string err = 1; }
