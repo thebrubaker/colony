@@ -1,15 +1,15 @@
 package game
 
-type tickRate float64
+type TickRate float64
 
 const (
-	PausedRate      = 0
-	BaseTickRate    = 1
-	FastTickRate    = 2
-	FastestTickRate = 3
+	PausedRate      TickRate = 0
+	BaseTickRate    TickRate = 1
+	FastTickRate    TickRate = 2
+	FastestTickRate TickRate = 3
 )
 
 type Ticker struct {
-	Rate  tickRate
+	Rate  TickRate
 	Count float64
 }

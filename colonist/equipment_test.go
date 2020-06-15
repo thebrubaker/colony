@@ -18,7 +18,7 @@ func (h Helmet) DexterityRequirement() float64 {
 }
 
 func TestColonistEquipment(t *testing.T) {
-	colonist := GenerateColonist("Joel")
+	colonist := NewColonist("Joel")
 
 	ironHelmet := &Helmet{
 		"Iron Helmet",

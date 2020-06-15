@@ -52,7 +52,7 @@ func (g *Game) AddCommand(commandType string) bool {
 	return <-c
 }
 
-func (g *Game) SetTickRate(rate tickRate) bool {
+func (g *Game) SetTickRate(rate TickRate) bool {
 	c := make(chan bool)
 	g.actionc <- func() {
 		g.state.Ticker.Rate = rate

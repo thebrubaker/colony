@@ -72,6 +72,17 @@ func (gc *GameController) SendCommand(key game.GameKey, commandType string) bool
 	return <-c
 }
 
+func (gc *GameController) SetSpeed(key game.GameKey, r game.TickRate) bool {
+	c := make(chan bool)
+	gc.actionc <- func() {
+		log.Printf("set game %s speed to %s", key, r)
+		g := gc.games[game.GameKey(key)]
+		g.SetTickRate(r)
+		c <- true
+	}
+	return <-c
+}
+
 func NewGameKey() game.GameKey {
 	return game.GameKey(xid.New().String())
 }

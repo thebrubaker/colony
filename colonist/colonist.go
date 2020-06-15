@@ -26,7 +26,7 @@ type Colonist struct {
 
 // GenerateColonist returns a new colonist with the given name
 // and a random set of skills and stats.
-func GenerateColonist(name string) *Colonist {
+func NewColonist(name string) *Colonist {
 	return &Colonist{
 		Name:      name,
 		Age:       generateAge(),

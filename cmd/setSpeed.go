@@ -16,29 +16,19 @@ limitations under the License.
 package cmd
 
 import (
+	"fmt"
 	"log"
-	"math/rand"
-	"net"
-	"os"
-	"os/signal"
-	"syscall"
-	"time"
+	"strconv"
 
 	"github.com/spf13/cobra"
-	"github.com/thebrubaker/colony/controllers"
-	"github.com/thebrubaker/colony/server"
+	"github.com/thebrubaker/colony/client"
+	"github.com/thebrubaker/colony/pb"
 )
 
-// type Debug struct {
-// 	Ticker    *ticker.Ticker
-// 	Colonists []*colonist.Colonist
-// 	Actions   []*actions.ColonistAction
-// }
-
-// startCmd represents the start command
-var startCmd = &cobra.Command{
-	Use:   "start",
-	Short: "Starts the game server.",
+// setSpeedCmd represents the setSpeed command
+var setSpeedCmd = &cobra.Command{
+	Use:   "setSpeed",
+	Short: "A brief description of your command",
 	Long: `A longer description that spans multiple lines and likely contains examples
 and usage of using your command. For example:
 
@@ -46,46 +36,48 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		// render, err := cmd.Flags().GetBool("render")
+		address := cmd.Flag("address").Value.String()
 
-		// if err != nil {
-		// 	log.Fatal(err)
-		// }
-		port := ":50051"
-		lis, err := net.Listen("tcp", port)
-		log.Printf("Listening on %s", port)
-		if err != nil {
-			log.Fatalf("failed to listen: %v", err)
+		if len(args) == 0 {
+			panic("Missing required argument for game Key")
 		}
-		sc := controllers.NewStreamController()
-		gc := controllers.NewGameController(sc)
-		server := server.NewServer(lis, server.NewGameService(gc, sc))
 
-		gc.CreateGame()
+		key := args[0]
 
-		c := make(chan os.Signal)
-		signal.Notify(c, os.Interrupt, syscall.SIGTERM)
-		<-c
-		log.Println("\nStopping Server and Game Resources...")
-		gc.Stop()
-		sc.Stop()
-		server.GracefulStop()
-		os.Exit(0)
+		if len(args) == 1 {
+			panic("Missing required argument for speed")
+		}
+
+		speed, err := strconv.ParseInt(args[1], 10, 64)
+
+		if err != nil {
+			log.Fatal("cannot parse second argument as speed type", err)
+		}
+
+		client, connection, context, _ := client.CreateClient(address)
+		defer connection.Close()
+
+		res, err := client.SetSpeed(context, &pb.SetSpeedRequest{GameKey: key, Speed: pb.SetSpeedRequest_Speed(speed)})
+
+		if err != nil {
+			log.Fatalf("could not create game: %v", err)
+		}
+
+		fmt.Printf("%v", res)
 	},
 }
 
 func init() {
-	rand.Seed(time.Now().UTC().UnixNano())
-
-	rootCmd.AddCommand(startCmd)
+	rootCmd.AddCommand(setSpeedCmd)
 
 	// Here you will define your flags and configuration settings.
+	setSpeedCmd.PersistentFlags().String("address", "localhost:50051", "The connection address.")
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	startCmd.PersistentFlags().Bool("render", false, "Streams the game state to the console.")
+	// setSpeedCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// startCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// setSpeedCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

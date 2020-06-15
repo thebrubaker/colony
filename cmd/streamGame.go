@@ -57,9 +57,10 @@ var streamGameCmd = &cobra.Command{
 			tm.Clear()
 			var state map[string]interface{}
 			json.Unmarshal([]byte(gameState.Json), &state)
+			formatted, err := json.MarshalIndent(state, "", "    ")
 			tm.Clear()
 			tm.MoveCursor(1, 1)
-			tm.Println(state)
+			tm.Println(string(formatted))
 			tm.Flush()
 		}
 	},

@@ -11,29 +11,32 @@ type GameState struct {
 	Ticker    *Ticker
 	Region    *region.Region
 	Colonists []*colonist.Colonist
-	Actions   []*actions.Action
-	Commands  []commands.Command
+	actions   []*actions.Action
+	commands  []commands.Command
 }
 
 func CreateGameState() *GameState {
 	t := &Ticker{
-		Rate: PausedRate,
+		Rate: BaseTickRate,
 	}
 	r := &region.Region{}
 	c := []*colonist.Colonist{
-		colonist.GenerateColonist("Joel"),
+		colonist.NewColonist("Joel"),
 	}
 	a := actions.InitActions(r, c)
 	return &GameState{
 		Ticker:    t,
 		Region:    r,
 		Colonists: c,
-		Actions:   a,
+		actions:   a,
 	}
 }
 
 func (gs *GameState) update(timeElapsed float64) {
+	if gs.Ticker.Rate == PausedRate {
+		return
+	}
 	tickElapsed := timeElapsed * float64(gs.Ticker.Rate)
-	actions.Update(tickElapsed, gs.Region, gs.Colonists, gs.Actions)
+	actions.Update(tickElapsed, gs.Region, gs.Colonists, gs.actions)
 	gs.Ticker.Count += tickElapsed
 }

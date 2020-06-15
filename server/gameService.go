@@ -11,7 +11,8 @@ import (
 
 type GameController interface {
 	CreateGame() game.GameKey
-	SendCommand(key game.GameKey, commantType string) bool
+	SendCommand(game.GameKey, string) bool
+	SetSpeed(game.GameKey, game.TickRate) bool
 }
 
 type StreamController interface {
@@ -54,4 +55,10 @@ func (gs *GameService) SendCommand(c context.Context, request *pb.SendCommandReq
 
 func (gs *GameService) CancelCommand(c context.Context, request *pb.CancelCommandRequest) (*pb.CancelCommandResponse, error) {
 	return &pb.CancelCommandResponse{}, errors.New("Not Implemented")
+}
+
+func (gs *GameService) SetSpeed(c context.Context, request *pb.SetSpeedRequest) (*pb.SetSpeedResponse, error) {
+	key := game.GameKey(request.GameKey)
+	gs.gameController.SetSpeed(key, game.TickRate(request.Speed))
+	return &pb.SetSpeedResponse{Err: ""}, nil
 }

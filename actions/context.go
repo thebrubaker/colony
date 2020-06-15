@@ -43,7 +43,7 @@ func (c *Context) SelectNextAction(currentType types.Actionable) *Action {
 	weights := GetActionWeights(c, currentType, types.InitTypes())
 
 	return &Action{
-		Colonist: c.Colonist,
+		colonist: c.Colonist,
 		Type:     weights[0].Type,
 	}
 }

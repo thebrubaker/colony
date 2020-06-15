@@ -8,6 +8,7 @@ service GameService {
   rpc StreamGame(StreamGameRequest) returns (stream GameState) {}
   rpc SendCommand(SendCommandRequest) returns (SendCommandResponse) {}
   rpc CancelCommand(CancelCommandRequest) returns (CancelCommandResponse) {}
+  rpc SetSpeed(SetSpeedRequest) returns (SetSpeedResponse) {}
 }
 
 message CreateGameRequest {}
@@ -25,3 +26,15 @@ message SendCommandResponse { string command_key = 1; }
 
 message CancelCommandRequest { string command_key = 1; }
 message CancelCommandResponse { string err = 1; }
+
+message SetSpeedRequest {
+  enum Speed {
+    PAUSE = 0;
+    NORMAL = 1;
+    FAST = 2;
+    FASTEST = 3;
+  }
+  string game_key = 4;
+  Speed speed = 5;
+}
+message SetSpeedResponse { string err = 1; }

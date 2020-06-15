@@ -8,7 +8,7 @@ import (
 func Update(tickElapsed float64, region *region.Region, colonists []*colonist.Colonist, actions []*Action) {
 	for _, colonist := range colonists {
 		for i, a := range actions {
-			if a.Colonist == colonist {
+			if a.colonist == colonist {
 				context := &Context{
 					Region:      region,
 					Colonist:    colonist,

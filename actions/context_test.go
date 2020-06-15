@@ -14,7 +14,7 @@ func TestUtility(t *testing.T) {
 
 	region := &region.Region{}
 
-	colonist := colonist.GenerateColonist("Test")
+	colonist := colonist.NewColonist("Test")
 
 	colonist.Needs.Set(need.Hunger, 100)
 	colonist.Needs.Set(need.Thirst, 60)

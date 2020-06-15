@@ -29,6 +29,58 @@ const (
 // of the legacy proto package is being used.
 const _ = proto.ProtoPackageIsVersion4
 
+type SetSpeedRequest_Speed int32
+
+const (
+	SetSpeedRequest_PAUSE   SetSpeedRequest_Speed = 0
+	SetSpeedRequest_NORMAL  SetSpeedRequest_Speed = 1
+	SetSpeedRequest_FAST    SetSpeedRequest_Speed = 2
+	SetSpeedRequest_FASTEST SetSpeedRequest_Speed = 3
+)
+
+// Enum value maps for SetSpeedRequest_Speed.
+var (
+	SetSpeedRequest_Speed_name = map[int32]string{
+		0: "PAUSE",
+		1: "NORMAL",
+		2: "FAST",
+		3: "FASTEST",
+	}
+	SetSpeedRequest_Speed_value = map[string]int32{
+		"PAUSE":   0,
+		"NORMAL":  1,
+		"FAST":    2,
+		"FASTEST": 3,
+	}
+)
+
+func (x SetSpeedRequest_Speed) Enum() *SetSpeedRequest_Speed {
+	p := new(SetSpeedRequest_Speed)
+	*p = x
+	return p
+}
+
+func (x SetSpeedRequest_Speed) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (SetSpeedRequest_Speed) Descriptor() protoreflect.EnumDescriptor {
+	return file_game_proto_enumTypes[0].Descriptor()
+}
+
+func (SetSpeedRequest_Speed) Type() protoreflect.EnumType {
+	return &file_game_proto_enumTypes[0]
+}
+
+func (x SetSpeedRequest_Speed) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use SetSpeedRequest_Speed.Descriptor instead.
+func (SetSpeedRequest_Speed) EnumDescriptor() ([]byte, []int) {
+	return file_game_proto_rawDescGZIP(), []int{7, 0}
+}
+
 type CreateGameRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -365,6 +417,108 @@ func (x *CancelCommandResponse) GetErr() string {
 	return ""
 }
 
+type SetSpeedRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	GameKey string                `protobuf:"bytes,4,opt,name=game_key,json=gameKey,proto3" json:"game_key,omitempty"`
+	Speed   SetSpeedRequest_Speed `protobuf:"varint,5,opt,name=speed,proto3,enum=SetSpeedRequest_Speed" json:"speed,omitempty"`
+}
+
+func (x *SetSpeedRequest) Reset() {
+	*x = SetSpeedRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_game_proto_msgTypes[7]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *SetSpeedRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SetSpeedRequest) ProtoMessage() {}
+
+func (x *SetSpeedRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_game_proto_msgTypes[7]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SetSpeedRequest.ProtoReflect.Descriptor instead.
+func (*SetSpeedRequest) Descriptor() ([]byte, []int) {
+	return file_game_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *SetSpeedRequest) GetGameKey() string {
+	if x != nil {
+		return x.GameKey
+	}
+	return ""
+}
+
+func (x *SetSpeedRequest) GetSpeed() SetSpeedRequest_Speed {
+	if x != nil {
+		return x.Speed
+	}
+	return SetSpeedRequest_PAUSE
+}
+
+type SetSpeedResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Err string `protobuf:"bytes,1,opt,name=err,proto3" json:"err,omitempty"`
+}
+
+func (x *SetSpeedResponse) Reset() {
+	*x = SetSpeedResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_game_proto_msgTypes[8]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *SetSpeedResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SetSpeedResponse) ProtoMessage() {}
+
+func (x *SetSpeedResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_game_proto_msgTypes[8]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SetSpeedResponse.ProtoReflect.Descriptor instead.
+func (*SetSpeedResponse) Descriptor() ([]byte, []int) {
+	return file_game_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *SetSpeedResponse) GetErr() string {
+	if x != nil {
+		return x.Err
+	}
+	return ""
+}
+
 var File_game_proto protoreflect.FileDescriptor
 
 var file_game_proto_rawDesc = []byte{
@@ -391,25 +545,40 @@ var file_game_proto_rawDesc = []byte{
 	0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0a, 0x63, 0x6f, 0x6d, 0x6d, 0x61, 0x6e, 0x64, 0x4b,
 	0x65, 0x79, 0x22, 0x29, 0x0a, 0x15, 0x43, 0x61, 0x6e, 0x63, 0x65, 0x6c, 0x43, 0x6f, 0x6d, 0x6d,
 	0x61, 0x6e, 0x64, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x10, 0x0a, 0x03, 0x65,
-	0x72, 0x72, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x65, 0x72, 0x72, 0x32, 0xed, 0x01,
-	0x0a, 0x0b, 0x47, 0x61, 0x6d, 0x65, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x2e, 0x0a,
-	0x0a, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x47, 0x61, 0x6d, 0x65, 0x12, 0x12, 0x2e, 0x43, 0x72,
-	0x65, 0x61, 0x74, 0x65, 0x47, 0x61, 0x6d, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a,
-	0x0a, 0x2e, 0x47, 0x61, 0x6d, 0x65, 0x53, 0x74, 0x61, 0x74, 0x65, 0x22, 0x00, 0x12, 0x30, 0x0a,
-	0x0a, 0x53, 0x74, 0x72, 0x65, 0x61, 0x6d, 0x47, 0x61, 0x6d, 0x65, 0x12, 0x12, 0x2e, 0x53, 0x74,
-	0x72, 0x65, 0x61, 0x6d, 0x47, 0x61, 0x6d, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a,
-	0x0a, 0x2e, 0x47, 0x61, 0x6d, 0x65, 0x53, 0x74, 0x61, 0x74, 0x65, 0x22, 0x00, 0x30, 0x01, 0x12,
-	0x3a, 0x0a, 0x0b, 0x53, 0x65, 0x6e, 0x64, 0x43, 0x6f, 0x6d, 0x6d, 0x61, 0x6e, 0x64, 0x12, 0x13,
-	0x2e, 0x53, 0x65, 0x6e, 0x64, 0x43, 0x6f, 0x6d, 0x6d, 0x61, 0x6e, 0x64, 0x52, 0x65, 0x71, 0x75,
-	0x65, 0x73, 0x74, 0x1a, 0x14, 0x2e, 0x53, 0x65, 0x6e, 0x64, 0x43, 0x6f, 0x6d, 0x6d, 0x61, 0x6e,
-	0x64, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x40, 0x0a, 0x0d, 0x43,
-	0x61, 0x6e, 0x63, 0x65, 0x6c, 0x43, 0x6f, 0x6d, 0x6d, 0x61, 0x6e, 0x64, 0x12, 0x15, 0x2e, 0x43,
-	0x61, 0x6e, 0x63, 0x65, 0x6c, 0x43, 0x6f, 0x6d, 0x6d, 0x61, 0x6e, 0x64, 0x52, 0x65, 0x71, 0x75,
-	0x65, 0x73, 0x74, 0x1a, 0x16, 0x2e, 0x43, 0x61, 0x6e, 0x63, 0x65, 0x6c, 0x43, 0x6f, 0x6d, 0x6d,
-	0x61, 0x6e, 0x64, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x42, 0x22, 0x5a,
-	0x20, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x74, 0x68, 0x65, 0x62,
-	0x72, 0x75, 0x62, 0x61, 0x6b, 0x65, 0x72, 0x2f, 0x63, 0x6f, 0x6c, 0x6f, 0x6e, 0x79, 0x2f, 0x70,
-	0x62, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x72, 0x72, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x65, 0x72, 0x72, 0x22, 0x91, 0x01,
+	0x0a, 0x0f, 0x53, 0x65, 0x74, 0x53, 0x70, 0x65, 0x65, 0x64, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
+	0x74, 0x12, 0x19, 0x0a, 0x08, 0x67, 0x61, 0x6d, 0x65, 0x5f, 0x6b, 0x65, 0x79, 0x18, 0x04, 0x20,
+	0x01, 0x28, 0x09, 0x52, 0x07, 0x67, 0x61, 0x6d, 0x65, 0x4b, 0x65, 0x79, 0x12, 0x2c, 0x0a, 0x05,
+	0x73, 0x70, 0x65, 0x65, 0x64, 0x18, 0x05, 0x20, 0x01, 0x28, 0x0e, 0x32, 0x16, 0x2e, 0x53, 0x65,
+	0x74, 0x53, 0x70, 0x65, 0x65, 0x64, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x2e, 0x53, 0x70,
+	0x65, 0x65, 0x64, 0x52, 0x05, 0x73, 0x70, 0x65, 0x65, 0x64, 0x22, 0x35, 0x0a, 0x05, 0x53, 0x70,
+	0x65, 0x65, 0x64, 0x12, 0x09, 0x0a, 0x05, 0x50, 0x41, 0x55, 0x53, 0x45, 0x10, 0x00, 0x12, 0x0a,
+	0x0a, 0x06, 0x4e, 0x4f, 0x52, 0x4d, 0x41, 0x4c, 0x10, 0x01, 0x12, 0x08, 0x0a, 0x04, 0x46, 0x41,
+	0x53, 0x54, 0x10, 0x02, 0x12, 0x0b, 0x0a, 0x07, 0x46, 0x41, 0x53, 0x54, 0x45, 0x53, 0x54, 0x10,
+	0x03, 0x22, 0x24, 0x0a, 0x10, 0x53, 0x65, 0x74, 0x53, 0x70, 0x65, 0x65, 0x64, 0x52, 0x65, 0x73,
+	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x10, 0x0a, 0x03, 0x65, 0x72, 0x72, 0x18, 0x01, 0x20, 0x01,
+	0x28, 0x09, 0x52, 0x03, 0x65, 0x72, 0x72, 0x32, 0xa0, 0x02, 0x0a, 0x0b, 0x47, 0x61, 0x6d, 0x65,
+	0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x2e, 0x0a, 0x0a, 0x43, 0x72, 0x65, 0x61, 0x74,
+	0x65, 0x47, 0x61, 0x6d, 0x65, 0x12, 0x12, 0x2e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x47, 0x61,
+	0x6d, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x0a, 0x2e, 0x47, 0x61, 0x6d, 0x65,
+	0x53, 0x74, 0x61, 0x74, 0x65, 0x22, 0x00, 0x12, 0x30, 0x0a, 0x0a, 0x53, 0x74, 0x72, 0x65, 0x61,
+	0x6d, 0x47, 0x61, 0x6d, 0x65, 0x12, 0x12, 0x2e, 0x53, 0x74, 0x72, 0x65, 0x61, 0x6d, 0x47, 0x61,
+	0x6d, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x0a, 0x2e, 0x47, 0x61, 0x6d, 0x65,
+	0x53, 0x74, 0x61, 0x74, 0x65, 0x22, 0x00, 0x30, 0x01, 0x12, 0x3a, 0x0a, 0x0b, 0x53, 0x65, 0x6e,
+	0x64, 0x43, 0x6f, 0x6d, 0x6d, 0x61, 0x6e, 0x64, 0x12, 0x13, 0x2e, 0x53, 0x65, 0x6e, 0x64, 0x43,
+	0x6f, 0x6d, 0x6d, 0x61, 0x6e, 0x64, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x14, 0x2e,
+	0x53, 0x65, 0x6e, 0x64, 0x43, 0x6f, 0x6d, 0x6d, 0x61, 0x6e, 0x64, 0x52, 0x65, 0x73, 0x70, 0x6f,
+	0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x40, 0x0a, 0x0d, 0x43, 0x61, 0x6e, 0x63, 0x65, 0x6c, 0x43,
+	0x6f, 0x6d, 0x6d, 0x61, 0x6e, 0x64, 0x12, 0x15, 0x2e, 0x43, 0x61, 0x6e, 0x63, 0x65, 0x6c, 0x43,
+	0x6f, 0x6d, 0x6d, 0x61, 0x6e, 0x64, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x16, 0x2e,
+	0x43, 0x61, 0x6e, 0x63, 0x65, 0x6c, 0x43, 0x6f, 0x6d, 0x6d, 0x61, 0x6e, 0x64, 0x52, 0x65, 0x73,
+	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x31, 0x0a, 0x08, 0x53, 0x65, 0x74, 0x53, 0x70,
+	0x65, 0x65, 0x64, 0x12, 0x10, 0x2e, 0x53, 0x65, 0x74, 0x53, 0x70, 0x65, 0x65, 0x64, 0x52, 0x65,
+	0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x11, 0x2e, 0x53, 0x65, 0x74, 0x53, 0x70, 0x65, 0x65, 0x64,
+	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x42, 0x22, 0x5a, 0x20, 0x67, 0x69,
+	0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x74, 0x68, 0x65, 0x62, 0x72, 0x75, 0x62,
+	0x61, 0x6b, 0x65, 0x72, 0x2f, 0x63, 0x6f, 0x6c, 0x6f, 0x6e, 0x79, 0x2f, 0x70, 0x62, 0x62, 0x06,
+	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -424,30 +593,37 @@ func file_game_proto_rawDescGZIP() []byte {
 	return file_game_proto_rawDescData
 }
 
-var file_game_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
+var file_game_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
+var file_game_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
 var file_game_proto_goTypes = []interface{}{
-	(*CreateGameRequest)(nil),     // 0: CreateGameRequest
-	(*StreamGameRequest)(nil),     // 1: StreamGameRequest
-	(*GameState)(nil),             // 2: GameState
-	(*SendCommandRequest)(nil),    // 3: SendCommandRequest
-	(*SendCommandResponse)(nil),   // 4: SendCommandResponse
-	(*CancelCommandRequest)(nil),  // 5: CancelCommandRequest
-	(*CancelCommandResponse)(nil), // 6: CancelCommandResponse
+	(SetSpeedRequest_Speed)(0),    // 0: SetSpeedRequest.Speed
+	(*CreateGameRequest)(nil),     // 1: CreateGameRequest
+	(*StreamGameRequest)(nil),     // 2: StreamGameRequest
+	(*GameState)(nil),             // 3: GameState
+	(*SendCommandRequest)(nil),    // 4: SendCommandRequest
+	(*SendCommandResponse)(nil),   // 5: SendCommandResponse
+	(*CancelCommandRequest)(nil),  // 6: CancelCommandRequest
+	(*CancelCommandResponse)(nil), // 7: CancelCommandResponse
+	(*SetSpeedRequest)(nil),       // 8: SetSpeedRequest
+	(*SetSpeedResponse)(nil),      // 9: SetSpeedResponse
 }
 var file_game_proto_depIdxs = []int32{
-	0, // 0: GameService.CreateGame:input_type -> CreateGameRequest
-	1, // 1: GameService.StreamGame:input_type -> StreamGameRequest
-	3, // 2: GameService.SendCommand:input_type -> SendCommandRequest
-	5, // 3: GameService.CancelCommand:input_type -> CancelCommandRequest
-	2, // 4: GameService.CreateGame:output_type -> GameState
-	2, // 5: GameService.StreamGame:output_type -> GameState
-	4, // 6: GameService.SendCommand:output_type -> SendCommandResponse
-	6, // 7: GameService.CancelCommand:output_type -> CancelCommandResponse
-	4, // [4:8] is the sub-list for method output_type
-	0, // [0:4] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	0, // 0: SetSpeedRequest.speed:type_name -> SetSpeedRequest.Speed
+	1, // 1: GameService.CreateGame:input_type -> CreateGameRequest
+	2, // 2: GameService.StreamGame:input_type -> StreamGameRequest
+	4, // 3: GameService.SendCommand:input_type -> SendCommandRequest
+	6, // 4: GameService.CancelCommand:input_type -> CancelCommandRequest
+	8, // 5: GameService.SetSpeed:input_type -> SetSpeedRequest
+	3, // 6: GameService.CreateGame:output_type -> GameState
+	3, // 7: GameService.StreamGame:output_type -> GameState
+	5, // 8: GameService.SendCommand:output_type -> SendCommandResponse
+	7, // 9: GameService.CancelCommand:output_type -> CancelCommandResponse
+	9, // 10: GameService.SetSpeed:output_type -> SetSpeedResponse
+	6, // [6:11] is the sub-list for method output_type
+	1, // [1:6] is the sub-list for method input_type
+	1, // [1:1] is the sub-list for extension type_name
+	1, // [1:1] is the sub-list for extension extendee
+	0, // [0:1] is the sub-list for field type_name
 }
 
 func init() { file_game_proto_init() }
@@ -540,19 +716,44 @@ func file_game_proto_init() {
 				return nil
 			}
 		}
+		file_game_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*SetSpeedRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_game_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*SetSpeedResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_game_proto_rawDesc,
-			NumEnums:      0,
-			NumMessages:   7,
+			NumEnums:      1,
+			NumMessages:   9,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
 		GoTypes:           file_game_proto_goTypes,
 		DependencyIndexes: file_game_proto_depIdxs,
+		EnumInfos:         file_game_proto_enumTypes,
 		MessageInfos:      file_game_proto_msgTypes,
 	}.Build()
 	File_game_proto = out.File
@@ -577,6 +778,7 @@ type GameServiceClient interface {
 	StreamGame(ctx context.Context, in *StreamGameRequest, opts ...grpc.CallOption) (GameService_StreamGameClient, error)
 	SendCommand(ctx context.Context, in *SendCommandRequest, opts ...grpc.CallOption) (*SendCommandResponse, error)
 	CancelCommand(ctx context.Context, in *CancelCommandRequest, opts ...grpc.CallOption) (*CancelCommandResponse, error)
+	SetSpeed(ctx context.Context, in *SetSpeedRequest, opts ...grpc.CallOption) (*SetSpeedResponse, error)
 }
 
 type gameServiceClient struct {
@@ -646,12 +848,22 @@ func (c *gameServiceClient) CancelCommand(ctx context.Context, in *CancelCommand
 	return out, nil
 }
 
+func (c *gameServiceClient) SetSpeed(ctx context.Context, in *SetSpeedRequest, opts ...grpc.CallOption) (*SetSpeedResponse, error) {
+	out := new(SetSpeedResponse)
+	err := c.cc.Invoke(ctx, "/GameService/SetSpeed", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // GameServiceServer is the server API for GameService service.
 type GameServiceServer interface {
 	CreateGame(context.Context, *CreateGameRequest) (*GameState, error)
 	StreamGame(*StreamGameRequest, GameService_StreamGameServer) error
 	SendCommand(context.Context, *SendCommandRequest) (*SendCommandResponse, error)
 	CancelCommand(context.Context, *CancelCommandRequest) (*CancelCommandResponse, error)
+	SetSpeed(context.Context, *SetSpeedRequest) (*SetSpeedResponse, error)
 }
 
 // UnimplementedGameServiceServer can be embedded to have forward compatible implementations.
@@ -669,6 +881,9 @@ func (*UnimplementedGameServiceServer) SendCommand(context.Context, *SendCommand
 }
 func (*UnimplementedGameServiceServer) CancelCommand(context.Context, *CancelCommandRequest) (*CancelCommandResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CancelCommand not implemented")
+}
+func (*UnimplementedGameServiceServer) SetSpeed(context.Context, *SetSpeedRequest) (*SetSpeedResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetSpeed not implemented")
 }
 
 func RegisterGameServiceServer(s *grpc.Server, srv GameServiceServer) {
@@ -750,6 +965,24 @@ func _GameService_CancelCommand_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _GameService_SetSpeed_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetSpeedRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GameServiceServer).SetSpeed(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/GameService/SetSpeed",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GameServiceServer).SetSpeed(ctx, req.(*SetSpeedRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _GameService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "GameService",
 	HandlerType: (*GameServiceServer)(nil),
@@ -765,6 +998,10 @@ var _GameService_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CancelCommand",
 			Handler:    _GameService_CancelCommand_Handler,
+		},
+		{
+			MethodName: "SetSpeed",
+			Handler:    _GameService_SetSpeed_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

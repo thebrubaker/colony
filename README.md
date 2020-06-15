@@ -22,21 +22,26 @@ You will have to slowly build your colony from the ground up despite this setbac
 - Combat. Train your colonists and prepare them for battle from raiders, dangerous animals and much, much worse things crawling in the dark recesses of the planet
 - Trade. Build a trade depot and send your colonists out to trade with other players.
 
-# How to start the game server
+## How to start the game server
 
-To do some basic streaming of the game server, you can run the following command.
-
-Warning: you should run this in a very tall console window.
+To start the game server, run the following command. It will create a default game and you can find the GameKey in the logs.
 
 ```script
-go run main.go start --render true
+go run main.go start
 ```
 
-# How to stream the game server
+## How to stream the game server
+
+Run the following in a tall terminal window to see the JSON game state streamed at 30fps.
 
 ```script
-Coming Soon
-go run main.go stream
+go run main.go streamGame {GameKey}
+```
+
+## How to pause / speed up the game
+
+```script
+go run main.go setSpeed {GameKey} [0|1|2|3]
 ```
 
 # Contributing

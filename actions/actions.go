@@ -7,7 +7,7 @@ import (
 )
 
 type Action struct {
-	Colonist     *colonist.Colonist
+	colonist     *colonist.Colonist
 	Type         types.Actionable
 	TickProgress float64
 }
@@ -30,8 +30,8 @@ func InitActions(region *region.Region, colonists []*colonist.Colonist) []*Actio
 
 func (c *Context) CreateStartingAction(colonist *colonist.Colonist) *Action {
 	action := &Action{
-		Type:     &types.GatherWood{},
-		Colonist: colonist,
+		Type:     &types.StartingAction{},
+		colonist: colonist,
 	}
 
 	c.OnStart(action)

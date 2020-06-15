@@ -37,7 +37,7 @@ func (a *GatherWood) EnergyCost() EnergyCost {
 }
 
 func (a *GatherWood) Duration() TickDuration {
-	return Slow
+	return Tedious
 }
 
 func (a *GatherWood) Priority() Priority {
