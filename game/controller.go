@@ -1,24 +1,27 @@
-package controllers
+package game
 
 import (
 	"log"
 	"time"
 
-	"github.com/rs/xid"
-	"github.com/thebrubaker/colony/game"
+	"github.com/thebrubaker/colony/keys"
 )
 
+type Broadcaster interface {
+	Broadcast(keys.GameKey, GameState)
+}
+
 type GameController struct {
-	streams *StreamController
-	games   map[game.GameKey]*game.Game
+	streams Broadcaster
+	games   map[keys.GameKey]*Game
 	actionc chan func()
 	quitc   chan struct{}
 }
 
-func NewGameController(streams *StreamController) *GameController {
+func NewController(streams Broadcaster) *GameController {
 	gc := &GameController{
 		streams: streams,
-		games:   make(map[game.GameKey]*game.Game),
+		games:   make(map[keys.GameKey]*Game),
 		actionc: make(chan func()),
 		quitc:   make(chan struct{}),
 	}
@@ -34,8 +37,8 @@ func (gc *GameController) loop() {
 		case f := <-gc.actionc:
 			f()
 		case <-time.Tick(33 * time.Millisecond):
-			for key, game := range gc.games {
-				gc.streams.Broadcast(key, game.Render())
+			for key, g := range gc.games {
+				gc.streams.Broadcast(key, g.Render())
 			}
 		}
 	}
@@ -50,39 +53,35 @@ func (gc *GameController) Stop() {
 	close(gc.quitc)
 }
 
-func (gc *GameController) CreateGame() game.GameKey {
-	c := make(chan game.GameKey)
+func (gc *GameController) CreateGame() keys.GameKey {
+	c := make(chan keys.GameKey)
 	gc.actionc <- func() {
-		key := NewGameKey()
+		key := keys.NewGameKey()
 		log.Printf("creating game %s", key)
-		gc.games[key] = game.CreateGame()
+		gc.games[key] = CreateGame()
 		c <- key
 	}
 	return <-c
 }
 
-func (gc *GameController) SendCommand(key game.GameKey, commandType string) bool {
+func (gc *GameController) SendCommand(key keys.GameKey, commandType string) bool {
 	c := make(chan bool)
 	gc.actionc <- func() {
 		log.Printf("command %s sent to game %s", commandType, key)
-		g := gc.games[game.GameKey(key)]
+		g := gc.games[keys.GameKey(key)]
 		g.AddCommand(commandType)
 		c <- true
 	}
 	return <-c
 }
 
-func (gc *GameController) SetSpeed(key game.GameKey, r game.TickRate) bool {
+func (gc *GameController) SetSpeed(key keys.GameKey, r TickRate) bool {
 	c := make(chan bool)
 	gc.actionc <- func() {
-		log.Printf("set game %s speed to %s", key, r)
-		g := gc.games[game.GameKey(key)]
+		log.Printf("set game %s speed to %d", key, r)
+		g := gc.games[keys.GameKey(key)]
 		g.SetTickRate(r)
 		c <- true
 	}
 	return <-c
-}
-
-func NewGameKey() game.GameKey {
-	return game.GameKey(xid.New().String())
 }

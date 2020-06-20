@@ -1,9 +1,10 @@
 package needs
 
 import (
+	"errors"
 	"math"
 
-	"github.com/thebrubaker/colony/colonist"
+	"github.com/thebrubaker/colony/keys"
 )
 
 type needType string
@@ -22,19 +23,25 @@ const (
 	Status      needType = "Status"
 )
 
-type NeedsController struct {
-	state   map[colonist.ColonistKey]map[needType]*need
+// Controller manages all of the colonist needs within the same game tick world.
+type Controller struct {
+	state   map[keys.ColonistKey]map[needType]*need
 	actionc chan func()
 	quitc   chan struct{}
 }
 
-func NewNeedsController(k colonist.ColonistKey) *NeedsController {
-	nc := &NeedsController{}
+// NewController returns a controller for managing all changes to
+// colonist needs within the same game tick world.
+func NewController(k keys.ColonistKey) *Controller {
+	nc := &Controller{
+		actionc: make(chan func()),
+		quitc:   make(chan struct{}),
+	}
 	go nc.start()
 	return nc
 }
 
-func (nc *NeedsController) start() {
+func (nc *Controller) start() {
 	for {
 		select {
 		case f := <-nc.actionc:
@@ -45,7 +52,7 @@ func (nc *NeedsController) start() {
 	}
 }
 
-func (nc *NeedsController) update(tickElapsed float64) {
+func (nc *Controller) update(tickElapsed float64) {
 	c := make(chan struct{})
 	nc.actionc <- func() {
 		var size int
@@ -71,7 +78,36 @@ func (nc *NeedsController) update(tickElapsed float64) {
 	<-c
 }
 
-func (nc *NeedsController) NewColonist(k colonist.ColonistKey) {
+// Stop will shut down all colonist needs and then close the controller loop.
+func (nc *Controller) Stop() {
+	c := make(chan struct{})
+	nc.actionc <- func() {
+		var size int
+		for _, needs := range nc.state {
+			for range needs {
+				size++
+			}
+		}
+		d := make(chan bool, size)
+		for _, needs := range nc.state {
+			for _, n := range needs {
+				go func(n *need) {
+					n.stop()
+					d <- true
+				}(n)
+			}
+		}
+		for i := 0; i < size; i++ {
+			<-d
+		}
+		close(c)
+	}
+	<-c
+	close(nc.quitc)
+}
+
+// NewColonist registers a new set of colonist needs with the controller
+func (nc *Controller) NewColonist(k keys.ColonistKey) {
 	c := make(chan struct{})
 	nc.actionc <- func() {
 		nc.state[k] = map[needType]*need{
@@ -91,34 +127,79 @@ func (nc *NeedsController) NewColonist(k colonist.ColonistKey) {
 	<-c
 }
 
-func (nc *NeedsController) GetValue(k colonist.ColonistKey, t needType) float64 {
-	n := nc.state[k][t]
+// GetValue returns the current value for the given colonist and need type.
+func (nc *Controller) GetValue(k keys.ColonistKey, t needType) float64 {
+	c := make(chan float64)
+	nc.actionc <- func() {
+		n := nc.state[k][t]
 
-	return n.getValue()
+		c <- n.getValue()
+	}
+	return <-c
 }
 
-func (nc *NeedsController) Adjust(k colonist.ColonistKey, t needType, adjustment float64) float64 {
-	n := nc.state[k][t]
-	n.setValue(n.getValue() + adjustment)
-	return n.getValue()
+// Adjust alters the given colonist key and need type by the given adjustment value (+/-). Adjustments
+// are capped by any ceilings or floors active on the given need.
+func (nc *Controller) Adjust(k keys.ColonistKey, t needType, adjustment float64) float64 {
+	c := make(chan float64)
+	nc.actionc <- func() {
+		n := nc.state[k][t]
+		n.setValue(n.getValue() + adjustment)
+		c <- n.getValue()
+	}
+	return <-c
 }
 
-func (nc *NeedsController) Target(k colonist.ColonistKey, t needType, target float64, duration float64) (cancel func()) {
-	n := nc.state[k][t]
+// Rate applies a given rate value for an optional duration to the given colonist and need type. A rate is applied
+// per tick. All active rates are applied per tick, meaning if one rate is supposed to increase the need by +10
+// per tick, and another is to decrease it by -1, the resulting adjustment will be +9 per tick.
+func (nc *Controller) Rate(k keys.ColonistKey, t needType, rate float64, duration float64) (cancel func()) {
+	c := make(chan func())
+	nc.actionc <- func() {
+		n := nc.state[k][t]
 
-	return n.addTarget(target, duration)
+		c <- n.addRate(rate, duration)
+	}
+	return <-c
 }
 
-func (nc *NeedsController) Ceiling(k colonist.ColonistKey, t needType, ceiling float64, duration float64) (cancel func()) {
-	n := nc.state[k][t]
+// Target applies a given target value over a required duration (greater than 0) to the need, progressing the need toward
+// that target over the duration. Targets are also capped by active floors and ceilings on the need.
+func (nc *Controller) Target(k keys.ColonistKey, t needType, target float64, duration float64) (cancel func(), err error) {
+	if duration <= 0 {
+		return nil, errors.New("duration for a target must be greater than zero")
+	}
+	c := make(chan func())
+	nc.actionc <- func() {
+		n := nc.state[k][t]
 
-	return n.addCeiling(ceiling, duration)
+		c <- n.addTarget(target, duration)
+	}
+	return <-c, nil
 }
 
-func (nc *NeedsController) Floor(k colonist.ColonistKey, t needType, floor float64, duration float64) (cancel func()) {
-	n := nc.state[k][t]
+// Ceiling applies a given ceiling value to the given colonist and need type which caps how high the need can be set. If
+// there is more than one active ceiling, the lowest ceiling will be applied.
+func (nc *Controller) Ceiling(k keys.ColonistKey, t needType, ceiling float64, duration float64) (cancel func()) {
+	c := make(chan func())
+	nc.actionc <- func() {
+		n := nc.state[k][t]
 
-	return n.addFloor(floor, duration)
+		c <- n.addCeiling(ceiling, duration)
+	}
+	return <-c
+}
+
+// Floor applies a given floor value to the given colonist and need type which limits how low the need can be set. If
+// there is more than one active floor, the highest floor will be applied.
+func (nc *Controller) Floor(k keys.ColonistKey, t needType, floor float64, duration float64) (cancel func()) {
+	c := make(chan func())
+	nc.actionc <- func() {
+		n := nc.state[k][t]
+
+		c <- n.addFloor(floor, duration)
+	}
+	return <-c
 }
 
 type need struct {
@@ -165,20 +246,27 @@ func (n *need) start() {
 	}
 }
 
+func (n *need) stop() {
+	close(n.quitc)
+}
+
 // update processes how the need should be adjusted for the amount of tick time
 // that has elapsed. Various rates, ceilings and floors may expire.
 func (n *need) update(tickElapsed float64) {
+	c := make(chan struct{})
 	n.actionc <- func() {
 		n.state.rates = updateExpiringValues(n.state.rates, tickElapsed)
 		n.state.ceilings = updateExpiringValues(n.state.ceilings, tickElapsed)
 		n.state.floors = updateExpiringValues(n.state.floors, tickElapsed)
 
-		adjustment := sumExpiringValues(n.state.rates) * tickElapsed
+		adjustment := (n.state.baseRate + sumExpiringValues(n.state.rates)) * tickElapsed
 		ceiling := minExpiringValue(n.state.ceilings)
 		floor := maxExpiringValue(n.state.floors)
 
 		n.state.value = math.Min(ceiling, math.Max(floor, n.state.value+adjustment))
+		close(c)
 	}
+	<-c
 }
 
 // addTarget adds a new target for a given duration and returns a cancel callback to remove the target.
@@ -192,13 +280,41 @@ func (n *need) addTarget(target float64, duration float64) (cancel func()) {
 			duration: duration,
 		}
 		cancel := func() {
-			n.state.rates = removeExpiringValue(n.state.rates, v)
+			n.removeRate(v)
 		}
 		// add rate
 		n.state.rates = append(n.state.rates, v)
 		c <- cancel
 	}
 	return <-c
+}
+
+// addRate adds a new rate for a given duration and returns a cancel callback to remove the rate.
+func (n *need) addRate(r float64, duration float64) (cancel func()) {
+	c := make(chan func())
+	n.actionc <- func() {
+		// convert target to rate
+		v := &expiringValue{
+			value:    r,
+			duration: duration,
+		}
+		cancel := func() {
+			n.removeRate(v)
+		}
+		// add rate
+		n.state.rates = append(n.state.rates, v)
+		c <- cancel
+	}
+	return <-c
+}
+
+func (n *need) removeRate(v *expiringValue) {
+	c := make(chan struct{})
+	n.actionc <- func() {
+		n.state.rates = removeExpiringValue(n.state.rates, v)
+		close(c)
+	}
+	<-c
 }
 
 // addCeiling adds a new ceiling for an optional duration and returns a cancel callback to remove the ceiling.
@@ -211,12 +327,21 @@ func (n *need) addCeiling(ceiling float64, duration float64) (cancel func()) {
 			duration: duration,
 		}
 		cancel := func() {
-			n.state.ceilings = removeExpiringValue(n.state.ceilings, v)
+			n.removeCeiling(v)
 		}
 		n.state.ceilings = append(n.state.ceilings, v)
 		c <- cancel
 	}
 	return <-c
+}
+
+func (n *need) removeCeiling(v *expiringValue) {
+	c := make(chan struct{})
+	n.actionc <- func() {
+		n.state.ceilings = removeExpiringValue(n.state.ceilings, v)
+		close(c)
+	}
+	<-c
 }
 
 // addFloor adds a new floor for an optional duration and returns a cancel callback to remove the floor.
@@ -229,12 +354,21 @@ func (n *need) addFloor(floor float64, duration float64) (cancel func()) {
 			duration: duration,
 		}
 		cancel := func() {
-			n.state.floors = removeExpiringValue(n.state.floors, v)
+			n.removeFloor(v)
 		}
 		n.state.floors = append(n.state.floors, v)
 		c <- cancel
 	}
 	return <-c
+}
+
+func (n *need) removeFloor(v *expiringValue) {
+	c := make(chan struct{})
+	n.actionc <- func() {
+		n.state.floors = removeExpiringValue(n.state.floors, v)
+		close(c)
+	}
+	<-c
 }
 
 // getValue returns the current value of the need.

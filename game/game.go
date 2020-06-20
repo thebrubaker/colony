@@ -4,8 +4,6 @@ import (
 	"time"
 )
 
-type GameKey string
-
 type Game struct {
 	state   *GameState
 	actionc chan func()

@@ -25,8 +25,9 @@ import (
 	"time"
 
 	"github.com/spf13/cobra"
-	"github.com/thebrubaker/colony/controllers"
+	"github.com/thebrubaker/colony/game"
 	"github.com/thebrubaker/colony/server"
+	"github.com/thebrubaker/colony/streams"
 )
 
 // type Debug struct {
@@ -57,8 +58,8 @@ to quickly create a Cobra application.`,
 		if err != nil {
 			log.Fatalf("failed to listen: %v", err)
 		}
-		sc := controllers.NewStreamController()
-		gc := controllers.NewGameController(sc)
+		sc := streams.NewController()
+		gc := game.NewController(sc)
 		server := server.NewServer(lis, server.NewGameService(gc, sc))
 
 		gc.CreateGame()
