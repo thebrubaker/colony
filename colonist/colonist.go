@@ -3,6 +3,7 @@ package colonist
 import (
 	"math/rand"
 
+	"github.com/rs/xid"
 	"github.com/thebrubaker/colony/need"
 )
 
@@ -12,6 +13,7 @@ const (
 
 // Colonist struct
 type Colonist struct {
+	Key    string `json:"key"`
 	Name   string `json:"name"`
 	Status string `json:"status"`
 	Age    uint   `json:"age"`
@@ -24,10 +26,13 @@ type Colonist struct {
 	Stats  *Stats      `json:"stats"`
 }
 
+type ColonistKey string
+
 // GenerateColonist returns a new colonist with the given name
 // and a random set of skills and stats.
 func NewColonist(name string) *Colonist {
 	return &Colonist{
+		Key:       newColonistKey(),
 		Name:      name,
 		Age:       generateAge(),
 		Needs:     need.NewNeeds(),
@@ -44,4 +49,8 @@ func generateAge() uint {
 
 func (c *Colonist) SetStatus(s string) {
 	c.Status = s
+}
+
+func newColonistKey() string {
+	return xid.New().String()
 }
