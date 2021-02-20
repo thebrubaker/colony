@@ -1,6 +1,14 @@
 # Colony (Working Title)
 
-Colony is a colony / survival / simulation game written in Go. The game is currently experimental and a work in progress.
+Colony is a colony simulation / game written in Go. The game is currently experimental and a work in progress. I use this project to tinker with various golang concepts.
+
+## How to take it for a spin
+
+To start the game but without a server and render the gamestate to the console, run the following command:
+
+```script
+go run main.go debug
+```
 
 ## Quick Backstory
 
@@ -8,27 +16,13 @@ Your colonist has woken up from cryosleep alone on a new planet. Your mission wa
 
 You will have to slowly build your colony from the ground up despite this setback. Hunt for food, create a settlement, recruit new colonists, and discover advanced technology hidden away. But be careful. Not everyone is friendly, and there appears to be some strange, dangerous creatures roaming about. Maybe something much worse.
 
-## Planned technical features include
+## Ideas WIP for the game
 
 - gRPC API for streaming game and sending in commands
-- Fully documented API for automating the game while you are away
-- Multiplayer support to play with others
-- OAuth support enabling custom API-driven clients such as voice commands, push notifications and custom clients
-
-## Planned game features include
-
 - Utility-based decision trees. Colonists have a mind of their own, but you can command them to attempt certain tasks. Assign colonists to leadership roles to improve coordinated effort.
 - Crafting and Construction. Build farms, mines, workshops, fortificatons, trade depots and other buildings to sustain your colonists needs and desires
 - Combat. Train your colonists and prepare them for battle from raiders, dangerous animals and much, much worse things crawling in the dark recesses of the planet
 - Trade. Build a trade depot and send your colonists out to trade with other players.
-
-## How to start a game and debug
-
-To start the game but without a server and render the gamestate to the console, run the following command:
-
-```script
-go run main.go debug
-```
 
 ## How to start the game server
 
