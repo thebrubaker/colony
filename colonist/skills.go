@@ -6,6 +6,22 @@ import (
 	"math/rand"
 )
 
+type SkillType string
+
+const (
+	Hunting     SkillType = "hunting"
+	Crafting    SkillType = "crafting"
+	Cooking     SkillType = "cooking"
+	Building    SkillType = "building"
+	Gathering   SkillType = "gathering"
+	Mining      SkillType = "mining"
+	Woodcutting SkillType = "woodcutting"
+	Science     SkillType = "science"
+	Combat      SkillType = "combat"
+	Charisma    SkillType = "charisma"
+	Medicine    SkillType = "medicine"
+)
+
 type Skills struct {
 	Hunting     float64 `json:"hunting"`
 	Crafting    float64 `json:"crafting"`
@@ -70,4 +86,33 @@ func (s Skills) MarshalJSON() ([]byte, error) {
 	}
 
 	return json.Marshal(data)
+}
+
+// Increase will increase the given need type by the value
+// with a ceiling of 0
+func (s *Skills) Increase(t SkillType, value float64) {
+	switch t {
+	case Hunting:
+		s.Hunting = math.Min(100, s.Hunting+value)
+	case Crafting:
+		s.Crafting = math.Min(100, s.Crafting+value)
+	case Cooking:
+		s.Cooking = math.Min(100, s.Cooking+value)
+	case Building:
+		s.Building = math.Min(100, s.Building+value)
+	case Gathering:
+		s.Gathering = math.Min(100, s.Gathering+value)
+	case Mining:
+		s.Mining = math.Min(100, s.Mining+value)
+	case Woodcutting:
+		s.Woodcutting = math.Min(100, s.Woodcutting+value)
+	case Science:
+		s.Science = math.Min(100, s.Science+value)
+	case Combat:
+		s.Combat = math.Min(100, s.Combat+value)
+	case Charisma:
+		s.Charisma = math.Min(100, s.Charisma+value)
+	case Medicine:
+		s.Medicine = math.Min(100, s.Medicine+value)
+	}
 }

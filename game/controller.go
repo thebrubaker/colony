@@ -1,6 +1,8 @@
 package game
 
 import (
+	"encoding/json"
+	"fmt"
 	"log"
 	"time"
 
@@ -38,6 +40,12 @@ func (gc *GameController) loop() {
 			f()
 		case <-time.Tick(33 * time.Millisecond):
 			for key, g := range gc.games {
+				data, err := json.MarshalIndent(g.Render(), "", "    ")
+				if err != nil {
+					return
+				}
+				fmt.Println(string(data))
+
 				gc.streams.Broadcast(key, g.Render())
 			}
 		}
@@ -78,7 +86,7 @@ func (gc *GameController) SendCommand(key keys.GameKey, commandType string) bool
 func (gc *GameController) SetSpeed(key keys.GameKey, r TickRate) bool {
 	c := make(chan bool)
 	gc.actionc <- func() {
-		log.Printf("set game %s speed to %d", key, r)
+		log.Printf("set game %s speed to %f", key, r)
 		g := gc.games[keys.GameKey(key)]
 		g.SetTickRate(r)
 		c <- true

@@ -2,6 +2,7 @@ package types
 
 import (
 	"github.com/fogleman/ease"
+	"github.com/thebrubaker/colony/colonist"
 	"github.com/thebrubaker/colony/need"
 )
 
@@ -30,4 +31,8 @@ func (a *PickBerries) Need() need.NeedType {
 
 func (a *PickBerries) Satisfies() (need.NeedType, float64, func(float64) float64) {
 	return need.Hunger, 70, func(w float64) float64 { return ease.InQuad(w) }
+}
+
+func (a *PickBerries) SkillUp() (colonist.SkillType, float64, func(float64) float64) {
+	return colonist.Gathering, 0.5, func(w float64) float64 { return w }
 }

@@ -1,6 +1,7 @@
 package types
 
 import (
+	"github.com/thebrubaker/colony/colonist"
 	"github.com/thebrubaker/colony/need"
 )
 
@@ -104,4 +105,8 @@ type Gathers interface {
 type EasedWeight interface {
 	Actionable
 	EaseWeight(v float64) float64
+}
+type SimpleSkillUp interface {
+	Actionable
+	SkillUp() (colonist.SkillType, float64, func(float64) float64)
 }

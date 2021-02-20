@@ -27,6 +27,10 @@ func OnTick(c *Context, a *Action) {
 	if i, ok := a.Type.(types.Gathers); ok {
 		Gathers(c, i, c.TickElapsed)
 	}
+
+	if i, ok := a.Type.(types.SimpleSkillUp); ok {
+		SimpleSkillUp(c, i, c.TickElapsed)
+	}
 }
 
 func Gathers(c *Context, i types.Gathers, tickElapsed float64) {
@@ -50,16 +54,25 @@ func SimpleFulfillment(c *Context, i types.SimpleFulfillment, tickProgress float
 	needType, total, ease := i.Satisfies()
 	duration := float64(i.Duration())
 
-	need, value := GetEasedValue(needType, total, ease, duration, tickProgress, c.TickElapsed)
+	value := GetEasedValue(total, ease, duration, tickProgress, c.TickElapsed)
 
-	c.Colonist.Needs.Decrease(need, value)
+	c.Colonist.Needs.Decrease(needType, value)
 }
 
 func SimpleAgitate(c *Context, i types.SimpleAgitate, tickProgress float64) {
 	needType, total, ease := i.Agitates()
 	duration := float64(i.Duration())
 
-	need, value := GetEasedValue(needType, total, ease, duration, tickProgress, c.TickElapsed)
+	value := GetEasedValue(total, ease, duration, tickProgress, c.TickElapsed)
 
-	c.Colonist.Needs.Increase(need, value)
+	c.Colonist.Needs.Increase(needType, value)
+}
+
+func SimpleSkillUp(c *Context, i types.SimpleSkillUp, tickProgress float64) {
+	skillType, total, ease := i.SkillUp()
+	duration := float64(i.Duration())
+
+	value := GetEasedValue(total, ease, duration, tickProgress, c.TickElapsed)
+
+	c.Colonist.Skills.Increase(skillType, value)
 }

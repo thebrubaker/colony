@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	JsonDecimalPlaces float64 = 100
+	JsonDecimalPlaces float64 = 10000
 )
 
 // Colonist struct

@@ -3,7 +3,6 @@ package actions
 import (
 	"github.com/thebrubaker/colony/actions/types"
 	"github.com/thebrubaker/colony/colonist"
-	"github.com/thebrubaker/colony/need"
 	"github.com/thebrubaker/colony/region"
 )
 
@@ -62,13 +61,13 @@ func (c *Context) OnStart(a *Action) {
 	c.Colonist.SetStatus(a.Type.Status())
 }
 
-func GetEasedValue(needType need.NeedType, total float64, ease func(float64) float64, duration float64, tickProgress float64, tickElapsed float64) (need.NeedType, float64) {
+func GetEasedValue(total float64, ease func(float64) float64, duration float64, tickProgress float64, tickElapsed float64) float64 {
 	if ease == nil {
-		return needType, (total / duration) * tickElapsed
+		return (total / duration) * tickElapsed
 	}
 
 	previousTick := ease(tickProgress / duration)
 	currentTick := ease((tickProgress + tickElapsed) / duration)
 
-	return needType, total * (currentTick - previousTick)
+	return total * (currentTick - previousTick)
 }

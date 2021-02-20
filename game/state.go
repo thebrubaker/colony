@@ -3,7 +3,6 @@ package game
 import (
 	"github.com/thebrubaker/colony/actions"
 	"github.com/thebrubaker/colony/colonist"
-	"github.com/thebrubaker/colony/commands"
 	"github.com/thebrubaker/colony/region"
 )
 
@@ -12,7 +11,6 @@ type GameState struct {
 	Region    *region.Region
 	Colonists []*colonist.Colonist
 	actions   []*actions.Action
-	commands  []commands.Command
 }
 
 func CreateGameState() *GameState {
