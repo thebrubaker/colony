@@ -1,13 +1,62 @@
-# Colony (Working Title)
+# Go Colony
 
-Colony is a colony simulation / game written in Go. The game is currently experimental and a work in progress. I use this project to tinker with various golang concepts.
+A colony simulation / game written in Go. The game is currently experimental and a work in progress. I use this project to tinker with various golang concepts.
 
 ## How to take it for a spin
 
-To start the game but without a server and render the gamestate to the console, run the following command:
+To start the game but without a server and render the gamestate to the console, run the following command in a tall terminal window:
 
 ```script
 go run main.go debug
+```
+
+```json
+{
+    "Ticker": {
+        "Rate": 1,
+        "Count": 68.74488719699967
+    },
+    "Region": {
+        "stockpile": null
+    },
+    "Colonists": [
+        {
+            "key": "c0o8a8mcie6kh5rknmug",
+            "name": "John Wallis",
+            "status": "gathering wood from a nearby forest",
+            "age": 225,
+            "bag": null,
+            "equipment": {
+                "head": null,
+                "weapon": null,
+                "body": null
+            },
+            "needs": {
+                "Thirst": 1.5331686573000003,
+                "Stress": 0,
+                "Exhaustion": 3.1466673566200103,
+                "Hunger": 2.2835665030500083
+            },
+            "skills": {
+                "building": 3.2662,
+                "charisma": 3.8244,
+                "combat": 4.1223,
+                "cooking": 6.3478,
+                "crafting": 7.7639,
+                "gathering": 2.3608,
+                "hunting": 6.5566,
+                "medicine": 7.785,
+                "mining": 1.2168,
+                "science": 3.3645,
+                "woodcutting": 1.9107
+            },
+            "stats": {
+                "dexterity": 10.9845,
+                "strength": 15.5423
+            }
+        }
+    ]
+}
 ```
 
 ## Quick Backstory
@@ -16,7 +65,7 @@ Your colonist has woken up from cryosleep alone on a new planet. Your mission wa
 
 You will have to slowly build your colony from the ground up despite this setback. Hunt for food, create a settlement, recruit new colonists, and discover advanced technology hidden away. But be careful. Not everyone is friendly, and there appears to be some strange, dangerous creatures roaming about. Maybe something much worse.
 
-## Ideas WIP for the game
+## WIP ideas for the game
 
 - gRPC API for streaming game and sending in commands
 - Utility-based decision trees. Colonists have a mind of their own, but you can command them to attempt certain tasks. Assign colonists to leadership roles to improve coordinated effort.
