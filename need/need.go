@@ -9,17 +9,19 @@ type NeedType string
 
 // The constants for each need type.
 const (
-	Thirst     NeedType = "thirst"
-	Stress     NeedType = "stress"
-	Exhaustion NeedType = "exhaustion"
-	Hunger     NeedType = "hunger"
+	Thirst      NeedType = "thirst"
+	Stress      NeedType = "stress"
+	Exhaustion  NeedType = "exhaustion"
+	Hunger      NeedType = "hunger"
+	Fulfillment NeedType = "fulfillment"
 )
 
 type attributes struct {
-	Thirst     float64
-	Stress     float64
-	Exhaustion float64
-	Hunger     float64
+	Thirst      float64
+	Stress      float64
+	Exhaustion  float64
+	Hunger      float64
+	Fulfillment float64
 }
 
 // Needs are the basic needs of a colonist
@@ -31,10 +33,11 @@ type Needs struct {
 func NewNeeds() *Needs {
 	return &Needs{
 		attributes: &attributes{
-			Thirst:     60,
-			Stress:     0,
-			Exhaustion: 0,
-			Hunger:     60,
+			Thirst:      60,
+			Stress:      10,
+			Exhaustion:  15,
+			Hunger:      60,
+			Fulfillment: 5,
 		},
 	}
 }
@@ -69,6 +72,8 @@ func (n *Needs) Increase(t NeedType, value float64) {
 		n.attributes.Exhaustion = math.Min(100, n.attributes.Exhaustion+value)
 	case Stress:
 		n.attributes.Stress = math.Min(100, n.attributes.Stress+value)
+	case Fulfillment:
+		n.attributes.Fulfillment = math.Min(100, n.attributes.Fulfillment+value)
 	}
 }
 
@@ -84,6 +89,8 @@ func (n *Needs) Decrease(t NeedType, value float64) {
 		n.attributes.Exhaustion = math.Max(0, n.attributes.Exhaustion-value)
 	case Stress:
 		n.attributes.Stress = math.Max(0, n.attributes.Stress-value)
+	case Fulfillment:
+		n.attributes.Fulfillment = math.Max(0, n.attributes.Fulfillment-value)
 	}
 }
 
@@ -107,6 +114,8 @@ func (n *Needs) Set(t NeedType, value float64) {
 		n.attributes.Exhaustion = value
 	case Stress:
 		n.attributes.Stress = value
+	case Fulfillment:
+		n.attributes.Fulfillment = value
 	}
 }
 
@@ -121,6 +130,8 @@ func (n *Needs) Get(t NeedType) float64 {
 		return n.attributes.Exhaustion
 	case Stress:
 		return n.attributes.Stress
+	case Fulfillment:
+		return n.attributes.Fulfillment
 	}
 
 	return 0

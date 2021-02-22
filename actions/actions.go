@@ -6,35 +6,40 @@ import (
 	"github.com/thebrubaker/colony/region"
 )
 
+type Context struct {
+	Region         *region.Region
+	Colonists      []*colonist.Colonist
+	ActiveColonist *colonist.Colonist
+	TickElapsed    float64
+}
 type Action struct {
-	colonist     *colonist.Colonist
 	Type         types.Actionable
 	TickProgress float64
 }
 
-func InitActions(region *region.Region, colonists []*colonist.Colonist) []*Action {
-	var actions []*Action
+type Actions map[string]*Action
+
+func (a Actions) Update(ctx *Context) {
+	for _, colonist := range ctx.Colonists {
+		if activeAction, ok := a[colonist.Key]; ok {
+			ctx.ActiveColonist = colonist
+			action := ctx.DetermineAction(activeAction)
+			ctx.UpdateAction(action.Type)
+			action.TickProgress = action.TickProgress + ctx.TickElapsed
+			a[colonist.Key] = action
+		}
+	}
+}
+
+func CreateActions(colonists []*colonist.Colonist) Actions {
+	actions := make(Actions)
 
 	for _, colonist := range colonists {
-		context := &Context{
-			Region:      region,
-			Colonist:    colonist,
-			TickElapsed: 0,
+		actions[colonist.Key] = &Action{
+			Type:         types.CryoSleepWakeup,
+			TickProgress: 0,
 		}
-
-		actions = append(actions, context.CreateStartingAction(colonist))
 	}
 
 	return actions
-}
-
-func (c *Context) CreateStartingAction(colonist *colonist.Colonist) *Action {
-	action := &Action{
-		Type:     &types.StartingAction{},
-		colonist: colonist,
-	}
-
-	c.OnStart(action)
-
-	return action
 }

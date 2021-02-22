@@ -46,6 +46,14 @@ func Put(slice []interface{}, elem interface{}) ([]interface{}, error) {
 	return putElem(slice, elem)
 }
 
+func GetCount(elem interface{}) uint {
+	if stack, ok := elem.(Stackable); ok {
+		return stack.GetCount()
+	}
+
+	return 1
+}
+
 // Has is a utility method for determining if an element, or the count
 // of a Stackable element exists within the given slice. It is useful to run a check
 // on Has before executing Take to remove an element or Stackable from the slice.

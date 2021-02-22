@@ -8,6 +8,7 @@ import (
 )
 
 type Bag struct {
+	size  uint
 	items []interface{}
 }
 
@@ -24,7 +25,7 @@ func (b *Bag) MarshalJSON() ([]byte, error) {
 func (b *Bag) UnmarshalJSON(bytes []byte) error {
 	var items []interface{}
 
-	if err := json.Unmarshal(bytes, items); err != nil {
+	if err := json.Unmarshal(bytes, &items); err != nil {
 		return err
 	}
 
@@ -42,7 +43,10 @@ func (b *Bag) Add(elem interface{}, count uint) error {
 	}
 
 	if i, ok := elem.(Stackable); ok && i.IsStackable() {
-		items, err = stackable.Put(b.items, &stackable.Stack{elem, count})
+		items, err = stackable.Put(b.items, &stackable.Stack{
+			Element: elem,
+			Count:   count,
+		})
 	} else {
 		items, err = stackable.Put(b.items, elem)
 	}
@@ -65,7 +69,10 @@ func (b *Bag) Remove(elem interface{}, count uint) error {
 	}
 
 	if i, ok := elem.(Stackable); ok && i.IsStackable() {
-		items, err = stackable.Take(b.items, &stackable.Stack{elem, count})
+		items, err = stackable.Take(b.items, &stackable.Stack{
+			Element: elem,
+			Count:   count,
+		})
 	} else {
 		items, err = stackable.Take(b.items, elem)
 	}
@@ -85,8 +92,29 @@ func (b *Bag) Has(elem interface{}, count uint) bool {
 	}
 
 	if i, ok := elem.(Stackable); ok && i.IsStackable() {
-		return stackable.Has(b.items, &stackable.Stack{elem, count})
+		return stackable.Has(b.items, &stackable.Stack{
+			Element: elem,
+			Count:   count,
+		})
 	}
 
 	return stackable.Has(b.items, elem)
+}
+
+func (b *Bag) GetAvailableSpace() uint {
+	var itemCount uint = 0
+
+	for _, i := range b.items {
+		itemCount += getCount(i)
+	}
+
+	return uint(itemCount)
+}
+
+func getCount(item interface{}) uint {
+	if i, ok := item.(Stackable); ok && i.IsStackable() {
+		return stackable.GetCount(item)
+	}
+
+	return 1
 }

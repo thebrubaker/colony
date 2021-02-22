@@ -4,8 +4,10 @@ go 1.14
 
 require (
 	github.com/buger/goterm v0.0.0-20200322175922-2f3e71b85129
+	github.com/davecgh/go-spew v1.1.1
 	github.com/fogleman/ease v0.0.0-20170301025033-8da417bf1776
 	github.com/golang/protobuf v1.4.2
+	github.com/jmcvetta/randutil v0.0.0-20150817122601-2bb1b664bcff
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/rs/xid v1.2.1
 	github.com/spf13/cobra v1.0.0
