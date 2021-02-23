@@ -11,8 +11,9 @@ var DrinkGroundWater = &SimpleAction{
 		"drinking water from a nearby stream",
 		"drinking a small amount of collected rain water",
 	},
-	effort:   Easy,
-	duration: Slow,
+	effort:      Easy,
+	duration:    Slow,
+	utilityNeed: colonist.Thirst,
 	satisfiesNeeds: []SatisfyNeed{
 		{colonist.Thirst, 65, ease.InOutCubic},
 	},
@@ -27,8 +28,9 @@ var GatherWildBerries = &SimpleAction{
 		"gathering berries from a nearby forest",
 		"gathering ripe berries from wild bushes",
 	},
-	effort:   Easy,
-	duration: Slow,
+	effort:      Easy,
+	duration:    Slow,
+	utilityNeed: colonist.Hunger,
 	satisfiesNeeds: []SatisfyNeed{
 		{colonist.Hunger, 35, ease.InOutCubic},
 		{colonist.Stress, 10, ease.InOutCubic},
@@ -47,8 +49,9 @@ var GatherWood = &SimpleAction{
 		"gathering large branches from a nearby forest",
 		"collecting large sticks and branches from nearby",
 	},
-	effort:   Demanding,
-	duration: Slow,
+	effort:        Demanding,
+	duration:      Slow,
+	utilityDesire: colonist.Fulfillment,
 	satisfiesDesires: []SatisfyDesire{
 		{colonist.Fulfillment, 35, ease.InOutCubic},
 	},
@@ -66,8 +69,9 @@ var BasicRelax = &SimpleAction{
 		"watching clouds as they pass by in the distance",
 		"wandering around aimlessly",
 	},
-	effort:   Painless,
-	duration: Moderate,
+	effort:      Painless,
+	duration:    Moderate,
+	utilityNeed: colonist.Stress,
 	satisfiesNeeds: []SatisfyNeed{
 		{colonist.Stress, 30, ease.InOutCubic},
 	},
@@ -79,8 +83,9 @@ var BasicRest = &SimpleAction{
 		"huddled in a protected corner attempting to sleep",
 		"trying to sleep using worn rags and torn clothing as a blanket",
 	},
-	effort:   Easy,
-	duration: Slow,
+	effort:      Easy,
+	duration:    Slow,
+	utilityNeed: colonist.Exhaustion,
 	satisfiesNeeds: []SatisfyNeed{
 		{colonist.Exhaustion, 60, ease.InBounce},
 	},
@@ -96,6 +101,6 @@ var CryoSleepWakeup = &SimpleAction{
 	effort:   Painless,
 	duration: Fast,
 	agitatesNeeds: []AgitateNeed{
-		{colonist.Stress, 85, ease.InOutQuint},
+		{colonist.Stress, 30, ease.InOutQuint},
 	},
 }

@@ -19,8 +19,8 @@ func (b *CampFire) Description() string {
 func (b *CampFire) BuildCost() []stackable.Stack {
 	return []stackable.Stack{
 		{
-			Element: resources.Wood,
-			Count:   10,
+			Item:  resources.Wood,
+			Count: 10,
 		},
 	}
 }

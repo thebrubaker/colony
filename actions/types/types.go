@@ -1,5 +1,7 @@
 package types
 
+import "github.com/thebrubaker/colony/colonist"
+
 type TickDuration float64
 
 const (
@@ -24,8 +26,11 @@ type Actionable interface {
 	Status() []string
 	TakesEffort() Effort
 	HasDuration() TickDuration
+	HasUtilityNeed() colonist.NeedType
+	HasUtilityDesire() colonist.DesireType
 	SatisfiesNeeds() []SatisfyNeed
 	AgitatesNeeds() []AgitateNeed
+	SatisfiesDesires() []SatisfyDesire
 	ProducesResources() []ProduceResource
 	ConsumesResources() []ConsumeResource
 	ImprovesSkills() []ImproveSkill

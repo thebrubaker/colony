@@ -8,28 +8,28 @@ import (
 // a slice but should be incremented as a stack instead of appended
 // to the slice.
 type Stackable interface {
-	GetElement() interface{}
+	GetItem() interface{}
 	GetCount() uint
 	SetCount(uint)
 }
 
 // Stack is a struct that represents the count of a given element.
 type Stack struct {
-	Element interface{}
-	Count   uint
+	Item  interface{}
+	Count uint
 }
 
-// GetElement returns the Element of the Stack
-func (s *Stack) GetElement() interface{} {
-	return s.Element
+// GetItem returns the Item of the Stack
+func (s *Stack) GetItem() interface{} {
+	return s.Item
 }
 
-// GetCount returns the count of the Element in the Stack
+// GetCount returns the count of the Item in the Stack
 func (s *Stack) GetCount() uint {
 	return s.Count
 }
 
-// SetCount sets the count of the Element in the Stack
+// SetCount sets the count of the Item in the Stack
 func (s *Stack) SetCount(count uint) {
 	s.Count = count
 }
@@ -80,14 +80,14 @@ func Take(slice []interface{}, elem interface{}) ([]interface{}, error) {
 
 func takeStack(slice []interface{}, stack Stackable) ([]interface{}, error) {
 	for i, elem := range slice {
-		if s, ok := elem.(Stackable); ok && s.GetElement() == stack.GetElement() {
+		if s, ok := elem.(Stackable); ok && s.GetItem() == stack.GetItem() {
 			if s.GetCount() == stack.GetCount() {
 				return removeIndex(slice, i), nil
 			}
 
 			if stack.GetCount() < s.GetCount() {
 				slice[i] = &Stack{
-					s.GetElement(),
+					s.GetItem(),
 					s.GetCount() - stack.GetCount(),
 				}
 
@@ -119,7 +119,7 @@ func removeIndex(slice []interface{}, i int) []interface{} {
 
 func hasStack(slice []interface{}, stack Stackable) bool {
 	for _, elem := range slice {
-		if s, ok := elem.(Stackable); ok && s.GetElement() == stack.GetElement() {
+		if s, ok := elem.(Stackable); ok && s.GetItem() == stack.GetItem() {
 			return s.GetCount() >= stack.GetCount()
 		}
 	}
@@ -139,7 +139,7 @@ func hasElem(slice []interface{}, elem interface{}) bool {
 
 func putStack(slice []interface{}, stack Stackable) ([]interface{}, error) {
 	for i, elem := range slice {
-		if s, ok := elem.(Stackable); ok && s.GetElement() == stack.GetElement() {
+		if s, ok := elem.(Stackable); ok && s.GetItem() == stack.GetItem() {
 			combined, err := CombineStacks(s, stack)
 
 			slice[i] = combined
@@ -149,7 +149,7 @@ func putStack(slice []interface{}, stack Stackable) ([]interface{}, error) {
 	}
 
 	slice = append(slice, &Stack{
-		stack.GetElement(),
+		stack.GetItem(),
 		stack.GetCount(),
 	})
 
@@ -163,12 +163,12 @@ func putElem(slice []interface{}, elem interface{}) ([]interface{}, error) {
 // CombineStacks returns a new Stack that combines the counts of two Stacks
 // as long as the elements in the stacks match.
 func CombineStacks(a Stackable, b Stackable) (*Stack, error) {
-	if a.GetElement() != b.GetElement() {
+	if a.GetItem() != b.GetItem() {
 		return nil, errors.New("cannot combine stacks where items do not match")
 	}
 
 	return &Stack{
-		a.GetElement(),
+		a.GetItem(),
 		a.GetCount() + b.GetCount(),
 	}, nil
 }

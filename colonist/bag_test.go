@@ -7,7 +7,9 @@ import (
 )
 
 func TestColonistBag(t *testing.T) {
-	bag := Bag{}
+	bag := Bag{
+		size: 10,
+	}
 	var err error
 
 	err = bag.Add(resources.Wood, 10)

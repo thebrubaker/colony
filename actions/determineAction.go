@@ -8,7 +8,7 @@ import (
 )
 
 func (ctx *Context) DetermineAction(a *Action) *Action {
-	if a != nil && a.TickProgress < float64(a.Type.HasDuration()) {
+	if a.TickProgress < float64(a.Type.HasDuration()) {
 		return a
 	}
 
@@ -29,6 +29,12 @@ func (ctx *Context) NextAction(previousAction types.Actionable) *Action {
 // then generate a weight score for how motivated the colonist is to choose
 // that action (with some randomness).
 func (ctx *Context) SelectNextAction(currentType types.Actionable) *Action {
+	if ctx.TickElapsed == 0 {
+		return &Action{
+			Type: types.CryoSleepWakeup,
+		}
+	}
+
 	allowedActions := ctx.FilterActions([]types.Actionable{
 		types.DrinkGroundWater,
 		types.GatherWildBerries,
@@ -56,17 +62,6 @@ func (ctx *Context) FilterActions(actions []types.Actionable) []types.Actionable
 	}
 
 	return allowedActions
-}
-
-func GetEasedValue(total float64, ease func(float64) float64, duration float64, tickProgress float64, tickElapsed float64) float64 {
-	if ease == nil {
-		return (total / duration) * tickElapsed
-	}
-
-	previousTick := ease(tickProgress / duration)
-	currentTick := ease((tickProgress + tickElapsed) / duration)
-
-	return total * (currentTick - previousTick)
 }
 
 // Goes through the game context to confirm the resources exist
@@ -119,5 +114,13 @@ func (ctx *Context) GetWeightedChoices(currentAction types.Actionable, available
 }
 
 func (ctx *Context) GetUtility(currentAction types.Actionable, nextAction types.Actionable) int {
-	return 0
+	if needType := nextAction.HasUtilityNeed(); needType != "" {
+		return int(ctx.ActiveColonist.Needs[needType])
+	}
+
+	if desireType := nextAction.HasUtilityDesire(); desireType != "" {
+		return 100 - int(ctx.ActiveColonist.Desires[desireType])
+	}
+
+	return 50
 }

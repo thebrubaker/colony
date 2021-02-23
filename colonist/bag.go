@@ -38,14 +38,16 @@ func (b *Bag) Add(elem interface{}, count uint) error {
 	var items []interface{}
 	var err error
 
-	if i, ok := elem.(Stackable); !ok && i.IsStackable() && count > 0 {
+	i, ok := elem.(Stackable)
+
+	if !ok {
 		return errors.New("non-stackable elements cannot be added with a count")
 	}
 
-	if i, ok := elem.(Stackable); ok && i.IsStackable() {
+	if i.IsStackable() {
 		items, err = stackable.Put(b.items, &stackable.Stack{
-			Element: elem,
-			Count:   count,
+			Item:  elem,
+			Count: count,
 		})
 	} else {
 		items, err = stackable.Put(b.items, elem)
@@ -64,14 +66,16 @@ func (b *Bag) Remove(elem interface{}, count uint) error {
 	var items []interface{}
 	var err error
 
-	if i, ok := elem.(Stackable); !ok && i.IsStackable() && count > 0 {
+	i, ok := elem.(Stackable)
+
+	if (!ok || !i.IsStackable()) && count > 0 {
 		return errors.New("non-stackable elements cannot be removed with a count")
 	}
 
 	if i, ok := elem.(Stackable); ok && i.IsStackable() {
 		items, err = stackable.Take(b.items, &stackable.Stack{
-			Element: elem,
-			Count:   count,
+			Item:  elem,
+			Count: count,
 		})
 	} else {
 		items, err = stackable.Take(b.items, elem)
@@ -93,8 +97,8 @@ func (b *Bag) Has(elem interface{}, count uint) bool {
 
 	if i, ok := elem.(Stackable); ok && i.IsStackable() {
 		return stackable.Has(b.items, &stackable.Stack{
-			Element: elem,
-			Count:   count,
+			Item:  elem,
+			Count: count,
 		})
 	}
 

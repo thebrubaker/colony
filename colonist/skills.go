@@ -4,7 +4,7 @@ import (
 	"math/rand"
 )
 
-func generateSkills() *Skills {
+func generateSkills() map[SkillType]float64 {
 	var values [11]float64
 
 	for i := 0; i < 2; i++ {
@@ -23,7 +23,7 @@ func generateSkills() *Skills {
 		values[i], values[j] = values[j], values[i]
 	})
 
-	return &Skills{
+	return map[SkillType]float64{
 		Hunting:     values[0],
 		Crafting:    values[1],
 		Cooking:     values[2],

@@ -58,7 +58,7 @@ func TestPutStack(t *testing.T) {
 		t.Error("stack failed to be placed into slice as stackable")
 	}
 
-	if stackable.GetElement() != stack.GetElement() {
+	if stackable.GetItem() != stack.GetItem() {
 		t.Error("stack failed to be placed into slice")
 	}
 
@@ -104,7 +104,7 @@ func TestPutCombineStack(t *testing.T) {
 		t.Error("stack failed to be placed into slice as stackable")
 	}
 
-	if stackable.GetElement() != stackA.GetElement() {
+	if stackable.GetItem() != stackA.GetItem() {
 		t.Error("stack failed to be placed into slice")
 	}
 

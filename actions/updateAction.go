@@ -1,6 +1,8 @@
 package actions
 
 import (
+	"math/rand"
+
 	"github.com/thebrubaker/colony/actions/types"
 	"github.com/thebrubaker/colony/colonist"
 )
@@ -17,10 +19,38 @@ func (ctx *Context) EndAction(action types.Actionable) {
 
 }
 
-func (ctx *Context) UpdateAction(action types.Actionable) {
-	ctx.ActiveColonist.Needs.Increase(colonist.Exhaustion, float64(action.TakesEffort())*ctx.TickElapsed)
+func (ctx *Context) UpdateAction(action *Action) {
+	ctx.ActiveColonist.Needs.Increase(colonist.Exhaustion, float64(action.Type.TakesEffort())*ctx.TickElapsed)
 	ctx.ActiveColonist.Needs.Increase(colonist.Hunger, 0.05*ctx.TickElapsed)
 	ctx.ActiveColonist.Needs.Increase(colonist.Thirst, 0.05*ctx.TickElapsed)
+
+	ctx.ActiveColonist.Desires.Decrease(colonist.Fulfillment, 0.05*ctx.TickElapsed)
+	ctx.ActiveColonist.Desires.Decrease(colonist.Belonging, 0.05*ctx.TickElapsed)
+	ctx.ActiveColonist.Desires.Decrease(colonist.Esteem, 0.05*ctx.TickElapsed)
+
+	if agitateNeeds := action.Type.AgitatesNeeds(); agitateNeeds != nil {
+		for _, need := range agitateNeeds {
+			ctx.AgitateNeed(need, action.Type, action.TickProgress)
+		}
+	}
+
+	if satisfyNeeds := action.Type.SatisfiesNeeds(); satisfyNeeds != nil {
+		for _, need := range satisfyNeeds {
+			ctx.SatisfyNeed(need, action.Type, action.TickProgress)
+		}
+	}
+
+	if satisfyDesires := action.Type.SatisfiesDesires(); satisfyDesires != nil {
+		for _, desire := range satisfyDesires {
+			ctx.SatisfyDesire(desire, action.Type, action.TickProgress)
+		}
+	}
+
+	if produces := action.Type.ProducesResources(); produces != nil {
+		for _, produce := range produces {
+			ctx.ProduceResource(produce, action.TickProgress)
+		}
+	}
 
 	// if i, ok := action.(types.SimpleFulfillment); ok {
 	// 	SimpleFulfillment(c, i, a.TickProgress)
@@ -37,24 +67,17 @@ func (ctx *Context) UpdateAction(action types.Actionable) {
 	// if i, ok := action.(types.SimpleSkillUp); ok {
 	// 	SimpleSkillUp(c, i, ctx.ActiveColonist.TickElapsed)
 	// }
+
+	action.TickProgress = action.TickProgress + ctx.TickElapsed
 }
 
-// func Gathers(c *Context, i types.Gathers, tickElapsed float64) {
-// 	storage, elem, odds := i.Gather()
+func (ctx *Context) ProduceResource(produce types.ProduceResource, tickElapsed float64) {
+	if rand.Float64() > produce.ChancePerTick*ctx.TickElapsed {
+		return
+	}
 
-// 	// fmt.Println(rand.Float64(), tickElapsed, odds)
-
-// 	if rand.Float64() > odds*tickElapsed {
-// 		return
-// 	}
-
-// 	switch storage {
-// 	case types.ColonistBag:
-// 		ctx.ActiveColonist.Colonist.Bag.Add(elem, 1)
-// 	case types.Stockpile:
-// 		return // TODO
-// 	}
-// }
+	ctx.ActiveColonist.Bag.Add(produce.Resource, 1)
+}
 
 // func SimpleFulfillment(c *Context, i types.SimpleFulfillment, tickProgress float64) {
 // 	needType, total, ease := i.Satisfies()
@@ -65,14 +88,23 @@ func (ctx *Context) UpdateAction(action types.Actionable) {
 // 	ctx.ActiveColonist.Colonist.Needs.Decrease(needType, value)
 // }
 
-// func SimpleAgitate(c *Context, i types.SimpleAgitate, tickProgress float64) {
-// 	needType, total, ease := i.Agitates()
-// 	duration := float64(i.Duration())
+func (ctx *Context) SatisfyNeed(need types.SatisfyNeed, action types.Actionable, actionProgress float64) {
+	value := ctx.GetEasedValue(need.Total, need.Ease, float64(action.HasDuration()), actionProgress)
 
-// 	value := GetEasedValue(total, ease, duration, tickProgress, ctx.ActiveColonist.TickElapsed)
+	ctx.ActiveColonist.Needs.Decrease(need.NeedType, value)
+}
 
-// 	ctx.ActiveColonist.Colonist.Needs.Increase(needType, value)
-// }
+func (ctx *Context) SatisfyDesire(desire types.SatisfyDesire, action types.Actionable, actionProgress float64) {
+	value := ctx.GetEasedValue(desire.Total, desire.Ease, float64(action.HasDuration()), actionProgress)
+
+	ctx.ActiveColonist.Desires.Increase(desire.DesireType, value)
+}
+
+func (ctx *Context) AgitateNeed(need types.AgitateNeed, action types.Actionable, actionProgress float64) {
+	value := ctx.GetEasedValue(need.Total, need.Ease, float64(action.HasDuration()), actionProgress)
+
+	ctx.ActiveColonist.Needs.Increase(need.NeedType, value)
+}
 
 // func SimpleSkillUp(c *Context, i types.SimpleSkillUp, tickProgress float64) {
 // 	skillType, total, ease := i.SkillUp()
@@ -91,4 +123,15 @@ func (ctx *Context) RemoveResources(resources []types.ConsumeResource) {
 
 func CheckBagSpace(b *colonist.Bag, quantity uint) bool {
 	return b.GetAvailableSpace() >= quantity
+}
+
+func (ctx *Context) GetEasedValue(total float64, ease func(float64) float64, duration float64, tickProgress float64) float64 {
+	if ease == nil {
+		return (total / duration) * ctx.TickElapsed
+	}
+
+	previousTick := ease(tickProgress / duration)
+	currentTick := ease((tickProgress + ctx.TickElapsed) / duration)
+
+	return total * (currentTick - previousTick)
 }
