@@ -52,6 +52,12 @@ func (ctx *Context) UpdateAction(action *Action) {
 		}
 	}
 
+	if skills := action.Type.ImprovesSkills(); skills != nil {
+		for _, skill := range skills {
+			ctx.ImproveSkill(skill)
+		}
+	}
+
 	// if i, ok := action.(types.SimpleFulfillment); ok {
 	// 	SimpleFulfillment(c, i, a.TickProgress)
 	// }
@@ -79,14 +85,9 @@ func (ctx *Context) ProduceResource(produce types.ProduceResource, tickElapsed f
 	ctx.ActiveColonist.Bag.Add(produce.Resource, 1)
 }
 
-// func SimpleFulfillment(c *Context, i types.SimpleFulfillment, tickProgress float64) {
-// 	needType, total, ease := i.Satisfies()
-// 	duration := float64(i.Duration())
-
-// 	value := GetEasedValue(total, ease, duration, tickProgress, ctx.ActiveColonist.TickElapsed)
-
-// 	ctx.ActiveColonist.Colonist.Needs.Decrease(needType, value)
-// }
+func (ctx *Context) ImproveSkill(improve types.ImproveSkill) {
+	ctx.ActiveColonist.Skills.Increase(improve.Skill, improve.AmountPerTick*ctx.TickElapsed)
+}
 
 func (ctx *Context) SatisfyNeed(need types.SatisfyNeed, action types.Actionable, actionProgress float64) {
 	value := ctx.GetEasedValue(need.Total, need.Ease, float64(action.HasDuration()), actionProgress)
@@ -105,15 +106,6 @@ func (ctx *Context) AgitateNeed(need types.AgitateNeed, action types.Actionable,
 
 	ctx.ActiveColonist.Needs.Increase(need.NeedType, value)
 }
-
-// func SimpleSkillUp(c *Context, i types.SimpleSkillUp, tickProgress float64) {
-// 	skillType, total, ease := i.SkillUp()
-// 	duration := float64(i.Duration())
-
-// 	value := GetEasedValue(total, ease, duration, tickProgress, ctx.ActiveColonist.TickElapsed)
-
-// 	ctx.ActiveColonist.Colonist.Skills.Increase(skillType, value)
-// }
 
 func (ctx *Context) RemoveResources(resources []types.ConsumeResource) {
 	for _, resourceQuantity := range resources {

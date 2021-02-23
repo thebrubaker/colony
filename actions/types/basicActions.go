@@ -36,10 +36,10 @@ var GatherWildBerries = &SimpleAction{
 		{colonist.Stress, 10, ease.InOutCubic},
 	},
 	producesResources: []ProduceResource{
-		{resources.Berries, 0.75},
+		{resources.Berries, 0.7},
 	},
 	improvesSkills: []ImproveSkill{
-		{colonist.Gathering, 0.1},
+		{colonist.Gathering, 0.05},
 	},
 }
 
@@ -56,7 +56,7 @@ var GatherWood = &SimpleAction{
 		{colonist.Fulfillment, 35, ease.InOutCubic},
 	},
 	producesResources: []ProduceResource{
-		{resources.Wood, 0.5},
+		{resources.Wood, 0.4},
 	},
 	improvesSkills: []ImproveSkill{
 		{colonist.Woodcutting, 0.05},
@@ -101,6 +101,6 @@ var CryoSleepWakeup = &SimpleAction{
 	effort:   Painless,
 	duration: Fast,
 	agitatesNeeds: []AgitateNeed{
-		{colonist.Stress, 30, ease.InOutQuint},
+		{colonist.Stress, 85, ease.InOutQuint},
 	},
 }

@@ -25,7 +25,7 @@ type SatisfyDesire struct {
 
 type ImproveSkill struct {
 	Skill         colonist.SkillType
-	ChancePerTick float64
+	AmountPerTick float64
 }
 
 type ProduceResource struct {
