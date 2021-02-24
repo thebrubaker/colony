@@ -26,6 +26,7 @@ import (
 	ui "github.com/gizak/termui/v3"
 	"github.com/gizak/termui/v3/widgets"
 	"github.com/spf13/cobra"
+	"github.com/thebrubaker/colony/colonist"
 	"github.com/thebrubaker/colony/game"
 )
 
@@ -62,26 +63,49 @@ var debugCmd = &cobra.Command{
 			for {
 				select {
 				case e := <-ui.PollEvents():
-				if e.Type == ui.KeyboardEvent {
-					close(quitc)
-					return
-				}
-				case <-time.Tick(33 * time.Millisecond):
-					p := widgets.NewParagraph()
-					p.Text = fmt.Sprintf("%f", gc.Render(key).Ticker.Count)
-					p.SetRect(0, 0, 25, 5)
-					ui.Render(p)
-					// data, err := json.MarshalIndent(gc.Render(key), "", "    ")
+					switch e.ID {
+					case "q", "<C-c>":
+						close(quitc)
+						return
+					}
+				case <-time.Tick(100 * time.Millisecond):
+					tick := widgets.NewParagraph()
+					tick.Title = "Tick Count"
+					tick.Text = fmt.Sprintf(" %v", int64(gc.Render(key).Ticker.Count))
+					tick.SetRect(0, 0, 30, 3)
 
-					// if err != nil {
-					// 	close(quitc)
-					// 	return
-					// }
+					c := gc.Render(key).Colonists[0]
+					name := widgets.NewParagraph()
+					name.Title = "Name"
+					name.Text = fmt.Sprintf(" %v", c.Name)
+					name.SetRect(32, 0, 62, 3)
 
-					// tm.Clear()
-					// tm.MoveCursor(1, 1)
-					// tm.Println(string(data))
-					// tm.Flush()
+					action := widgets.NewParagraph()
+					action.Title = "Action"
+					action.Text = fmt.Sprintf(" %v", c.Status)
+					action.SetRect(0, 3, 62, 6)
+
+					stress := widgets.NewGauge()
+					stress.Title = "Stress"
+					stress.SetRect(64, 0, 94, 3)
+					stress.Percent = int(c.Needs[colonist.Stress])
+
+					hunger := widgets.NewGauge()
+					hunger.Title = "Hunger"
+					hunger.SetRect(64, 3, 94, 6)
+					hunger.Percent = int(c.Needs[colonist.Hunger])
+
+					thirst := widgets.NewGauge()
+					thirst.Title = "Thirst"
+					thirst.SetRect(64, 6, 94, 9)
+					thirst.Percent = int(c.Needs[colonist.Thirst])
+
+					exhaustion := widgets.NewGauge()
+					exhaustion.Title = "Exhaustion"
+					exhaustion.SetRect(64, 9, 94, 12)
+					exhaustion.Percent = int(c.Needs[colonist.Exhaustion])
+
+					ui.Render(tick, name, action, stress, hunger, thirst, exhaustion)
 				}
 			}
 		}(quitc)
