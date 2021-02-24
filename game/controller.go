@@ -1,28 +1,19 @@
 package game
 
 import (
-	"encoding/json"
-	"fmt"
 	"log"
-	"time"
 
 	"github.com/thebrubaker/colony/keys"
 )
 
-type Broadcaster interface {
-	Broadcast(keys.GameKey, GameState)
-}
-
 type GameController struct {
-	streams Broadcaster
 	games   map[keys.GameKey]*Game
 	actionc chan func()
 	quitc   chan struct{}
 }
 
-func NewController(streams Broadcaster) *GameController {
+func NewController() *GameController {
 	gc := &GameController{
-		streams: streams,
 		games:   make(map[keys.GameKey]*Game),
 		actionc: make(chan func()),
 		quitc:   make(chan struct{}),
@@ -38,16 +29,6 @@ func (gc *GameController) loop() {
 			return
 		case f := <-gc.actionc:
 			f()
-		case <-time.Tick(33 * time.Millisecond):
-			for key, g := range gc.games {
-				data, err := json.MarshalIndent(g.Render(), "", "    ")
-				if err != nil {
-					return
-				}
-				fmt.Println(string(data))
-
-				gc.streams.Broadcast(key, g.Render())
-			}
 		}
 	}
 }
@@ -90,6 +71,14 @@ func (gc *GameController) SetSpeed(key keys.GameKey, r TickRate) bool {
 		g := gc.games[keys.GameKey(key)]
 		g.SetTickRate(r)
 		c <- true
+	}
+	return <-c
+}
+
+func (gc *GameController) Render(key keys.GameKey) GameState {
+	c := make(chan GameState)
+	gc.actionc <- func() {
+		c <- gc.games[key].Render()
 	}
 	return <-c
 }

@@ -59,7 +59,7 @@ to quickly create a Cobra application.`,
 			log.Fatalf("failed to listen: %v", err)
 		}
 		sc := streams.NewController()
-		gc := game.NewController(sc)
+		gc := game.NewController()
 		server := server.NewServer(lis, server.NewGameService(gc, sc))
 
 		gc.CreateGame()

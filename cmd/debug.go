@@ -16,15 +16,16 @@ limitations under the License.
 package cmd
 
 import (
+	"fmt"
 	"log"
 	"math/rand"
 	"os"
-	"os/signal"
-	"syscall"
 	"time"
 
+	tm "github.com/buger/goterm"
+	ui "github.com/gizak/termui/v3"
+	"github.com/gizak/termui/v3/widgets"
 	"github.com/spf13/cobra"
-	"github.com/thebrubaker/colony/debug"
 	"github.com/thebrubaker/colony/game"
 )
 
@@ -40,18 +41,56 @@ var debugCmd = &cobra.Command{
 	Short: "Debug the game server.",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		sc := debug.NewController()
-		gc := game.NewController(sc)
+		if err := ui.Init(); err != nil {
+			log.Fatalf("failed to initialize termui: %v", err)
+		}
+		defer ui.Close()
 
-		gameKey := gc.CreateGame()
-		sc.CreateStream(gameKey)
+		gc := game.NewController()
+		defer gc.Stop()
 
-		c := make(chan os.Signal)
-		signal.Notify(c, os.Interrupt, syscall.SIGTERM)
-		<-c
-		log.Println("\nStopping Game Resources...")
-		gc.Stop()
-		sc.Stop()
+		key := gc.CreateGame()
+
+		quitc := make(chan struct{})
+		defer close(quitc)
+
+		tm.Clear()
+		tm.MoveCursor(1, 1)
+		tm.Flush()
+
+		go func(quitc chan struct{}) {
+			for {
+				select {
+				case e := <-ui.PollEvents():
+				if e.Type == ui.KeyboardEvent {
+					close(quitc)
+					return
+				}
+				case <-time.Tick(33 * time.Millisecond):
+					p := widgets.NewParagraph()
+					p.Text = fmt.Sprintf("%f", gc.Render(key).Ticker.Count)
+					p.SetRect(0, 0, 25, 5)
+					ui.Render(p)
+					// data, err := json.MarshalIndent(gc.Render(key), "", "    ")
+
+					// if err != nil {
+					// 	close(quitc)
+					// 	return
+					// }
+
+					// tm.Clear()
+					// tm.MoveCursor(1, 1)
+					// tm.Println(string(data))
+					// tm.Flush()
+				}
+			}
+		}(quitc)
+
+		<-quitc
+		tm.Clear()
+		tm.MoveCursor(1, 1)
+		tm.Flush()
+		tm.Println("Stopping Game Resources...")
 		os.Exit(0)
 	},
 }
