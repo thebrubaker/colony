@@ -29,12 +29,12 @@ type ImproveSkill struct {
 }
 
 type ProduceResource struct {
-	Resource      *resources.SimpleResource
+	Resource      resources.SimpleResource
 	ChancePerTick float64
 }
 
 type ConsumeResource struct {
-	Resource *resources.SimpleResource
+	Resource resources.SimpleResource
 	Amount   uint
 }
 

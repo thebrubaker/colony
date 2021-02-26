@@ -5,11 +5,11 @@ import "github.com/thebrubaker/colony/colonist"
 type TickDuration float64
 
 const (
-	Tedious  TickDuration = 20
-	Slow     TickDuration = 15
-	Moderate TickDuration = 12
-	Fast     TickDuration = 8
-	Fastest  TickDuration = 5
+	Tedious  TickDuration = 60 * 3
+	Slow     TickDuration = 60
+	Moderate TickDuration = 45
+	Fast     TickDuration = 30
+	Fastest  TickDuration = 15
 )
 
 type Effort float64

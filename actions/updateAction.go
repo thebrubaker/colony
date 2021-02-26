@@ -12,7 +12,8 @@ func (ctx *Context) StartAction(action types.Actionable) {
 		ctx.RemoveResources(resources)
 	}
 	statuses := action.Status()
-	ctx.ActiveColonist.SetStatus(statuses[0])
+	randomIndex := rand.Intn(len(statuses))
+	ctx.ActiveColonist.SetStatus(statuses[randomIndex])
 }
 
 func (ctx *Context) EndAction(action types.Actionable) {

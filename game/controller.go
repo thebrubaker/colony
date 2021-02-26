@@ -2,6 +2,7 @@ package game
 
 import (
 	"log"
+	"math"
 
 	"github.com/thebrubaker/colony/keys"
 )
@@ -67,9 +68,32 @@ func (gc *GameController) SendCommand(key keys.GameKey, commandType string) bool
 func (gc *GameController) SetSpeed(key keys.GameKey, r TickRate) bool {
 	c := make(chan bool)
 	gc.actionc <- func() {
-		log.Printf("set game %s speed to %f", key, r)
-		g := gc.games[keys.GameKey(key)]
+		g := gc.games[key]
 		g.SetTickRate(r)
+		c <- true
+	}
+	return <-c
+}
+
+func (gc *GameController) IncreaseSpeed(key keys.GameKey) bool {
+	c := make(chan bool)
+	gc.actionc <- func() {
+		g := gc.games[key]
+		rate := g.state.Ticker.Rate
+		newRate := math.Min(float64(FastestTickRate), float64(rate)+1)
+		g.SetTickRate(TickRate(newRate))
+		c <- true
+	}
+	return <-c
+}
+
+func (gc *GameController) DecreaseSpeed(key keys.GameKey) bool {
+	c := make(chan bool)
+	gc.actionc <- func() {
+		g := gc.games[key]
+		rate := g.state.Ticker.Rate
+		newRate := math.Max(float64(BaseTickRate), float64(rate)-1)
+		g.SetTickRate(TickRate(newRate))
 		c <- true
 	}
 	return <-c

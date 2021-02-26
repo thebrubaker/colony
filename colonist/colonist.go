@@ -5,6 +5,8 @@ import (
 	"math/rand"
 
 	"github.com/rs/xid"
+	"github.com/thebrubaker/colony/resources"
+	"github.com/thebrubaker/colony/stackable"
 )
 
 const (
@@ -100,7 +102,21 @@ func NewColonist(name string) *Colonist {
 		Name: name,
 		Age:  generateAge(),
 		Bag: &Bag{
-			size: 30,
+			Size: 30,
+			Items: []interface{}{
+				stackable.Stack{
+					Item:  resources.RawLeather,
+					Count: 8,
+				},
+				stackable.Stack{
+					Item:  resources.Wood,
+					Count: 3,
+				},
+				stackable.Stack{
+					Item:  resources.Berries,
+					Count: 12,
+				},
+			},
 		},
 		Equipment: &Equipment{},
 		Desires: map[DesireType]float64{

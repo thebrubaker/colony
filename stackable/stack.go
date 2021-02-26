@@ -20,17 +20,17 @@ type Stack struct {
 }
 
 // GetItem returns the Item of the Stack
-func (s *Stack) GetItem() interface{} {
+func (s Stack) GetItem() interface{} {
 	return s.Item
 }
 
 // GetCount returns the count of the Item in the Stack
-func (s *Stack) GetCount() uint {
+func (s Stack) GetCount() uint {
 	return s.Count
 }
 
 // SetCount sets the count of the Item in the Stack
-func (s *Stack) SetCount(count uint) {
+func (s Stack) SetCount(count uint) {
 	s.Count = count
 }
 

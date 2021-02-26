@@ -28,15 +28,24 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/thebrubaker/colony/colonist"
 	"github.com/thebrubaker/colony/game"
+	"github.com/thebrubaker/colony/stackable"
 )
 
-// type Debug struct {
-// 	Ticker    *ticker.Ticker
-// 	Colonists []*colonist.Colonist
-// 	Actions   []*actions.ColonistAction
-// }
+const (
+	Foreground  = 254
+	Background  = -1
+	BorderLabel = 254
+	BorderLine  = 96
+)
 
-// startCmd represents the start command
+type Namer interface {
+	GetName() string
+}
+
+type Counter interface {
+	GetCount() uint
+}
+
 var debugCmd = &cobra.Command{
 	Use:   "debug",
 	Short: "Debug the game server.",
@@ -46,6 +55,11 @@ var debugCmd = &cobra.Command{
 			log.Fatalf("failed to initialize termui: %v", err)
 		}
 		defer ui.Close()
+
+		ui.Theme.Default = ui.NewStyle(ui.Color(Foreground), ui.Color(Background))
+		ui.Theme.Block.Title = ui.NewStyle(ui.Color(BorderLabel), ui.Color(Background))
+		ui.Theme.Block.Border = ui.NewStyle(ui.Color(BorderLine), ui.Color(Background))
+		ui.Theme.Gauge.Bar = 31
 
 		gc := game.NewController()
 		defer gc.Stop()
@@ -59,6 +73,15 @@ var debugCmd = &cobra.Command{
 		tm.MoveCursor(1, 1)
 		tm.Flush()
 
+		f, err := os.OpenFile("debug.log",
+			os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+		if err != nil {
+			log.Println(err)
+		}
+		defer f.Close()
+
+		log.SetOutput(f)
+
 		go func(quitc chan struct{}) {
 			for {
 				select {
@@ -67,10 +90,16 @@ var debugCmd = &cobra.Command{
 					case "q", "<C-c>":
 						close(quitc)
 						return
+					case "<Right>":
+						gc.IncreaseSpeed(key)
+						break
+					case "<Left>":
+						gc.DecreaseSpeed(key)
+						break
 					}
 				case <-time.Tick(100 * time.Millisecond):
 					tick := widgets.NewParagraph()
-					tick.Title = "Tick Count"
+					tick.Title = fmt.Sprintf("Tick Count (%v/s)", gc.Render(key).Ticker.Rate)
 					tick.Text = fmt.Sprintf(" %v", int64(gc.Render(key).Ticker.Count))
 					tick.SetRect(0, 0, 30, 3)
 
@@ -105,7 +134,28 @@ var debugCmd = &cobra.Command{
 					exhaustion.SetRect(64, 9, 94, 12)
 					exhaustion.Percent = int(c.Needs[colonist.Exhaustion])
 
-					ui.Render(tick, name, action, stress, hunger, thirst, exhaustion)
+					items := [][]string{
+						[]string{"Item", "Count"},
+					}
+					for _, item := range c.Bag.Items {
+						name := "Unknown Item"
+						count := "1"
+						if i, ok := item.(stackable.Stackable); ok {
+							count = fmt.Sprint(i.GetCount())
+							item = i.GetItem()
+						}
+						if i, ok := item.(Namer); ok {
+							name = i.GetName()
+						}
+						items = append(items, []string{name, count})
+					}
+
+					bag := widgets.NewTable()
+					bag.Title = "Bag Contents"
+					bag.Rows = items
+					bag.SetRect(0, 6, 62, 9+(2*len(c.Bag.Items)))
+
+					ui.Render(tick, name, action, bag, stress, hunger, thirst, exhaustion)
 				}
 			}
 		}(quitc)

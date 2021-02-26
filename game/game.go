@@ -60,6 +60,14 @@ func (g *Game) SetTickRate(rate TickRate) bool {
 	return <-c
 }
 
+func (g *Game) GetTickRate(rate TickRate) TickRate {
+	c := make(chan TickRate)
+	g.actionc <- func() {
+		c <- g.state.Ticker.Rate
+	}
+	return <-c
+}
+
 func (g *Game) Render() GameState {
 	c := make(chan GameState)
 	g.actionc <- func() {

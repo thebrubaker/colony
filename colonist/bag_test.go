@@ -8,7 +8,7 @@ import (
 
 func TestColonistBag(t *testing.T) {
 	bag := Bag{
-		size: 10,
+		Size: 10,
 	}
 	var err error
 

@@ -8,8 +8,8 @@ import (
 )
 
 type Bag struct {
-	size  uint
-	items []interface{}
+	Size  uint
+	Items []interface{}
 }
 
 type Stackable interface {
@@ -18,7 +18,7 @@ type Stackable interface {
 
 // MarshalJSON will marshal needs into it's attributes
 func (b *Bag) MarshalJSON() ([]byte, error) {
-	return json.Marshal(b.items)
+	return json.Marshal(b.Items)
 }
 
 // UnmarshalJSON fills in the attributes of needs
@@ -29,7 +29,7 @@ func (b *Bag) UnmarshalJSON(bytes []byte) error {
 		return err
 	}
 
-	b.items = items
+	b.Items = items
 
 	return nil
 }
@@ -45,19 +45,19 @@ func (b *Bag) Add(elem interface{}, count uint) error {
 	}
 
 	if i.IsStackable() {
-		items, err = stackable.Put(b.items, &stackable.Stack{
+		items, err = stackable.Put(b.Items, &stackable.Stack{
 			Item:  elem,
 			Count: count,
 		})
 	} else {
-		items, err = stackable.Put(b.items, elem)
+		items, err = stackable.Put(b.Items, elem)
 	}
 
 	if err != nil {
 		return err
 	}
 
-	b.items = items
+	b.Items = items
 
 	return nil
 }
@@ -73,19 +73,19 @@ func (b *Bag) Remove(elem interface{}, count uint) error {
 	}
 
 	if i, ok := elem.(Stackable); ok && i.IsStackable() {
-		items, err = stackable.Take(b.items, &stackable.Stack{
+		items, err = stackable.Take(b.Items, &stackable.Stack{
 			Item:  elem,
 			Count: count,
 		})
 	} else {
-		items, err = stackable.Take(b.items, elem)
+		items, err = stackable.Take(b.Items, elem)
 	}
 
 	if err != nil {
 		return err
 	}
 
-	b.items = items
+	b.Items = items
 
 	return nil
 }
@@ -96,19 +96,19 @@ func (b *Bag) Has(elem interface{}, count uint) bool {
 	}
 
 	if i, ok := elem.(Stackable); ok && i.IsStackable() {
-		return stackable.Has(b.items, &stackable.Stack{
+		return stackable.Has(b.Items, &stackable.Stack{
 			Item:  elem,
 			Count: count,
 		})
 	}
 
-	return stackable.Has(b.items, elem)
+	return stackable.Has(b.Items, elem)
 }
 
 func (b *Bag) GetAvailableSpace() uint {
 	var itemCount uint = 0
 
-	for _, i := range b.items {
+	for _, i := range b.Items {
 		itemCount += getCount(i)
 	}
 

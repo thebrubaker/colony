@@ -9,7 +9,7 @@ import (
 var DrinkGroundWater = &SimpleAction{
 	status: []string{
 		"drinking water from a nearby stream",
-		"drinking a small amount of collected rain water",
+		"drinking rain water pooling in ",
 	},
 	effort:      Easy,
 	duration:    Slow,
@@ -87,10 +87,10 @@ var BasicRest = &SimpleAction{
 	duration:    Slow,
 	utilityNeed: colonist.Exhaustion,
 	satisfiesNeeds: []SatisfyNeed{
-		{colonist.Exhaustion, 60, ease.InBounce},
+		{colonist.Exhaustion, 60, ease.InOutCubic},
 	},
 	agitatesNeeds: []AgitateNeed{
-		{colonist.Stress, 40, ease.InBounce},
+		{colonist.Stress, 40, ease.InOutCubic},
 	},
 }
 

@@ -6,14 +6,14 @@ type SimpleResource struct {
 	stackable   bool
 }
 
-func (w *SimpleResource) GetName() string {
+func (w SimpleResource) GetName() string {
 	return w.Name
 }
 
-func (w *SimpleResource) GetDescription() string {
+func (w SimpleResource) GetDescription() string {
 	return w.Description
 }
 
-func (w *SimpleResource) IsStackable() bool {
+func (w SimpleResource) IsStackable() bool {
 	return w.stackable
 }
