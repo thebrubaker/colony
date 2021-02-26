@@ -56,58 +56,32 @@ Guide coming soon.
 
 ## How To Add Actions
 
-To create a new action, create a new file in the `game/actions/types` directory and then append it to the InitTypes() method at the top of `game/actions/types/types.go`. The following is an example action for gathering wood.
+To create a new action, create a new file in the `game/actions/types` directory and then append it to the SelectNextAction() method in `actions/determineAction.go`. The following is an example action for gathering wood.
 
 ```go
 package types
 
 import (
-	"encoding/json"
-
+	"github.com/fogleman/ease"
+	"github.com/thebrubaker/colony/colonist"
 	"github.com/thebrubaker/colony/resources"
 )
 
-type GatherWood struct {
-}
-
-// MarshalJSON will marshal needs into it's attributes
-func (a *GatherWood) MarshalJSON() ([]byte, error) {
-	return json.Marshal(map[string]interface{}{
-		"status":      a.Status(),
-		"energy_cost": a.EnergyCost(),
-		"duration":    a.Duration(),
-		"priority":    a.Priority(),
-	})
-}
-
-// UnmarshalJSON fills in the attributes of needs
-func (a *GatherWood) UnmarshalJSON(b []byte) error {
-	if err := json.Unmarshal(b, a); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (a *GatherWood) Status() string {
-	return "gathering wood from a nearby forest"
-}
-
-func (a *GatherWood) EnergyCost() EnergyCost {
-	return Hard
-}
-
-func (a *GatherWood) Duration() TickDuration {
-	return Slow
-}
-
-func (a *GatherWood) Priority() Priority {
-	return Job
-}
-
-func (a *GatherWood) Gather() (StorageType, interface{}, float64) {
-	return ColonistBag, resources.Wood, 0.5
+var GatherWood = &SimpleAction{
+	status: []string{
+		"gathering wood nearby",
+	},
+	effort:        Demanding,
+	duration:      Slow,
+	utilityDesire: colonist.Fulfillment,
+	satisfiesDesires: []SatisfyDesire{
+		{colonist.Fulfillment, 35, ease.OutQuad},
+	},
+	producesResources: []ProduceResource{
+		{resources.Wood, 0.1},
+	},
+	improvesSkills: []ImproveSkill{
+		{colonist.Woodcutting, 0.05},
+	},
 }
 ```
-
-Open `game/actions/types/types.go` to view the different constants available to you.
