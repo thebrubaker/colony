@@ -10,54 +10,7 @@ To start the game but without a server and render the gamestate to the console, 
 go run main.go debug
 ```
 
-```json
-{
-    "Ticker": {
-        "Rate": 1,
-        "Count": 68.74488719699967
-    },
-    "Region": {
-        "stockpile": null
-    },
-    "Colonists": [
-        {
-            "key": "c0o8a8mcie6kh5rknmug",
-            "name": "John Wallis",
-            "status": "gathering wood from a nearby forest",
-            "age": 225,
-            "bag": null,
-            "equipment": {
-                "head": null,
-                "weapon": null,
-                "body": null
-            },
-            "needs": {
-                "Thirst": 1.5331686573000003,
-                "Stress": 0,
-                "Exhaustion": 3.1466673566200103,
-                "Hunger": 2.2835665030500083
-            },
-            "skills": {
-                "building": 3.2662,
-                "charisma": 3.8244,
-                "combat": 4.1223,
-                "cooking": 6.3478,
-                "crafting": 7.7639,
-                "gathering": 2.3608,
-                "hunting": 6.5566,
-                "medicine": 7.785,
-                "mining": 1.2168,
-                "science": 3.3645,
-                "woodcutting": 1.9107
-            },
-            "stats": {
-                "dexterity": 10.9845,
-                "strength": 15.5423
-            }
-        }
-    ]
-}
-```
+![example](./example.png)
 
 ## Quick Backstory
 
