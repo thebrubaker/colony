@@ -14,7 +14,7 @@ func TestChooseWeightedAction(t *testing.T) {
 
 	region := &region.Region{}
 
-	c := colonist.NewColonist("Test")
+	c := colonist.NewColonist()
 
 	c.Needs[colonist.Stress] = 90
 

@@ -24,6 +24,7 @@ func (ctx *Context) UpdateAction(action *Action) {
 	ctx.ActiveColonist.Needs.Increase(colonist.Exhaustion, float64(action.Type.TakesEffort())*ctx.TickElapsed)
 	ctx.ActiveColonist.Needs.Increase(colonist.Hunger, 0.05*ctx.TickElapsed)
 	ctx.ActiveColonist.Needs.Increase(colonist.Thirst, 0.05*ctx.TickElapsed)
+	ctx.ActiveColonist.Needs.Increase(colonist.Stress, 0.05*ctx.TickElapsed)
 
 	ctx.ActiveColonist.Desires.Decrease(colonist.Fulfillment, 0.05*ctx.TickElapsed)
 	ctx.ActiveColonist.Desires.Decrease(colonist.Belonging, 0.05*ctx.TickElapsed)

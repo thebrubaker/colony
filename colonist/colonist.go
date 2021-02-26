@@ -1,16 +1,11 @@
 package colonist
 
 import (
+	"fmt"
 	"math"
 	"math/rand"
 
 	"github.com/rs/xid"
-	"github.com/thebrubaker/colony/resources"
-	"github.com/thebrubaker/colony/stackable"
-)
-
-const (
-	JsonDecimalPlaces float64 = 10000
 )
 
 type DesireType string
@@ -66,6 +61,7 @@ const (
 	Combat      SkillType = "Combat"
 	Charisma    SkillType = "Charisma"
 	Medicine    SkillType = "Medicine"
+	Tinkering   SkillType = "Tinkering"
 )
 
 type Skills map[SkillType]float64
@@ -96,50 +92,312 @@ type Colonist struct {
 
 // GenerateColonist returns a new colonist with the given name
 // and a random set of skills and stats.
-func NewColonist(name string) *Colonist {
+func NewColonist() *Colonist {
 	return &Colonist{
 		Key:  xid.New().String(),
-		Name: name,
+		Name: generateName(),
 		Age:  generateAge(),
 		Bag: &Bag{
 			Size: 30,
-			Items: []interface{}{
-				stackable.Stack{
-					Item:  resources.RawLeather,
-					Count: 8,
-				},
-				stackable.Stack{
-					Item:  resources.Wood,
-					Count: 3,
-				},
-				stackable.Stack{
-					Item:  resources.Berries,
-					Count: 12,
-				},
-			},
 		},
 		Equipment: &Equipment{},
-		Desires: map[DesireType]float64{
-			Fulfillment: 50,
-			Belonging:   50,
-			Esteem:      50,
-		},
-		Needs: map[NeedType]float64{
-			Hunger:     60,
-			Thirst:     60,
-			Stress:     20,
-			Exhaustion: 5,
-			Fear:       30,
-			Pain:       10,
-		},
-		Skills: generateSkills(),
+		Desires:   createDesires(),
+		Needs:     createNeeds(),
+		Skills:    generateSkills(),
 	}
 }
 
+func generateName() string {
+	firstNames := []string{
+		"Merek",
+		"Carac",
+		"Ulric",
+		"Tybalt",
+		"Borin",
+		"Sadon",
+		"Terrowin",
+		"Rowan",
+		"Forthwind",
+		"Althalos",
+		"Fendrel",
+		"Brom",
+		"Hadrian",
+		"Benedict",
+		"Gregory",
+		"Peter",
+		"Henry",
+		"Frederick",
+		"Walter",
+		"Thomas",
+		"Arthur",
+		"Bryce",
+		"Donald",
+		"Leofrick",
+		"Letholdus",
+		"Lief",
+		"Barda",
+		"Rulf",
+		"Robin",
+		"Gavin",
+		"Terrin",
+		"Terryn",
+		"Ronald",
+		"Jarin",
+		"Cassius",
+		"Leo",
+		"Cedric",
+		"Gavin",
+		"Peyton",
+		"Josef",
+		"Janshai",
+		"Doran",
+		"Asher",
+		"Quinn",
+		"Zane  ",
+		"Xalvador",
+		"Favian",
+		"Destrian",
+		"Dain",
+		"Berinon",
+		"Tristan",
+		"Gorvenal",
+		"Alfie",
+		"Andy",
+		"Basil",
+		"Buddy",
+		"Carter",
+		"Charlie",
+		"Danny",
+		"Eddie",
+		"Finn",
+		"Freddie",
+		"George",
+		"Harrison",
+		"Hank",
+		"Jack",
+		"Jonny",
+		"Karl",
+		"Leo",
+		"Leonard",
+		"Manny",
+		"Mason",
+		"Noah",
+		"Oscar",
+		"Pete",
+		"Robin",
+		"Sammy",
+		"Tim",
+		"Toby",
+		"Tyler",
+		"Victor",
+		"Will",
+		"Zack",
+	}
+	lastNames := []string{
+		"Ashdown",
+		"Baker",
+		"Bennett",
+		"Bigge",
+		"Brickenden",
+		"Brooker",
+		"Browne",
+		"Carpenter",
+		"Cheeseman",
+		"Clarke",
+		"Cooper",
+		"Fletcher",
+		"Foreman",
+		"Godfrey",
+		"Hughes",
+		"Mannering",
+		"Payne",
+		"Rolfe",
+		"Taylor",
+		"Walter",
+		"Ward",
+		"Webb",
+		"Wood",
+		"Abbey",
+		"Arkwright",
+		"Bauer",
+		"Bell",
+		"Brewster",
+		"Chamberlain",
+		"Chandler",
+		"Chapman",
+		"Clarke",
+		"Collier",
+		"Cooper",
+		"Dempster",
+		"Harper",
+		"Inman",
+		"Jenner",
+		"Kemp",
+		"Kitchener",
+		"Knight",
+		"Lister",
+		"Miller",
+		"Packard",
+		"Page",
+		"Payne",
+		"Palmer",
+		"Parker",
+		"Porter",
+		"Rolfe",
+		"Ryder",
+		"Saylor",
+		"Scrivens",
+		"Sommer",
+		"Smith",
+		"Spinner",
+	}
+
+	nickNames := []string{
+		"Stormbringer",
+		"Swiftflight",
+		"Sorrowsweet",
+		"Shadowmere",
+		"Shadowfax",
+		"Keirstrider",
+		"Bruno",
+		"Fireflanel",
+		"Curonious",
+		"Suntaria",
+		"Gypsy",
+		"Titanium",
+		"Curse",
+		"Lightning",
+		"Thunder",
+		"Storm",
+		"Storm Chaser",
+		"Goldentrot",
+		"Stareyes",
+		"Rock",
+		"Morningstar",
+		"Firefreeze",
+		"Veillantif",
+		"Winddodger",
+		"Hafaleil",
+		"Starflare",
+		"Elton",
+		"Cobalt",
+		"Darktonian",
+		"Death Bringer",
+		"Death Storm",
+		"Grand Prancer",
+		"Big Heart",
+		"Canterwell",
+		"Fury",
+		"Wildfire",
+		"Tempest",
+		"Silvermane",
+		"Bowrider",
+		"Bucephalus",
+		"Rocinante",
+		"Ares",
+		"Blade",
+		"Maverick",
+		"Tank",
+		"Crazy Eyes",
+		"Fish",
+		"Fox",
+		"Grant",
+		"Hardy",
+		"Hawk",
+		"Hendman",
+		"Keen",
+		"Lightfoot",
+		"Mannering",
+		"Moody",
+		"Mundy",
+		"Peacock",
+		"Power",
+		"Pratt",
+		"Proude",
+		"Pruitt",
+		"Puttock",
+		"Quick",
+		"Rey",
+		"Rose",
+		"Russ",
+		"Selly",
+		"Sharp",
+		"Short",
+		"Sommer",
+		"Sparks",
+		"Spear",
+		"Stern",
+		"Sweet",
+		"Tait",
+		"Terrell",
+		"Truman",
+	}
+
+	firstName := firstNames[rand.Intn(len(firstNames))]
+	lastName := lastNames[rand.Intn(len(lastNames))]
+	nickName := nickNames[rand.Intn(len(nickNames))]
+
+	return fmt.Sprintf("%s \"%s\" %s", firstName, nickName, lastName)
+}
+
 func generateAge() uint {
-	return 20 + uint(rand.Float64()*400)
+	return 20 + uint(rand.Intn(400))
 }
 
 func (c *Colonist) SetStatus(s string) {
 	c.Status = s
+}
+
+func createDesires() map[DesireType]float64 {
+	return map[DesireType]float64{
+		Fulfillment: float64(rand.Intn(60)),
+		Belonging:   float64(rand.Intn(60)),
+		Esteem:      float64(rand.Intn(60)),
+	}
+}
+
+func createNeeds() map[NeedType]float64 {
+	return map[NeedType]float64{
+		Hunger:     float64(rand.Intn(80)),
+		Thirst:     float64(rand.Intn(80)),
+		Stress:     float64(rand.Intn(80)),
+		Exhaustion: float64(rand.Intn(80)),
+		Fear:       float64(rand.Intn(80)),
+		Pain:       float64(rand.Intn(80)),
+	}
+}
+
+func generateSkills() map[SkillType]float64 {
+	var values [11]float64
+
+	for i := 0; i < 2; i++ {
+		values[i] = 4 + (rand.Float64() * 10)
+	}
+
+	for i := 2; i < 8; i++ {
+		values[i] = 3 + (rand.Float64() * 5)
+	}
+
+	for i := 8; i < 11; i++ {
+		values[i] = rand.Float64() * 2
+	}
+
+	rand.Shuffle(len(values), func(i, j int) {
+		values[i], values[j] = values[j], values[i]
+	})
+
+	return map[SkillType]float64{
+		Hunting:     values[0],
+		Crafting:    values[1],
+		Cooking:     values[2],
+		Building:    values[3],
+		Gathering:   values[4],
+		Mining:      values[5],
+		Woodcutting: values[6],
+		Science:     values[7],
+		Combat:      values[8],
+		Charisma:    values[9],
+		Medicine:    values[10],
+		Tinkering:   values[10],
+	}
 }

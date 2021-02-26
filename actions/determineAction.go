@@ -29,12 +29,6 @@ func (ctx *Context) NextAction(previousAction types.Actionable) *Action {
 // then generate a weight score for how motivated the colonist is to choose
 // that action (with some randomness).
 func (ctx *Context) SelectNextAction(currentType types.Actionable) *Action {
-	if ctx.TickElapsed == 0 {
-		return &Action{
-			Type: types.CryoSleepWakeup,
-		}
-	}
-
 	allowedActions := ctx.FilterActions([]types.Actionable{
 		types.DrinkGroundWater,
 		types.GatherWildBerries,

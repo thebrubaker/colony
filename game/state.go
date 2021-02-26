@@ -16,7 +16,11 @@ type GameState struct {
 // Create a new GameState
 func CreateGameState() *GameState {
 	colonists := []*colonist.Colonist{
-		colonist.NewColonist("John Wallis"),
+		colonist.NewColonist(),
+		colonist.NewColonist(),
+		colonist.NewColonist(),
+		colonist.NewColonist(),
+		colonist.NewColonist(),
 	}
 	return &GameState{
 		Ticker: &Ticker{

@@ -5,5 +5,5 @@ import (
 )
 
 func TestGenerateColonist(t *testing.T) {
-	NewColonist("Joel")
+	NewColonist()
 }

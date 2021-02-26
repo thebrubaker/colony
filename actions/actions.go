@@ -1,6 +1,8 @@
 package actions
 
 import (
+	"math/rand"
+
 	"github.com/thebrubaker/colony/actions/types"
 	"github.com/thebrubaker/colony/colonist"
 	"github.com/thebrubaker/colony/region"
@@ -35,9 +37,11 @@ func CreateActions(colonists []*colonist.Colonist) Actions {
 
 	for _, colonist := range colonists {
 		actions[colonist.Key] = &Action{
-			Type: types.CryoSleepWakeup,
+			Type: types.Thinking,
 		}
-		colonist.Status = types.CryoSleepWakeup.Status()[0]
+		statuses := types.Thinking.Status()
+		randomIndex := rand.Intn(len(statuses))
+		colonist.SetStatus(statuses[randomIndex])
 	}
 
 	return actions
