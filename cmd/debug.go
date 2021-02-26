@@ -28,6 +28,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/thebrubaker/colony/colonist"
 	"github.com/thebrubaker/colony/game"
+	"github.com/thebrubaker/colony/render"
 	"github.com/thebrubaker/colony/stackable"
 )
 
@@ -155,7 +156,8 @@ var debugCmd = &cobra.Command{
 					bag.Rows = items
 					bag.SetRect(0, 6, 62, 9+(2*len(c.Bag.Items)))
 
-					ui.Render(tick, name, action, bag, stress, hunger, thirst, exhaustion)
+					// ui.Render(tick, name, action, bag, stress, hunger, thirst, exhaustion)
+					render.Render(gc.Render(key))
 				}
 			}
 		}(quitc)
