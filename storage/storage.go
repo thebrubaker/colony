@@ -1,4 +1,4 @@
-package colonist
+package storage
 
 import (
 	"encoding/json"
@@ -7,7 +7,7 @@ import (
 	"github.com/thebrubaker/colony/stackable"
 )
 
-type Bag struct {
+type Storage struct {
 	Size  uint
 	Items []interface{}
 }
@@ -21,24 +21,24 @@ type Counter interface {
 }
 
 // MarshalJSON will marshal needs into it's attributes
-func (b *Bag) MarshalJSON() ([]byte, error) {
-	return json.Marshal(b.Items)
+func (s *Storage) MarshalJSON() ([]byte, error) {
+	return json.Marshal(s.Items)
 }
 
 // UnmarshalJSON fills in the attributes of needs
-func (b *Bag) UnmarshalJSON(bytes []byte) error {
+func (s *Storage) UnmarshalJSON(bytes []byte) error {
 	var items []interface{}
 
 	if err := json.Unmarshal(bytes, &items); err != nil {
 		return err
 	}
 
-	b.Items = items
+	s.Items = items
 
 	return nil
 }
 
-func (b *Bag) Add(elem interface{}, count uint) error {
+func (s *Storage) Add(elem interface{}, count uint) error {
 	var items []interface{}
 	var err error
 
@@ -49,24 +49,24 @@ func (b *Bag) Add(elem interface{}, count uint) error {
 	}
 
 	if i.IsStackable() {
-		items, err = stackable.Put(b.Items, &stackable.Stack{
+		items, err = stackable.Put(s.Items, &stackable.Stack{
 			Item:  elem,
 			Count: count,
 		})
 	} else {
-		items, err = stackable.Put(b.Items, elem)
+		items, err = stackable.Put(s.Items, elem)
 	}
 
 	if err != nil {
 		return err
 	}
 
-	b.Items = items
+	s.Items = items
 
 	return nil
 }
 
-func (b *Bag) Remove(elem interface{}, count uint) error {
+func (s *Storage) Remove(elem interface{}, count uint) error {
 	var items []interface{}
 	var err error
 
@@ -77,64 +77,64 @@ func (b *Bag) Remove(elem interface{}, count uint) error {
 	}
 
 	if i, ok := elem.(Stackable); ok && i.IsStackable() {
-		items, err = stackable.Take(b.Items, &stackable.Stack{
+		items, err = stackable.Take(s.Items, &stackable.Stack{
 			Item:  elem,
 			Count: count,
 		})
 	} else {
-		items, err = stackable.Take(b.Items, elem)
+		items, err = stackable.Take(s.Items, elem)
 	}
 
 	if err != nil {
 		return err
 	}
 
-	b.Items = items
+	s.Items = items
 
 	return nil
 }
 
-func (b *Bag) Has(elem interface{}, count uint) bool {
+func (s *Storage) Has(elem interface{}, count uint) bool {
 	if i, ok := elem.(Stackable); (!ok || !i.IsStackable()) && count > 0 {
 		return false
 	}
 
 	if i, ok := elem.(Stackable); ok && i.IsStackable() {
-		return stackable.Has(b.Items, &stackable.Stack{
+		return stackable.Has(s.Items, &stackable.Stack{
 			Item:  elem,
 			Count: count,
 		})
 	}
 
-	return stackable.Has(b.Items, elem)
+	return stackable.Has(s.Items, elem)
 }
 
-func (b *Bag) GetAvailableSpace() uint {
+func (s *Storage) GetAvailableSpace() uint {
 	var itemCount uint = 0
 
-	for _, i := range b.Items {
+	for _, i := range s.Items {
 		itemCount += getCount(i)
 	}
 
-	return uint(b.Size - itemCount)
+	return uint(s.Size - itemCount)
 }
 
-func (b *Bag) GetItemCount() uint {
+func (s *Storage) GetItemCount() uint {
 	var itemCount uint = 0
 
-	for _, i := range b.Items {
+	for _, i := range s.Items {
 		itemCount += getCount(i)
 	}
 
 	return uint(itemCount)
 }
 
-func (b *Bag) IsFull() bool {
-	return b.GetAvailableSpace() == 0
+func (s *Storage) IsFull() bool {
+	return s.GetAvailableSpace() == 0
 }
 
-func (b *Bag) IsEmpty() bool {
-	return b.GetItemCount() == 0
+func (s *Storage) IsEmpty() bool {
+	return s.GetItemCount() == 0
 }
 
 func getCount(item interface{}) uint {

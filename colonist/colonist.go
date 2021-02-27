@@ -6,6 +6,7 @@ import (
 	"math/rand"
 
 	"github.com/rs/xid"
+	"github.com/thebrubaker/colony/storage"
 )
 
 type DesireType string
@@ -81,8 +82,8 @@ type Colonist struct {
 	Status string `json:"status"`
 	Age    uint   `json:"age"`
 
-	Bag       *Bag       `json:"bag"`
-	Equipment *Equipment `json:"equipment"`
+	Bag       *storage.Storage `json:"bag"`
+	Equipment *Equipment       `json:"equipment"`
 
 	Desires Desires `json:"desires"`
 	Needs   Needs   `json:"needs"`
@@ -97,8 +98,9 @@ func NewColonist() *Colonist {
 		Key:  xid.New().String(),
 		Name: generateName(),
 		Age:  generateAge(),
-		Bag: &Bag{
-			Size: 30,
+		Bag: &storage.Storage{
+			Size:  30,
+			Items: []interface{}{},
 		},
 		Equipment: &Equipment{},
 		Desires:   createDesires(),

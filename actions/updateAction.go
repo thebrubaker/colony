@@ -1,10 +1,12 @@
 package actions
 
 import (
+	"log"
 	"math/rand"
 
 	"github.com/thebrubaker/colony/actions/types"
 	"github.com/thebrubaker/colony/colonist"
+	"github.com/thebrubaker/colony/stackable"
 )
 
 func (ctx *Context) StartAction(action types.Actionable) {
@@ -32,25 +34,25 @@ func (ctx *Context) UpdateAction(action *Action) {
 
 	if agitateNeeds := action.Type.AgitatesNeeds(); agitateNeeds != nil {
 		for _, need := range agitateNeeds {
-			ctx.AgitateNeed(need, action.Type, action.TickProgress)
+			ctx.AgitateNeed(need, float64(action.TickDuration), action.TickProgress)
 		}
 	}
 
 	if satisfyNeeds := action.Type.SatisfiesNeeds(); satisfyNeeds != nil {
 		for _, need := range satisfyNeeds {
-			ctx.SatisfyNeed(need, action.Type, action.TickProgress)
+			ctx.SatisfyNeed(need, float64(action.TickDuration), action.TickProgress)
 		}
 	}
 
 	if satisfyDesires := action.Type.SatisfiesDesires(); satisfyDesires != nil {
 		for _, desire := range satisfyDesires {
-			ctx.SatisfyDesire(desire, action.Type, action.TickProgress)
+			ctx.SatisfyDesire(desire, float64(action.TickDuration), action.TickProgress)
 		}
 	}
 
 	if produces := action.Type.ProducesResources(); produces != nil {
 		for _, produce := range produces {
-			ctx.ProduceResource(produce, action.TickProgress)
+			ctx.ProduceResource(produce)
 		}
 	}
 
@@ -60,27 +62,26 @@ func (ctx *Context) UpdateAction(action *Action) {
 		}
 	}
 
-	// if i, ok := action.(types.SimpleFulfillment); ok {
-	// 	SimpleFulfillment(c, i, a.TickProgress)
-	// }
+	if action.Type == types.HaulItems {
+		ctx.UnloadBagUntilEmpty(float64(action.TickDuration))
+	}
 
-	// if i, ok := action.(types.SimpleAgitate); ok {
-	// 	SimpleAgitate(c, i, a.TickProgress)
-	// }
-
-	// if i, ok := action.(types.Gathers); ok {
-	// 	Gathers(c, i, ctx.ActiveColonist.TickElapsed)
-	// }
-
-	// if i, ok := action.(types.SimpleSkillUp); ok {
-	// 	SimpleSkillUp(c, i, ctx.ActiveColonist.TickElapsed)
-	// }
+	if ctx.shouldEndEarly(action) {
+		action.ActionComplete = true
+	}
 
 	action.TickProgress = action.TickProgress + ctx.TickElapsed
 }
 
-func (ctx *Context) ProduceResource(produce types.ProduceResource, tickElapsed float64) {
-	if rand.Float64() > produce.ChancePerTick*ctx.TickElapsed {
+func (ctx *Context) ProduceResource(produce types.ProduceResource) {
+	if ctx.ActiveColonist.Bag.IsFull() {
+		return
+	}
+
+	skillScore := ctx.ActiveColonist.Skills[produce.Skill]
+	chancePerTick := produce.ChancePerTick + skillScore/100
+
+	if rand.Float64() > chancePerTick*ctx.TickElapsed {
 		return
 	}
 
@@ -91,20 +92,20 @@ func (ctx *Context) ImproveSkill(improve types.ImproveSkill) {
 	ctx.ActiveColonist.Skills.Increase(improve.Skill, improve.AmountPerTick*ctx.TickElapsed)
 }
 
-func (ctx *Context) SatisfyNeed(need types.SatisfyNeed, action types.Actionable, actionProgress float64) {
-	value := ctx.GetEasedValue(need.Total, need.Ease, float64(action.HasDuration()), actionProgress)
+func (ctx *Context) SatisfyNeed(need types.SatisfyNeed, duration float64, actionProgress float64) {
+	value := ctx.GetEasedValue(need.Total, need.Ease, float64(duration), actionProgress)
 
 	ctx.ActiveColonist.Needs.Decrease(need.NeedType, value)
 }
 
-func (ctx *Context) SatisfyDesire(desire types.SatisfyDesire, action types.Actionable, actionProgress float64) {
-	value := ctx.GetEasedValue(desire.Total, desire.Ease, float64(action.HasDuration()), actionProgress)
+func (ctx *Context) SatisfyDesire(desire types.SatisfyDesire, duration float64, actionProgress float64) {
+	value := ctx.GetEasedValue(desire.Total, desire.Ease, float64(duration), actionProgress)
 
 	ctx.ActiveColonist.Desires.Increase(desire.DesireType, value)
 }
 
-func (ctx *Context) AgitateNeed(need types.AgitateNeed, action types.Actionable, actionProgress float64) {
-	value := ctx.GetEasedValue(need.Total, need.Ease, float64(action.HasDuration()), actionProgress)
+func (ctx *Context) AgitateNeed(need types.AgitateNeed, duration float64, actionProgress float64) {
+	value := ctx.GetEasedValue(need.Total, need.Ease, float64(duration), actionProgress)
 
 	ctx.ActiveColonist.Needs.Increase(need.NeedType, value)
 }
@@ -115,8 +116,28 @@ func (ctx *Context) RemoveResources(resources []types.ConsumeResource) {
 	}
 }
 
-func CheckBagSpace(b *colonist.Bag, quantity uint) bool {
-	return b.GetAvailableSpace() >= quantity
+func (ctx *Context) UnloadBagUntilEmpty(tickDuration float64) {
+	if ctx.ActiveColonist.Bag.IsEmpty() {
+		return
+	}
+
+	// roll the dice per tick, return if no go
+	if rand.Float64() > 1/tickDuration*ctx.TickElapsed {
+		return
+	}
+
+	// take first item, remove it, add to stockpile
+	item := ctx.ActiveColonist.Bag.Items[0]
+	if i, ok := item.(stackable.Stackable); ok {
+		item = i.GetItem()
+	}
+
+	if err := ctx.ActiveColonist.Bag.Remove(item, 1); err != nil {
+		log.Fatal(err)
+	}
+	if err := ctx.Region.Stockpile.Add(item, 1); err != nil {
+		log.Fatal(err)
+	}
 }
 
 func (ctx *Context) GetEasedValue(total float64, ease func(float64) float64, duration float64, tickProgress float64) float64 {

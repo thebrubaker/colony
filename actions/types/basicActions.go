@@ -33,7 +33,7 @@ var GatherWildBerries = &SimpleAction{
 		{colonist.Stress, 10, ease.OutQuad},
 	},
 	producesResources: []ProduceResource{
-		{resources.Berries, 0.7},
+		{resources.Berries, colonist.Gathering, 0.3},
 	},
 	improvesSkills: []ImproveSkill{
 		{colonist.Gathering, 0.05},
@@ -51,10 +51,10 @@ var GatherWood = &SimpleAction{
 		{colonist.Fulfillment, 35, ease.OutQuad},
 	},
 	producesResources: []ProduceResource{
-		{resources.Wood, 0.1},
+		{resources.Wood, colonist.Gathering, 0.1},
 	},
 	improvesSkills: []ImproveSkill{
-		{colonist.Woodcutting, 0.05},
+		{colonist.Gathering, 0.05},
 	},
 }
 
@@ -98,4 +98,16 @@ var Thinking = &SimpleAction{
 	satisfiesDesires: []SatisfyDesire{
 		{colonist.Fulfillment, 5, ease.OutQuad},
 	},
+}
+
+var HaulItems = &SimpleAction{
+	status: []string{
+		"dropping off items at the stockpile",
+	},
+	effort:   Easy,
+	duration: Moderate,
+	satisfiesDesires: []SatisfyDesire{
+		{colonist.Fulfillment, 5, ease.OutQuad},
+	},
+	whenBagFull: true,
 }

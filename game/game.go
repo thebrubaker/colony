@@ -29,7 +29,7 @@ func (g *Game) loop() {
 			return
 		case f := <-g.actionc:
 			f()
-		case <-time.Tick(10 * time.Millisecond):
+		case <-time.Tick(50 * time.Millisecond):
 			currentTime := time.Now()
 			tickElapsed := currentTime.Sub(previousTime).Seconds()
 			g.state.update(tickElapsed)

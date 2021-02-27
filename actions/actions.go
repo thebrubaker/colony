@@ -8,6 +8,15 @@ import (
 	"github.com/thebrubaker/colony/region"
 )
 
+var ColonistActions = []types.Actionable{
+	types.DrinkGroundWater,
+	types.GatherWildBerries,
+	types.GatherWood,
+	types.BasicRelax,
+	types.BasicRest,
+	types.HaulItems,
+}
+
 type Context struct {
 	Region         *region.Region
 	Colonists      []*colonist.Colonist
@@ -15,8 +24,10 @@ type Context struct {
 	TickElapsed    float64
 }
 type Action struct {
-	Type         types.Actionable
-	TickProgress float64
+	Type           types.Actionable
+	TickProgress   float64
+	TickDuration   types.TickDuration
+	ActionComplete bool
 }
 
 type Actions map[string]*Action

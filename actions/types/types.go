@@ -26,6 +26,7 @@ type Actionable interface {
 	Status() []string
 	TakesEffort() Effort
 	HasDuration() TickDuration
+	WhenBagFull() bool
 	HasUtilityNeed() colonist.NeedType
 	HasUtilityDesire() colonist.DesireType
 	SatisfiesNeeds() []SatisfyNeed

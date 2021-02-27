@@ -5,8 +5,17 @@ import (
 
 	ui "github.com/gizak/termui/v3"
 	"github.com/gizak/termui/v3/widgets"
+	"github.com/thebrubaker/colony/actions"
 	"github.com/thebrubaker/colony/colonist"
 	"github.com/thebrubaker/colony/game"
+)
+
+const (
+	Foreground  = 254
+	Background  = -1
+	BorderLabel = 254
+	BorderLine  = 96
+	Highlight   = 31
 )
 
 type Controller struct {
@@ -18,49 +27,116 @@ func Render(g game.GameState) {
 	termWidth, termHeight := ui.TerminalDimensions()
 	grid.SetRect(0, 0, termWidth, termHeight)
 
-	var rows []interface{}
+	var rows []ui.Drawable
 
-	for _, c := range g.Colonists {
-		rows = append(rows, ui.NewRow(1.0/10,
-			colonistRow(c)...,
-		))
+	for i, c := range g.Colonists {
+		action := g.Actions[c.Key]
+		rows = append(rows, colonistRow(i, c, action)...)
 	}
 
-	grid.Set(rows...)
-	ui.Render(grid)
+	ui.Render(rows...)
 }
 
-func colonistRow(c *colonist.Colonist) []interface{} {
-	w1 := widgets.NewParagraph()
-	w1.Title = "Name"
-	w1.Text = fmt.Sprintf(" %s", c.Name)
-	w2 := widgets.NewParagraph()
-	w2.Title = "Status"
-	w2.Text = c.Status
-	w3 := widgets.NewParagraph()
-	w3.Title = "Progress"
-	w4 := widgets.NewGauge()
-	w4.Title = "Stress"
-	w4.Percent = int(c.Needs[colonist.Stress])
-	w5 := widgets.NewGauge()
-	w5.Title = "Hunger"
-	w5.Percent = int(c.Needs[colonist.Hunger])
-	w6 := widgets.NewGauge()
-	w6.Title = "Thirst"
-	w6.Percent = int(c.Needs[colonist.Thirst])
-	w7 := widgets.NewGauge()
-	w7.Title = "Exhaustion"
-	w7.Percent = int(c.Needs[colonist.Exhaustion])
+func colonistRow(index int, c *colonist.Colonist, a *actions.Action) []ui.Drawable {
+	rowSize := 3
+	y1 := 0 + (rowSize * index)
+	y2 := rowSize + (rowSize * index)
+	colSize := 16
+	x1 := 0 * colSize
+	x2 := 1 * (colSize * 2)
 
-	width := 10.0
+	actionDuration := a.TickDuration
+	actionProgress := a.TickProgress
 
-	return []interface{}{
-		ui.NewCol(2.0/width, w1),
-		ui.NewCol(3.0/width, w2),
-		ui.NewCol(1.0/width, w3),
-		ui.NewCol(1.0/width, w4),
-		ui.NewCol(1.0/width, w5),
-		ui.NewCol(1.0/width, w6),
-		ui.NewCol(1.0/width, w7),
+	name := widgets.NewParagraph()
+	if index == 0 {
+		name.Title = "Name"
+	}
+	name.Text = fmt.Sprintf(" %s", c.Name)
+	name.SetRect(x1, y1, x2, y2)
+	x1 = x2
+	x2 = x1 + (colSize * 3)
+	status := widgets.NewParagraph()
+	if index == 0 {
+		status.Title = "Status"
+	}
+	status.Text = fmt.Sprintf(" %v", c.Status)
+	status.SetRect(x1, y1, x2, y2)
+	x1 = x2
+	x2 = x1 + colSize
+	progress := widgets.NewGauge()
+	if index == 0 {
+		progress.Title = "Progress"
+	}
+	progress.Percent = int(actionProgress / float64(actionDuration) * 100)
+	progress.BarColor = ui.Color(BorderLine)
+	progress.SetRect(x1, y1, x2, y2)
+	x1 = x2
+	x2 = x1 + (colSize / 2)
+	bag := widgets.NewParagraph()
+	if index == 0 {
+		bag.Title = "Bag"
+	}
+	bag.Text = fmt.Sprintf(" %v/%v", c.Bag.GetItemCount(), c.Bag.Size)
+	bag.SetRect(x1, y1, x2, y2)
+	x1 = x2
+	x2 = x1 + colSize/8*7
+	stress := widgets.NewGauge()
+	if index == 0 {
+		stress.Title = "Stress"
+	}
+	stress.Percent = int(c.Needs[colonist.Stress])
+	stress.BarColor = getColor(stress.Percent)
+	stress.SetRect(x1, y1, x2, y2)
+	x1 = x2
+	x2 = x1 + colSize/8*7
+	hunger := widgets.NewGauge()
+	if index == 0 {
+		hunger.Title = "Hunger"
+	}
+	hunger.Percent = int(c.Needs[colonist.Hunger])
+	hunger.BarColor = getColor(hunger.Percent)
+	hunger.SetRect(x1, y1, x2, y2)
+	x1 = x2
+	x2 = x1 + colSize/8*7
+	thirst := widgets.NewGauge()
+	if index == 0 {
+		thirst.Title = "Thirst"
+	}
+	thirst.Percent = int(c.Needs[colonist.Thirst])
+	thirst.BarColor = getColor(thirst.Percent)
+	thirst.SetRect(x1, y1, x2, y2)
+	x1 = x2
+	x2 = x1 + colSize/8*7
+	exhaustion := widgets.NewGauge()
+	if index == 0 {
+		exhaustion.Title = "Exhaustion"
+	}
+	exhaustion.Percent = int(c.Needs[colonist.Exhaustion])
+	exhaustion.BarColor = getColor(exhaustion.Percent)
+	exhaustion.SetRect(x1, y1, x2, y2)
+
+	return []ui.Drawable{
+		name,
+		status,
+		progress,
+		bag,
+		stress,
+		hunger,
+		thirst,
+		exhaustion,
+	}
+}
+
+func getColor(count int) ui.Color {
+	switch true {
+	case count >= 90:
+		return ui.Color(130)
+	case count >= 75:
+		return ui.Color(94)
+	case count >= 60:
+		return ui.Color(58)
+	default:
+		return ui.Color(22)
 	}
 }

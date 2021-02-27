@@ -1,5 +1,7 @@
 package region
 
+import "github.com/thebrubaker/colony/storage"
+
 type Region struct {
-	Stockpile []interface{} `json:"stockpile"`
+	Stockpile storage.Storage `json:"stockpile"`
 }

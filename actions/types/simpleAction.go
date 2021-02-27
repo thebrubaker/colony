@@ -30,6 +30,7 @@ type ImproveSkill struct {
 
 type ProduceResource struct {
 	Resource      resources.SimpleResource
+	Skill         colonist.SkillType
 	ChancePerTick float64
 }
 
@@ -40,6 +41,7 @@ type ConsumeResource struct {
 
 type SimpleAction struct {
 	status            []string
+	whenBagFull       bool
 	effort            Effort
 	duration          TickDuration
 	utilityNeed       colonist.NeedType
@@ -55,6 +57,7 @@ type SimpleAction struct {
 func (a *SimpleAction) Status() []string                      { return a.status }
 func (a *SimpleAction) TakesEffort() Effort                   { return a.effort }
 func (a *SimpleAction) HasDuration() TickDuration             { return a.duration }
+func (a *SimpleAction) WhenBagFull() bool                     { return a.whenBagFull }
 func (a *SimpleAction) HasUtilityNeed() colonist.NeedType     { return a.utilityNeed }
 func (a *SimpleAction) HasUtilityDesire() colonist.DesireType { return a.utilityDesire }
 func (a *SimpleAction) SatisfiesNeeds() []SatisfyNeed         { return a.satisfiesNeeds }

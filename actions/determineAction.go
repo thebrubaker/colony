@@ -2,17 +2,43 @@ package actions
 
 import (
 	"log"
+	"math/rand"
 
 	"github.com/jmcvetta/randutil"
 	"github.com/thebrubaker/colony/actions/types"
 )
 
 func (ctx *Context) DetermineAction(a *Action) *Action {
-	if a.TickProgress < float64(a.Type.HasDuration()) {
-		return a
+	// action duration has ended
+	if a.ActionComplete || a.TickProgress >= float64(a.TickDuration) {
+		return ctx.NextAction(a.Type)
 	}
 
-	return ctx.NextAction(a.Type)
+	return a
+}
+
+func (ctx *Context) shouldEndEarly(a *Action) bool {
+	// once a need is met, it ends the action
+	if needType := a.Type.HasUtilityNeed(); needType != "" {
+		return ctx.ActiveColonist.Needs[needType] <= 0
+	}
+
+	// desires never end early
+	if desireType := a.Type.HasUtilityDesire(); desireType != "" {
+		return false
+	}
+
+	// if it produces and the bag is full, it ends early
+	if produces := a.Type.ProducesResources(); produces != nil {
+		return ctx.ActiveColonist.Bag.IsFull()
+	}
+
+	// stops dropping off items after bag is empty
+	if a.Type == types.HaulItems && ctx.ActiveColonist.Bag.IsEmpty() {
+		return true
+	}
+
+	return false
 }
 
 func (ctx *Context) NextAction(previousAction types.Actionable) *Action {
@@ -29,18 +55,15 @@ func (ctx *Context) NextAction(previousAction types.Actionable) *Action {
 // then generate a weight score for how motivated the colonist is to choose
 // that action (with some randomness).
 func (ctx *Context) SelectNextAction(currentType types.Actionable) *Action {
-	allowedActions := ctx.FilterActions([]types.Actionable{
-		types.DrinkGroundWater,
-		types.GatherWildBerries,
-		types.GatherWood,
-		types.BasicRelax,
-		types.BasicRest,
-	})
+	allowedActions := ctx.FilterActions(ColonistActions)
 
 	action := ctx.ChooseWeightedAction(currentType, allowedActions)
+	variance := float64(action.HasDuration()) * 0.2
+	duration := types.TickDuration(float64(action.HasDuration()) - variance/2 + (rand.Float64() * variance))
 
 	return &Action{
-		Type: action,
+		Type:         action,
+		TickDuration: duration,
 	}
 }
 
@@ -49,9 +72,14 @@ func (ctx *Context) FilterActions(actions []types.Actionable) []types.Actionable
 
 	for _, a := range actions {
 		// colonist has required resources that will be consumed
-		if !ctx.MeetsResourceQuantities(a.ConsumesResources()) {
+		if a.ConsumesResources() != nil && !ctx.MeetsResourceQuantities(a.ConsumesResources()) {
 			continue
 		}
+		// will not produce resources while bag is full
+		if a.ProducesResources() != nil && ctx.ActiveColonist.Bag.IsFull() {
+			continue
+		}
+
 		allowedActions = append(allowedActions, a)
 	}
 
@@ -108,6 +136,10 @@ func (ctx *Context) GetWeightedChoices(currentAction types.Actionable, available
 }
 
 func (ctx *Context) GetUtility(currentAction types.Actionable, nextAction types.Actionable) int {
+	if nextAction.WhenBagFull() {
+		return 80
+	}
+
 	if needType := nextAction.HasUtilityNeed(); needType != "" {
 		return int(ctx.ActiveColonist.Needs[needType])
 	}
@@ -116,5 +148,5 @@ func (ctx *Context) GetUtility(currentAction types.Actionable, nextAction types.
 		return 100 - int(ctx.ActiveColonist.Desires[desireType])
 	}
 
-	return 50
+	return 10
 }
