@@ -4,6 +4,7 @@ import (
 	"github.com/thebrubaker/colony/actions"
 	"github.com/thebrubaker/colony/colonist"
 	"github.com/thebrubaker/colony/region"
+	"github.com/thebrubaker/colony/storage"
 )
 
 type GameState struct {
@@ -26,7 +27,11 @@ func CreateGameState() *GameState {
 		Ticker: &Ticker{
 			Rate: BaseTickRate,
 		},
-		Region:    &region.Region{},
+		Region: &region.Region{
+			Stockpile: storage.Storage{
+				Items: []interface{}{},
+			},
+		},
 		Colonists: colonists,
 		Actions:   actions.CreateActions(colonists),
 	}

@@ -8,6 +8,7 @@ import (
 	"github.com/thebrubaker/colony/actions"
 	"github.com/thebrubaker/colony/colonist"
 	"github.com/thebrubaker/colony/game"
+	"github.com/willf/pad"
 )
 
 const (
@@ -22,19 +23,56 @@ type Controller struct {
 	Grid *ui.Grid
 }
 
-func Render(g game.GameState) {
-	grid := ui.NewGrid()
-	termWidth, termHeight := ui.TerminalDimensions()
-	grid.SetRect(0, 0, termWidth, termHeight)
+type Namer interface {
+	GetName() string
+}
 
-	var rows []ui.Drawable
+type Stackable interface {
+	GetItem() interface{}
+	GetCount() uint
+}
+
+func Render(g game.GameState) {
+	var elements []ui.Drawable
 
 	for i, c := range g.Colonists {
 		action := g.Actions[c.Key]
-		rows = append(rows, colonistRow(i, c, action)...)
+		elements = append(elements, colonistRow(i, c, action)...)
 	}
 
-	ui.Render(rows...)
+	// var stockpileRows string
+	var row string
+	colSize := 20
+
+	for index, item := range g.Region.Stockpile.Items {
+		name := "Fix Me"
+		count := 1
+		if i, ok := item.(Stackable); ok {
+			item = i.GetItem()
+			count = int(i.GetCount())
+		}
+		if i, ok := item.(Namer); ok {
+			name = i.GetName()
+		}
+		text := pad.Right(fmt.Sprintf("[%v] %s", count, name), colSize, " ")
+		row = row + text
+		if index+1%3 == 0 {
+			row = row + "\n"
+		}
+	}
+
+	y1 := (len(g.Colonists) * 3)
+	y2 := y1 + 12
+	x1 := 0
+	x2 := colSize * 3
+	stockpile := widgets.NewParagraph()
+	stockpile.Title = "Stockpile"
+	stockpile.SetRect(x1, y1, x2, y2)
+	stockpile.Text = row
+
+	elements = append(elements, stockpile)
+
+	ui.Render(elements...)
 }
 
 func colonistRow(index int, c *colonist.Colonist, a *actions.Action) []ui.Drawable {

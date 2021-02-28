@@ -122,7 +122,7 @@ func (ctx *Context) UnloadBagUntilEmpty(tickDuration float64) {
 	}
 
 	// roll the dice per tick, return if no go
-	if rand.Float64() > 1/tickDuration*ctx.TickElapsed {
+	if rand.Float64() > 2*ctx.TickElapsed {
 		return
 	}
 
